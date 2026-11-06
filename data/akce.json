@@ -1,8 +1,8 @@
 {
  "meta": {
   "zalozeno": "2026-11-06",
-  "vygenerovano": "2026-11-06T17:21+01:00",
-  "predchozi_beh": "2026-11-06T17:05+01:00",
+  "vygenerovano": "2026-11-06T17:22+01:00",
+  "predchozi_beh": "2026-11-06T17:21+01:00",
   "horizont_dni": 120,
   "statistika": {
    "nove": 0,
@@ -1578,7 +1578,7 @@
    "vstupenky": "https://www.jazzdock.cz/cs/koncert/limbo-12",
    "stav": "volno",
    "cena": null,
-   "typ": "improvizace",
+   "typ": "koncert",
    "popis": "Skupina Limbo se již dvacet let řadí ke špičce české jazzové scény. U příležitosti tohoto výročí představí nové album Spirit of... ...",
    "znacky": "jazz – world music – improvising",
    "zdroj": "jazzdock",
@@ -3785,7 +3785,7 @@
    "vstupenky": "https://www.jazzdock.cz/cs/koncert/emil-viklicky-pavel-hruby-between-us-1",
    "stav": "volno",
    "cena": null,
-   "typ": "improvizace",
+   "typ": "koncert",
    "popis": "28. března 2025 natočili oba jazzmani v klubu JazzDock nové živé album. Tím zúročili dosavadních 5 let intenzivní spolupráce v duu. Album... ...",
    "znacky": "jazz & improvisation",
    "zdroj": "jazzdock",
