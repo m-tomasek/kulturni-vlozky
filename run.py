@@ -114,11 +114,12 @@ def duvod_vynechani(a, pr):
         return "uzavřené"
     if a["mimo_prahu"]:
         return "mimo Prahu"
-    nz = bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower()
+    # „vhodné pro děti“ = i pro dospělé; vyřazujeme jen akce určené dětem
+    nz = bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower().replace("vhodne pro deti", "")
     for k in pr["nazev"]:
         if k in nz:
             return f"pravidlo: {k}"
-    popis = bez_diakritiky(a.get("popis") or "").lower()
+    popis = bez_diakritiky(a.get("popis") or "").lower().replace("vhodne pro deti", "")
     for rx in pr["popis"]:
         if rx.search(popis):
             return f"popis: {rx.pattern}"

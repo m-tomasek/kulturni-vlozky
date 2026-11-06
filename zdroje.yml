@@ -98,23 +98,23 @@ zdroje:
   - id: alta
     nazev: Studio ALTA
     typ: primarni
-    aktivni: false
+    aktivni: true
     urls:
-      - https://www.altart.cz/
+      - https://www.altart.cz/program/
 
   - id: alfred
     nazev: Alfred ve dvoře
     typ: primarni
-    aktivni: false
+    aktivni: true
     urls:
       - https://www.alfredvedvore.cz/
 
   - id: hrdinu
     nazev: Studio Hrdinů
     typ: primarni
-    aktivni: false
+    aktivni: true
     urls:
-      - https://studiohrdinu.cz/en/program/
+      - https://studiohrdinu.cz/program/
 
   - id: galaxie
     nazev: Stanice Galaxie
