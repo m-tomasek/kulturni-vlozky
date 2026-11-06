@@ -1,0 +1,39 @@
+name: Hlídač denního sběru
+
+# Nezávislá kontrola: když se denní sběr z jakéhokoli důvodu nespustí
+# nebo spadne, data zestárnou – hlídač to pozná a založí issue (přijde e-mail).
+
+on:
+  schedule:
+    - cron: "43 10 * * *"   # kolem poledne, dlouho po ranním sběru
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  kontrola:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zkontrolovat stáří dat
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STARI=$(python3 -c "
+          import json, datetime as dt
+          m = json.load(open('data/akce.json'))['meta']
+          t = dt.datetime.fromisoformat(m['vygenerovano'])
+          print(int((dt.datetime.now(dt.timezone.utc) - t).total_seconds() // 3600))
+          ")
+          echo "Data jsou stará ${STARI} h"
+          NAZEV="Denní sběr se zastavil"
+          CISLO=$(gh issue list --state open --search "in:title $NAZEV" --json number --jq '.[0].number')
+          if [ "$STARI" -gt 30 ]; then
+            if [ -z "$CISLO" ]; then
+              gh issue create --title "$NAZEV" --body "Poslední úspěšný sběr akcí proběhl před ${STARI} hodinami. Zkontroluj záložku Actions (workflow *Denní sběr akcí*), nebo napiš Claudovi."
+            fi
+          elif [ -n "$CISLO" ]; then
+            gh issue close "$CISLO" --comment "Sběr zase běží."
+          fi

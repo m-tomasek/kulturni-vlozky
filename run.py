@@ -126,7 +126,7 @@ def duvod_vynechani(a, pr):
 
 
 def urci_typ(a, pr):
-    text = bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower()
+    text = bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower().replace("improvis", "")
     for typ, klice in pr["typy"]:
         if any(k in text for k in klice):
             if a.get("typ") in (None, "koncert") or typ in ("improvizace", "festival", "vystava"):
@@ -283,24 +283,40 @@ def main():
         try:
             surove = nacti(zid).ziskej(stahni, zz, dnes)
             chyba = None
+        except requests.HTTPError as e:
+            kod = e.response.status_code if e.response is not None else "?"
+            surove, chyba = [], f"web vrací chybu {kod}" + (" (stránka zmizela nebo se přesunula)" if kod == 404 else "")
+        except (requests.ConnectionError, requests.Timeout):
+            surove, chyba = [], "web je nedostupný (neodpovídá)"
         except Exception as e:  # noqa: BLE001
-            surove, chyba = [], f"{type(e).__name__}: {e}"
+            surove, chyba = [], f"web se asi změnil, skript ho neumí přečíst ({type(e).__name__})"
             traceback.print_exc()
         budouci = [a for a in surove if (a.get("konec_datum") or a["datum"]) >= dnes.isoformat()]
         minule_pocet = stav.get("pocet")
+        varovani = None
         if chyba is None and not budouci and surove:
-            chyba = "zdroj vrátil jen proběhlé akce"
+            chyba = "zdroj ukazuje jen proběhlé akce"
         if chyba is None and not surove:
             chyba = "zdroj nevrátil žádné akce (změnil se web?)"
+        if chyba is None and sum(1 for a in budouci if not a["nazev"]) > len(budouci) / 2:
+            chyba = "akce bez názvů – web se asi změnil"
         if chyba is None and minule_pocet and minule_pocet >= 5 and len(budouci) < PAD_ZDROJE * minule_pocet:
-            problemy.append(f"- **{z['nazev']}**: jen {len(budouci)} akcí (minule {minule_pocet}) – možná se změnil web")
+            varovani = f"jen {len(budouci)} akcí místo obvyklých {minule_pocet}"
         if chyba:
             stav["chyb_v_rade"] = stav.get("chyb_v_rade", 0) + 1
-            stav.update(ok=False, chyba=chyba, posledni_pokus=ted.isoformat(timespec="minutes"))
-            problemy.append(f"- **{z['nazev']}** ({zid}): {chyba}")
+            stav.setdefault("nefunguje_od", dnes.isoformat())
+            stav.update(ok=False, chyba=chyba, varovani=None, posledni_pokus=ted.isoformat(timespec="minutes"))
+            od = dt.date.fromisoformat(stav["nefunguje_od"]).strftime("%-d. %-m.")
+            problemy.append(f"- **{z['nazev']}**: {chyba} (nefunguje od {od}) – {stav['url'] if stav.get('url') else zz['urls'][0]}")
         else:
-            ok_zdroje.add(zid)
-            stav.update(ok=True, chyba=None, chyb_v_rade=0, pocet=len(budouci),
+            if varovani:
+                # podezřelý pokles: akce bereme, ale nic ze zdroje nepovažujeme za zrušené
+                problemy.append(f"- **{z['nazev']}**: {varovani} – možná se změnil web")
+            else:
+                ok_zdroje.add(zid)
+            stav.pop("nefunguje_od", None)
+            stav.update(ok=True, chyba=None, varovani=varovani, chyb_v_rade=0,
+                        pocet=len(budouci) if not varovani else minule_pocet,
                         posledni_ok=ted.isoformat(timespec="minutes"), posledni_pokus=ted.isoformat(timespec="minutes"))
         stav["nazev"] = z["nazev"]
         stav["url"] = zz["urls"][0]

@@ -26,6 +26,9 @@
   --t-festival:#B8EEEE; --t-film:#D9DEE6;        --t-spolecenska:#DDF5A6;
   --t-jine:#E3E7EC;
 
+  /* pastelové plochy */
+  --p-lemon:#FFF3A8; --p-sky:#DDEBFF; --p-mint:#D8F4E5; --p-pink:#FFDCE8; --p-lilac:#E9E1FF;
+
   --sold:#D01F4B; --free:#0E8656; --warn:#9A6500;
 
   --step--1:clamp(.78rem,.16vw + .74rem,.86rem);
@@ -45,6 +48,7 @@
     --t-divadlo:#FFB3CF; --t-improvizace:#FFE873; --t-koncert:#A3D3FF; --t-tanec:#C9B6FF;
     --t-prednaska:#A3EBC9; --t-vystava:#FFC69A; --t-festival:#A3E8E8; --t-film:#B9C2CF;
     --t-spolecenska:#D2F08A; --t-jine:#6A7380;
+    --p-lemon:#3A3517; --p-sky:#1B2A40; --p-mint:#17342A; --p-pink:#3D1E2B; --p-lilac:#2A2346;
     --sold:#FF7A98; --free:#5DD39E; --warn:#F2C14E;
   }
 }
@@ -181,6 +185,39 @@ details.filters>summary::-webkit-details-marker{display:none}
 .label{letter-spacing:.04em}
 .view{font-weight:600;font-stretch:88%;text-transform:uppercase;letter-spacing:.03em;font-size:var(--step--1)}
 .type{font-stretch:92%}
+
+/* ---------- pastelové plochy po celém webu ---------- */
+.masthead{background:var(--p-lemon);padding:clamp(20px,3vw,34px) clamp(16px,3vw,32px) 22px;border-bottom:0}
+.side{background:var(--p-sky);padding:18px 18px 20px}
+.cal{border-top-color:color-mix(in srgb,var(--ink) 12%,transparent)}
+.day{border-top:2px solid var(--p-sky);border-left:2px solid var(--p-sky)}
+.day:not(.none):hover{outline:2px solid var(--ink);outline-offset:-2px}
+.day.past .d,.day.none .d{color:color-mix(in srgb,var(--ink) 30%,transparent)}
+.day.today{box-shadow:inset 0 0 0 2px var(--signal)}
+.day.inrange:not(.sel){outline:2px solid var(--ink);outline-offset:-2px}
+.day .dots{display:none}
+.day .n{font-family:var(--mono);font-size:10px;color:color-mix(in srgb,var(--ink) 70%,transparent);align-self:flex-end}
+.day.sel .n{color:var(--surface)}
+.day.sel,.day.sel:hover{background:var(--ink)!important;color:var(--surface)}
+details.filters{background:var(--p-mint);margin:20px -18px -20px;padding:4px 18px 20px}
+details.filters>summary{border-top:0!important}
+.legend{margin-top:16px}
+.type{background:var(--surface-raised);border-color:transparent}
+.type[aria-pressed="true"]{background:var(--sw);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.side-tools select,.side-tools input[type=search]{border-color:transparent}
+.views{border-bottom:0;gap:6px;margin-bottom:0}
+.view{padding:7px 12px;border-radius:999px;border-bottom:0;margin-bottom:0}
+.view[aria-selected="true"]{background:var(--p-pink);color:var(--ink)}
+.view:hover{background:color-mix(in srgb,var(--p-pink) 50%,transparent)}
+.dayhead{background:var(--p-lilac);border-bottom:0;padding:10px 14px;margin:30px 0 8px}
+.ev{border-bottom:0;margin-bottom:6px;padding:12px 14px 12px 16px;
+  background:color-mix(in srgb,var(--tc) 22%,var(--surface-raised));border-left:6px solid var(--tc)}
+.ev.cancel{background:var(--surface-raised)}
+.health{background:var(--p-mint);padding:18px;border-top:0}
+.alert{background:var(--p-pink);padding:12px 16px;margin:16px 0 0;font-size:var(--step--1);line-height:1.45}
+.alert b{font-weight:650}
+.alert[hidden]{display:none}
+@media (max-width:560px){.ev{padding-left:12px}}
 </style>
 </head>
 <body>
@@ -218,6 +255,7 @@ details.filters>summary::-webkit-details-marker{display:none}
     </aside>
 
     <main>
+      <div class="alert" id="alert" hidden></div>
       <nav class="views" id="views" role="tablist" aria-label="Pohled"></nav>
       <div id="list"></div>
     </main>
@@ -323,9 +361,17 @@ function kreslitKalendar(){
     const cls=["day", iso<t?"past":"", !den.length?"none":"", iso===t?"today":"",
       S.view==="den"&&S.den===iso?"sel":"", S.view!=="den"&&rozsah.includes(iso)?"inrange":""].join(" ");
     const label=`${DNY[dow(iso)]} ${d}. ${MES2[m]}: ${den.length} akcí`;
-    html+=`<button class="${cls}" data-day="${iso}" aria-label="${label}" ${!den.length?"disabled":""}>
-      <span class="d">${d}</span>
-      <span class="dots">${den.slice(0,14).map(a=>`<i style="background:var(--t-${a.typ})"></i>`).join("")}</span></button>`;
+    let heat="";
+    if(den.length){
+      const pocty={}; den.forEach(a=>pocty[a.typ]=(pocty[a.typ]||0)+1);
+      // svislé pruhy v poměru typů akcí daného dne
+      let x=0; const pruhy=[];
+      Object.entries(pocty).sort((a,b)=>b[1]-a[1]).forEach(([ty,c])=>{
+        const w=c/den.length*100; pruhy.push(`var(--t-${ty}) ${x}% ${x+w}%`); x+=w; });
+      heat=`background:linear-gradient(90deg,${pruhy.join(",")})`;
+    }
+    html+=`<button class="${cls}" data-day="${iso}" aria-label="${label}" style="${heat}" ${!den.length?"disabled":""}>
+      <span class="d">${d}</span>${den.length?`<span class="n">${den.length}</span>`:""}</button>`;
   }
   document.getElementById("cal").innerHTML=html;
 }
@@ -359,7 +405,7 @@ function radek(a){
   const cas = a.cas || (viceDni ? "celý den" : "—");
   const pod = viceDni ? `<small>do ${kratce(a.konec_datum)}</small>` : a.konec_cas ? `<small>–${a.konec_cas}</small>` : "";
   const skryta=SKRYTE.has(a.id);
-  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skryta?"hidden":""}">
+  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skryta?"hidden":""}" style="--tc:var(--t-${a.typ})">
     <div class="time">${cas}${pod}</div>
     <div>
       <h4><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h4>
@@ -443,6 +489,14 @@ async function start(){
     if(innerWidth<=860) document.getElementById("filters").removeAttribute("open");
     if(AKCE.some(a=>zakladFiltr(a)&&nova7(a))) S.view="nove";
     ovladani(); vse();
+    // kontrola: neaktuální data a nefunkční zdroje
+    const zpravy=[];
+    const stari = META.vygenerovano ? (Date.now()-new Date(META.vygenerovano))/36e5 : 999;
+    if(stari>30) zpravy.push(`<b>Data nejsou čerstvá</b> – poslední úspěšný sběr byl před ${Math.round(stari/24)} dny. Denní běh na GitHubu se nejspíš zastavil.`);
+    const spatne=Object.values(z).filter(x=>!x.ok || x.varovani);
+    if(spatne.length) zpravy.push(`<b>Problém se zdroji:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}. Jejich akce tu můžou chybět nebo být zastaralé.`);
+    const al=document.getElementById("alert");
+    if(zpravy.length){ al.innerHTML=zpravy.join("<br>"); al.hidden=false; }
     document.getElementById("sources").innerHTML=Object.values(z).sort((a,b)=>a.nazev.localeCompare(b.nazev,"cs")).map(s=>
       `<li class="${s.ok?"":"bad"}"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> ${s.ok?`<span class="num">${s.pocet}</span>`:"— nefunguje"}</li>`).join("");
   }catch(e){
