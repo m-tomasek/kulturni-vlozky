@@ -93,9 +93,7 @@ zdroje:
     typ: primarni
     aktivni: false
     urls:
-      - https://www.jazzdock.cz/cs/program/{rok}/{mesic2}
-      - https://www.jazzdock.cz/cs/program/{rok+1m}/{mesic2+1m}
-      - https://www.jazzdock.cz/cs/program/{rok+2m}/{mesic2+2m}
+      - https://www.jazzdock.cz/cs/program
 
   - id: galaxie
     nazev: Stanice Galaxie
