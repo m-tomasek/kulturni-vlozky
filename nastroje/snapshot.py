@@ -34,9 +34,11 @@ def rozbal(url, dnes):
         co, posun = m.group(1), m.group(2)
         o = int(posun) if posun else 0
         rok, mesic = posun_mesic(dnes, o)
-        return str(rok if co == "rok" else mesic)
+        if co == "rok":
+            return str(rok)
+        return f"{mesic:02d}" if co == "mesic2" else str(mesic)
 
-    return re.sub(r"\{(rok|mesic)(?:\+(\d+)m)?\}", nahrad, url)
+    return re.sub(r"\{(rok|mesic2|mesic)(?:\+(\d+)m)?\}", nahrad, url)
 
 
 def stahni(url):
