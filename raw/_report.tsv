@@ -2,7 +2,7 @@ pomezi-0	200	66134	https://pomezi.com/
 letka-0	200	1097775	https://www.klubletka.cz/program
 vosto5-0	200	42095	https://vosto5.cz/program/
 disk-0	200	27278	https://www.divadlodisk.cz/program
-kis-0	200	11885	https://www.tyrkis.cz/program
+kis-0	CHYBA	HTTPSConnectionPool(host='www.tyrkis.cz', port=443): Max retries exceeded with url: /program (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.tyrkis.cz', port=443) at 0x7efe0c1dec90>, 'Connection to www.tyrkis.cz timed out. (connect timeout=30)'))	https://www.tyrkis.cz/program
 x10-0	200	66742	https://www.divadlox10.cz/cs/program
 malostranska-0	200	98698	https://www.malostranska-beseda.cz/club/program?year=2026&month=11
 malostranska-1	200	73445	https://www.malostranska-beseda.cz/club/program?year=2026&month=12
@@ -17,8 +17,8 @@ jazzdock-0	200	190969	https://www.jazzdock.cz/cs/program
 galaxie-0	200	109831	https://www.stanicegalaxie.cz/program
 galaxie-1	200	110382	https://www.stanicegalaxie.cz/program?p0100=2
 galaxie-2	200	108359	https://www.stanicegalaxie.cz/program?p0100=3
-improliga-0	200	49617	https://improliga.cz/kalendar-predstaveni/
-improliga-ical	200	49617	https://improliga.cz/kalendar-predstaveni/?ical=1
-improliga-api	404	151	https://improliga.cz/wp-json/tribe/events/v1/events?per_page=50
-improliga-feed	200	5303	https://improliga.cz/feed/
-jazzdock-strana2	200	209970	https://www.jazzdock.cz/cs/program?page=2
+improliga-0	CHYBA	HTTPSConnectionPool(host='improliga.cz', port=443): Max retries exceeded with url: /kalendar-predstaveni/ (Caused by NewConnectionError("HTTPSConnection(host='improliga.cz', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))	https://improliga.cz/kalendar-predstaveni/
+improliga-ical	CHYBA	HTTPSConnectionPool(host='improliga.cz', port=443): Max retries exceeded with url: /kalendar-predstaveni/?ical=1 (Caused by NewConnectionError("HTTPSConnection(host='improliga.cz', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))	https://improliga.cz/kalendar-predstaveni/?ical=1
+improliga-api	CHYBA	HTTPSConnectionPool(host='improliga.cz', port=443): Max retries exceeded with url: /wp-json/tribe/events/v1/events?per_page=50 (Caused by NewConnectionError("HTTPSConnection(host='improliga.cz', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))	https://improliga.cz/wp-json/tribe/events/v1/events?per_page=50
+improliga-feed	CHYBA	HTTPSConnectionPool(host='improliga.cz', port=443): Max retries exceeded with url: /feed/ (Caused by NewConnectionError("HTTPSConnection(host='improliga.cz', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))	https://improliga.cz/feed/
+jazzdock-strana2	200	209644	https://www.jazzdock.cz/cs/program?page=2

@@ -524,15 +524,12 @@
                                 <div style="margin-bottom: 2em;">
                                     <div class="wrap-input-pocet">
                                         <input type="number" name="amount" min="1"
-                                               max="2"
+                                               max="8"
                                                class="input-pocet input-amount" style="width: 60px;" value="1">
                                     </div>
                                     <div class="styled-select">
                                         <select class="place-select" name="place" required>
                                             <option value="">Cena</option>
-                                                                                            <option value="seat"
-                                                        data-max="2">Sezení                                                    <strong> 1300 Kč</strong>
-                                                </option>
                                                                                                                                         <option value="stand"
                                                         data-max="8">Stání                                                    <strong> 650 Kč</strong>
                                                 </option>
@@ -1406,14 +1403,14 @@ Michael Krásný je zpěvák, baskytarista a producent, dlouholetý dvorní basi
                                 <div style="margin-bottom: 2em;">
                                     <div class="wrap-input-pocet">
                                         <input type="number" name="amount" min="1"
-                                               max="3"
+                                               max="4"
                                                class="input-pocet input-amount" style="width: 60px;" value="1">
                                     </div>
                                     <div class="styled-select">
                                         <select class="place-select" name="place" required>
                                             <option value="">Cena</option>
                                                                                             <option value="seat"
-                                                        data-max="3">Sezení                                                    <strong> 1500 Kč</strong>
+                                                        data-max="4">Sezení                                                    <strong> 1500 Kč</strong>
                                                 </option>
                                                                                                                                         <option value="stand"
                                                         data-max="78">Stání                                                    <strong> 750 Kč</strong>
