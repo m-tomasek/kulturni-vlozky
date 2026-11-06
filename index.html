@@ -9,252 +9,171 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ---------- tokeny ---------- */
 :root{
-  --surface:#F3F5F8;        /* chladná bílá */
-  --surface-raised:#FFFFFF;
-  --ink:#10141A;            /* hlavní text */
-  --ink-muted:#626C78;      /* vedlejší text */
-  --rule:#DCE1E8;           /* linky */
-  --rule-strong:#B6BFCA;
-  --signal:#2E45F0;         /* jediný sytý akcent: nové, dnešek */
-  --focus:#2E45F0;
-
-  /* pastely = typy akcí */
-  --t-divadlo:#FFC4DA;  --t-improvizace:#FFEE8A; --t-koncert:#B8DEFF;
-  --t-tanec:#D7C8FF;    --t-prednaska:#B9F0D6;   --t-vystava:#FFD4B0;
-  --t-festival:#B8EEEE; --t-film:#D9DEE6;        --t-spolecenska:#DDF5A6;
-  --t-jine:#E3E7EC;
-
-  /* sytější barvy teček – stejné v kalendáři, legendě i seznamu */
-  --d-divadlo:#E0457B; --d-improvizace:#E3A600; --d-koncert:#2F7FE6; --d-tanec:#8257E5;
-  --d-prednaska:#12A27A; --d-vystava:#EE7A2B; --d-festival:#0BA9B8; --d-film:#6F7C90;
-  --d-spolecenska:#7FA816; --d-jine:#A2ABB8;
-
-  --sold:#D01F4B; --free:#0E8656; --warn:#9A6500;
-
-  --step--1:clamp(.78rem,.16vw + .74rem,.86rem);
-  --step-0:clamp(.95rem,.25vw + .89rem,1.06rem);
-  --step-1:clamp(1.15rem,.5vw + 1.03rem,1.4rem);
-  --step-2:clamp(1.5rem,1.1vw + 1.25rem,2.1rem);
-  --step-4:clamp(2.6rem,4.2vw + 1.6rem,5rem);
-
+  --bg:#F4F6F9; --panel:#FFFFFF; --ink:#11151B; --muted:#646E7A; --faint:#9AA3AE;
+  --rule:#E1E5EB; --rule-strong:#C9D0D8;
+  --accent:#2E45F0; --accent-soft:#E6E9FF; --weekend:#EEF0F4;
+  --sold:#C8244F; --free:#0E8656; --warn:#9A6500;
+  --c-divadlo:#E0457B; --c-improvizace:#D99A00; --c-koncert:#2F7FE6; --c-tanec:#8257E5;
+  --c-prednaska:#12A27A; --c-vystava:#EE7A2B; --c-festival:#0BA9B8; --c-film:#6F7C90;
+  --c-spolecenska:#7FA816; --c-jine:#A2ABB8;
   --sans:"Archivo","Helvetica Neue",Helvetica,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --s-1:clamp(.78rem,.15vw + .74rem,.85rem);
+  --s0:clamp(.95rem,.2vw + .9rem,1.04rem);
+  --s1:clamp(1.08rem,.4vw + 1rem,1.28rem);
+  --s2:clamp(1.35rem,.9vw + 1.15rem,1.8rem);
 }
 :root:not([data-theme="light"]){color-scheme:light dark}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --surface:#0E1116; --surface-raised:#161A21; --ink:#E8ECF2; --ink-muted:#8892A0;
-    --rule:#222832; --rule-strong:#343C48; --signal:#7F92FF; --focus:#7F92FF;
-    --t-divadlo:#FFB3CF; --t-improvizace:#FFE873; --t-koncert:#A3D3FF; --t-tanec:#C9B6FF;
-    --t-prednaska:#A3EBC9; --t-vystava:#FFC69A; --t-festival:#A3E8E8; --t-film:#B9C2CF;
-    --t-spolecenska:#D2F08A; --t-jine:#6A7380;
-    --d-divadlo:#FF6E9E; --d-improvizace:#FFC933; --d-koncert:#5EA2FF; --d-tanec:#A98BFF;
-    --d-prednaska:#3DD3A3; --d-vystava:#FF9A55; --d-festival:#36D3E0; --d-film:#9AA6B8;
-    --d-spolecenska:#AEDB3A; --d-jine:#6E7887;
+    --bg:#0E1116; --panel:#161A21; --ink:#E8ECF2; --muted:#8C96A3; --faint:#5D6673;
+    --rule:#232933; --rule-strong:#343C48; --accent:#8496FF; --accent-soft:#1D2347; --weekend:#13171D;
     --sold:#FF7A98; --free:#5DD39E; --warn:#F2C14E;
+    --c-divadlo:#FF6E9E; --c-improvizace:#FFC933; --c-koncert:#5EA2FF; --c-tanec:#A98BFF;
+    --c-prednaska:#3DD3A3; --c-vystava:#FF9A55; --c-festival:#36D3E0; --c-film:#9AA6B8;
+    --c-spolecenska:#AEDB3A; --c-jine:#6E7887;
   }
 }
-
-/* ---------- základ ---------- */
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--surface);color:var(--ink);font:400 var(--step-0)/1.5 var(--sans);
-  font-stretch:100%;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--s0)/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:inherit;text-underline-offset:.18em;text-decoration-thickness:1px}
-button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
-.num{font-variant-numeric:tabular-nums}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+button,input,select{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.mono{font-family:var(--mono)}
 
-.page{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,48px) 16px 80px}
+.page{max-width:880px;margin:0 auto;padding:28px 16px 80px}
 
-/* ---------- hlavička: asymetrická, zarovnaná dolů ---------- */
-.masthead{display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px 32px;
-  padding-bottom:20px;border-bottom:1px solid var(--ink)}
-.masthead h1{font-family:var(--sans);font-weight:850;font-stretch:62%;font-size:var(--step-4);line-height:.86;
-  letter-spacing:-.01em;text-transform:uppercase;margin:0}
-.masthead h1 span{display:block;font-weight:300;font-stretch:62%}
-.masthead p{margin:0;color:var(--ink-muted);font-size:var(--step--1);text-align:right;max-width:36ch}
+/* hlavička */
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:18px}
+.top h1{margin:0;font-weight:850;font-stretch:62%;font-size:clamp(2rem,3.4vw + 1rem,3rem);line-height:.9;text-transform:uppercase;letter-spacing:-.005em}
+.top h1 span{font-weight:300}
+.top p{margin:0;font-family:var(--mono);font-size:var(--s-1);color:var(--muted)}
 
-/* ---------- rozvržení ---------- */
-.layout{display:grid;grid-template-columns:340px 1fr;gap:0 56px;margin-top:28px}
-.side{position:sticky;top:20px;align-self:start}
-@media (max-width:860px){
-  .layout{grid-template-columns:1fr}
-  .side{position:static;margin-bottom:28px}
-  .masthead{grid-template-columns:1fr}
-  .masthead p{text-align:left;max-width:none}
+/* lepící lišta: dny + filtry */
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 0;margin:0 -16px;padding-left:16px;padding-right:16px;
+  border-bottom:1px solid var(--rule)}
+.days{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 12px;scrollbar-width:thin}
+.days::-webkit-scrollbar{height:4px}.days::-webkit-scrollbar-thumb{background:var(--rule-strong);border-radius:4px}
+.chip{flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
+  min-width:58px;height:66px;padding:7px 9px;border-radius:10px;background:var(--panel);border:1px solid var(--rule);text-align:left;
+  transition:border-color .12s,background .12s}
+.chip:hover{border-color:var(--rule-strong)}
+.chip .w{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chip .d{font-weight:800;font-stretch:75%;font-size:1.35rem;line-height:1}
+.chip .c{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.chip .c i{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.chip.we{background:var(--weekend)}
+.chip.empty{opacity:.45}
+.chip.special{min-width:auto;justify-content:center;gap:4px;padding:7px 12px}
+.chip.special .d{font-size:1.02rem;font-stretch:88%;text-transform:uppercase;letter-spacing:.02em}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.chip[aria-pressed="true"] .w,.chip[aria-pressed="true"] .c{color:var(--ink)}
+.sep{flex:0 0 1px;background:var(--rule);margin:6px 4px 18px}
+.datepick{position:relative}
+.datepick input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:0 0 12px}
+.type{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--rule);
+  background:var(--panel);font-size:var(--s-1);font-stretch:92%}
+.type i{width:7px;height:7px;border-radius:50%}
+.type[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.filters .grow{flex:1 1 160px;min-width:140px}
+.filters input[type=search],.filters select{font-size:var(--s-1);padding:6px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--panel)}
+.filters input[type=search]{width:100%}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:var(--s-1);color:var(--muted);cursor:pointer;white-space:nowrap}
+.toggle input{accent-color:var(--accent)}
+.more{display:none;font-size:var(--s-1);color:var(--muted);padding:4px 0}
+@media (max-width:640px){
+  .filters{display:none}
+  .filters.open{display:flex}
+  .more{display:inline-flex;gap:6px;align-items:center;margin:0 0 10px}
 }
 
-/* ---------- kalendář ---------- */
-.cal-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
-.cal-head h2{font-family:var(--sans);font-weight:800;font-stretch:75%;font-size:var(--step-2);line-height:1;
-  text-transform:uppercase;letter-spacing:.01em;margin:0}
-.cal-head h2 small{font-weight:400;font-family:var(--mono);font-size:var(--step--1);letter-spacing:0;margin-left:8px;color:var(--ink-muted)}
-.cal-nav{display:flex;gap:2px}
-.cal-nav button{width:32px;height:32px;border-radius:4px;color:var(--ink-muted);font-size:18px}
-.cal-nav button:hover{background:var(--rule);color:var(--ink)}
-.cal-nav button:disabled{opacity:.25;cursor:default;background:none}
-.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--rule)}
-.cal .wd{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);
-  padding:8px 0 6px;text-align:left}
-.day{position:relative;min-width:0;height:52px;border-top:1px solid var(--rule);padding:5px 4px;
-  display:flex;flex-direction:column;justify-content:space-between;text-align:left;border-radius:0}
-.day .d{font-size:var(--step--1);font-variant-numeric:tabular-nums;line-height:1}
-.day .dots{display:flex;flex-wrap:wrap;gap:3px;min-height:7px;max-width:44px}
-.day .dots i{width:7px;height:7px;border-radius:50%;display:block}
-.day .n{position:absolute;right:4px;top:5px;font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
-.day.sel .n{color:var(--surface);opacity:.75}
-.day.sel .dots i{box-shadow:0 0 0 1.5px var(--surface)}
-.day.out{visibility:hidden}
-.day.past .d,.day.none .d{color:var(--rule-strong)}
-.day.none{cursor:default}
-.day:not(.none):hover{background:var(--rule)}
-.day.today .d{color:var(--signal);font-weight:600}
-.day.sel{background:var(--ink);color:var(--surface)}
-.day.sel:hover{background:var(--ink)}
-.day.inrange:not(.sel){background:color-mix(in srgb,var(--ink) 7%,transparent)}
-
-/* ---------- legenda = filtr typů ---------- */
-.legend{margin-top:26px}
-.label{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 10px}
-.types{display:flex;flex-wrap:wrap;gap:6px}
-.type{display:inline-flex;align-items:center;gap:7px;padding:5px 10px 5px 8px;border-radius:3px;
-  font-size:var(--step--1);background:transparent;border:1px solid var(--rule);transition:background .15s}
-.type i{width:9px;height:9px;border-radius:50%}
-.type:hover{border-color:var(--rule-strong)}
-.type[aria-pressed="true"]{background:var(--sw);border-color:transparent}
-.type[aria-pressed="true"]{color:#10141A}
-.types.filtering .type[aria-pressed="false"]{color:var(--ink-muted)}
-details.filters>summary{list-style:none;cursor:pointer;margin-top:22px;font-size:var(--step--1);color:var(--ink-muted);display:none}
-details.filters>summary::-webkit-details-marker{display:none}
-@media (max-width:860px){details.filters>summary{display:block;border-top:1px solid var(--rule);padding-top:12px}
-  details.filters>summary::after{content:" ↓"} details.filters[open]>summary::after{content:" ↑"}}
-.side-tools{margin-top:22px;display:grid;gap:10px}
-.side-tools select,.side-tools input[type=search]{width:100%;font:inherit;font-size:var(--step--1);padding:8px 10px;
-  border:1px solid var(--rule);border-radius:3px;background:var(--surface-raised);color:var(--ink)}
-.toggle{display:flex;align-items:center;gap:8px;font-size:var(--step--1);color:var(--ink-muted);cursor:pointer}
-.toggle input{accent-color:var(--ink)}
-
-/* ---------- přepínač pohledů ---------- */
-.views{display:flex;gap:22px;flex-wrap:wrap;border-bottom:1px solid var(--rule);margin-bottom:6px}
-.view{padding:2px 0 10px;font-size:var(--step-0);color:var(--ink-muted);border-bottom:2px solid transparent;margin-bottom:-1px}
-.view:hover{color:var(--ink)}
-.view[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
-.view sup{font-size:10px;margin-left:2px;font-variant-numeric:tabular-nums}
-.view.has-new sup{color:var(--signal)}
-
-/* ---------- seznam ---------- */
-.dayhead{display:flex;align-items:baseline;gap:12px;margin:34px 0 4px;position:sticky;top:0;
-  background:var(--surface);padding:8px 0 6px;z-index:2;border-bottom:1px solid var(--ink)}
-.dayhead h3{font-family:var(--sans);font-weight:800;font-stretch:75%;font-size:var(--step-2);line-height:1.05;
-  text-transform:uppercase;letter-spacing:.005em;margin:0}
-.dayhead h3 b{font-family:var(--mono);font-weight:500;font-size:.62em;letter-spacing:0;margin-left:.5em;vertical-align:.12em}
-.dayhead span{color:var(--ink-muted);font-size:var(--step--1)}
-.ev{display:grid;grid-template-columns:62px 1fr auto;gap:2px 18px;padding:14px 0;border-bottom:1px solid var(--rule)}
-.ev .time{font-variant-numeric:tabular-nums;font-weight:500;padding-top:1px}
-.ev .time small{display:block;color:var(--ink-muted);font-weight:400;font-size:var(--step--1)}
-.ev h4{margin:0;font-family:var(--sans);font-weight:650;font-stretch:88%;font-size:var(--step-1);line-height:1.2}
-.ev h4 a{text-decoration:none}
-.ev h4 a:hover{text-decoration:underline}
-.ev .where{color:var(--ink-muted);font-size:var(--step--1);margin-top:2px}
-.ev .flags{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:7px;font-size:var(--step--1)}
-.tag{display:inline-flex;align-items:center;gap:6px}
-.tag i{width:8px;height:8px;border-radius:50%}
-.flag-new{color:var(--signal);font-weight:600}
-.flag-sold{color:var(--sold)}
-.flag-free{color:var(--free)}
-.flag-warn{color:var(--warn)}
-.ev .acts{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:var(--step--1);white-space:nowrap}
-.ev .acts a,.ev .acts button{color:var(--ink-muted);text-decoration:underline;text-decoration-color:var(--rule-strong)}
-.ev .acts a:hover,.ev .acts button:hover{color:var(--ink);text-decoration-color:currentColor}
-.ev .acts .cal-add{color:var(--ink);text-decoration-color:var(--ink)}
-.ev.cancel h4,.ev.cancel .time{text-decoration:line-through;color:var(--ink-muted)}
-.ev.hidden{opacity:.45}
-@media (max-width:560px){
-  .ev{grid-template-columns:52px 1fr;gap:2px 12px}
-  .ev .acts{grid-column:2;flex-direction:row;justify-content:flex-start;gap:16px;margin-top:8px}
-}
-.list-empty{padding:48px 0;color:var(--ink-muted);font-size:var(--step-1)}
-
-/* ---------- patička ---------- */
-.health{margin-top:72px;padding-top:16px;border-top:1px solid var(--rule);font-size:var(--step--1);color:var(--ink-muted);
-  display:grid;grid-template-columns:340px 1fr;gap:0 56px}
-.health ul{list-style:none;margin:0;padding:0;columns:2;column-gap:32px}
-.health li{break-inside:avoid;padding:2px 0}
-.health .bad{color:var(--sold)}
-@media (max-width:860px){.health{grid-template-columns:1fr}.health ul{columns:1}}
-
-.ev .time,.day .d,.cal .wd,.view sup,.health .num,.masthead p,.label{font-family:var(--mono)}
-.ev .time{font-size:var(--step--1);font-weight:500;padding-top:4px}
-.label{letter-spacing:.04em}
-.view{font-weight:600;font-stretch:88%;text-transform:uppercase;letter-spacing:.03em;font-size:var(--step--1)}
-.type{font-stretch:92%}
-.alert{border-left:3px solid var(--sold);padding:8px 12px;margin:0 0 14px;font-size:var(--step--1);color:var(--ink-muted)}
+/* hlášky */
+.alert{margin:14px 0 0;padding:8px 12px;border-left:3px solid var(--sold);background:var(--panel);font-size:var(--s-1);color:var(--muted)}
 .alert b{color:var(--ink);font-weight:600}
 .alert[hidden]{display:none}
+
+/* seznam */
+.dayhead{display:flex;align-items:baseline;gap:10px;margin:32px 0 6px}
+.dayhead h2{margin:0;font-weight:800;font-stretch:75%;font-size:var(--s2);text-transform:uppercase;line-height:1}
+.dayhead .dt{font-family:var(--mono);font-size:var(--s0);font-weight:500}
+.dayhead .n{font-size:var(--s-1);color:var(--muted)}
+.list{background:var(--panel);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.ev{display:grid;grid-template-columns:60px 1fr auto;gap:2px 16px;padding:13px 16px;border-top:1px solid var(--rule)}
+.ev:first-child{border-top:0}
+.ev .time{font-family:var(--mono);font-size:var(--s-1);font-weight:500;padding-top:3px}
+.ev .time small{display:block;color:var(--muted);font-weight:400}
+.ev h3{margin:0;font-weight:650;font-stretch:90%;font-size:var(--s1);line-height:1.25}
+.ev h3 a{text-decoration:none}.ev h3 a:hover{text-decoration:underline}
+.ev .info{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;margin-top:3px;font-size:var(--s-1);color:var(--muted)}
+.ev .info .t{display:inline-flex;align-items:center;gap:5px;color:var(--ink)}
+.ev .info .t i{width:7px;height:7px;border-radius:50%}
+.st-new{color:var(--accent);font-weight:600}
+.st-sold{color:var(--sold)}.st-free{color:var(--free)}.st-warn{color:var(--warn)}
+.ev .acts{display:flex;align-items:flex-start;gap:12px;font-size:var(--s-1);white-space:nowrap;padding-top:3px}
+.ev .acts a,.ev .acts button{color:var(--muted);text-decoration:none}
+.ev .acts a:hover,.ev .acts button:hover{color:var(--ink);text-decoration:underline}
+.ev .acts .add{color:var(--accent);font-weight:600}
+.ev.cancel h3,.ev.cancel .time{text-decoration:line-through;color:var(--muted)}
+.ev.hidden{opacity:.45}
+@media (max-width:640px){
+  .ev{grid-template-columns:48px 1fr;padding:12px 12px}
+  .ev .acts{grid-column:2;margin-top:6px}
+}
+.empty{padding:48px 0;color:var(--muted);text-align:center}
+
+footer{margin-top:56px;font-size:var(--s-1);color:var(--muted)}
+footer h2{font-size:var(--s-1);font-family:var(--mono);font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin:0 0 8px}
+footer ul{list-style:none;margin:0;padding:0;columns:3;column-gap:24px}
+footer li{break-inside:avoid;padding:1px 0}
+footer .bad{color:var(--sold)}
+@media (max-width:640px){footer ul{columns:2}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <div class="page">
-  <header class="masthead">
+  <header class="top">
     <h1>Kulturní <span>vložky</span></h1>
-    <p id="meta">Načítám program…</p>
+    <p id="meta">načítám…</p>
   </header>
 
-  <div class="layout">
-    <aside class="side" aria-label="Kalendář a filtry">
-      <div class="cal-head">
-        <h2 id="calTitle">—</h2>
-        <div class="cal-nav">
-          <button id="prev" aria-label="Předchozí měsíc">‹</button>
-          <button id="next" aria-label="Další měsíc">›</button>
-        </div>
-      </div>
-      <div class="cal" id="cal" role="grid"></div>
-
-      <details class="filters" id="filters" open>
-      <summary>Filtry: typ, místo, hledání</summary>
-      <div class="legend">
-        <p class="label">Typ akce</p>
-        <div class="types" id="types"></div>
-      </div>
-
-      <div class="side-tools">
-        <input type="search" id="q" placeholder="Hledat název nebo místo" aria-label="Hledat">
-        <select id="place" aria-label="Místo"><option value="">Všechna místa</option></select>
-        <label class="toggle"><input type="checkbox" id="hideSold"> skrýt vyprodané</label>
-        <label class="toggle"><input type="checkbox" id="showHidden"> ukázat, co jsem skryl</label>
-      </div>
-      </details>
-    </aside>
-
-    <main>
-      <div class="alert" id="alert" hidden></div>
-      <nav class="views" id="views" role="tablist" aria-label="Pohled"></nav>
-      <div id="list"></div>
-    </main>
+  <div class="bar">
+    <nav class="days" id="days" aria-label="Výběr dne"></nav>
+    <button class="more" id="more" aria-expanded="false">Filtry <span id="nf"></span></button>
+    <div class="filters" id="filters">
+      <div id="types" style="display:contents"></div>
+      <select id="place" aria-label="Místo"><option value="">Všechna místa</option></select>
+      <div class="grow"><input type="search" id="q" placeholder="Hledat…" aria-label="Hledat"></div>
+      <label class="toggle"><input type="checkbox" id="hideSold"> bez vyprodaných</label>
+      <label class="toggle"><input type="checkbox" id="showHidden"> i skryté</label>
+    </div>
   </div>
 
-  <footer class="health">
-    <p class="label">Zdroje</p>
+  <div class="alert" id="alert" hidden></div>
+  <main id="list"></main>
+
+  <footer>
+    <h2>Sledované scény</h2>
     <ul id="sources"></ul>
   </footer>
 </div>
 
 <script>
-const TYPY = {divadlo:"Divadlo",improvizace:"Impro",koncert:"Koncert",tanec:"Tanec a performance",
-  prednaska:"Přednáška a debata",vystava:"Výstava",festival:"Festival",film:"Film",spolecenska:"Společenské",jine:"Jiné"};
-const DNY = ["neděle","pondělí","úterý","středa","čtvrtek","pátek","sobota"];
-const MES = ["leden","únor","březen","duben","květen","červen","červenec","srpen","září","říjen","listopad","prosinec"];
-const MES2 = ["ledna","února","března","dubna","května","června","července","srpna","září","října","listopadu","prosince"];
+const TYPY={divadlo:"Divadlo",improvizace:"Impro",koncert:"Koncert",tanec:"Tanec a performance",prednaska:"Přednáška a debata",
+  vystava:"Výstava",festival:"Festival",film:"Film",spolecenska:"Společenské",jine:"Jiné"};
+const DNY=["neděle","pondělí","úterý","středa","čtvrtek","pátek","sobota"];
+const DNY2=["ne","po","út","st","čt","pá","so"];
+const MES2=["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj","lis","pro"];
+const PASMO=21; // kolik dní ukazovat v pásu
 
-const S = {view:"vse", den:null, typy:new Set(), misto:"", q:"", hideSold:false, showHidden:false, mesic:null};
+const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, showHidden:false};
 let AKCE=[], META={}, SKRYTE=new Set();
 
-/* ---------- pomůcky ---------- */
 function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null} }
 try{ SKRYTE=new Set(JSON.parse(store("kv-skryte")||"[]")); }catch(e){}
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -264,18 +183,10 @@ const dow=d=>new Date(d+"T12:00:00").getDay();
 const kratce=d=>`${+d.slice(8)}. ${+d.slice(5,7)}.`;
 const konec=a=>a.konec_datum||a.datum;
 const probiha=(a,d)=>a.datum<=d && konec(a)>=d;
+const nova=a=>a.poprve_videno!==META.zalozeno && a.poprve_videno>=plus(dnes(),-7);
+function vikend(){ const t=dnes(),w=dow(t); const pa=w===0?plus(t,-2):w===6?plus(t,-1):plus(t,5-w); return [pa,plus(pa,1),plus(pa,2)]; }
 
-function nova7(a){ return a.poprve_videno!==META.zalozeno && a.poprve_videno>=plus(dnes(),-7); }
-function novaOdMinula(a){ return META.predchozi_beh && a.poprve_videno!==META.zalozeno && a.poprve_videno>=META.predchozi_beh.slice(0,10); }
-
-function vikend(){
-  const t=dnes(), w=dow(t);
-  const pa = w===0 ? plus(t,-2) : w===6 ? plus(t,-1) : plus(t,5-w);
-  return [pa, plus(pa,1), plus(pa,2)];
-}
-
-/* ---------- filtry ---------- */
-function zakladFiltr(a){
+function zaklad(a){
   if(!S.showHidden && SKRYTE.has(a.id)) return false;
   if(S.typy.size && !S.typy.has(a.typ)) return false;
   if(S.misto && a.zdroj!==S.misto) return false;
@@ -283,196 +194,134 @@ function zakladFiltr(a){
   if(S.q){ const q=S.q.toLocaleLowerCase("cs"); if(!`${a.nazev} ${a.misto} ${a.znacky||""}`.toLocaleLowerCase("cs").includes(q)) return false; }
   return true;
 }
-function vPohledu(a, view=S.view){
-  const t=dnes();
-  switch(view){
-    case "nove": return nova7(a);
-    case "dnes": return probiha(a,t);
-    case "zitra": return probiha(a,plus(t,1));
-    case "vikend": { const [pa,so,ne]=vikend();
-      return (probiha(a,pa) && (a.cas||"00:00")>="17:00") || probiha(a,so) || probiha(a,ne); }
-    case "den": return probiha(a,S.den);
-    default: return true;
-  }
+function vyber(a, sel=S.sel){
+  if(sel==="vse") return true;
+  if(sel==="nove") return nova(a);
+  if(sel==="vikend"){ const [pa,so,ne]=vikend(); return (probiha(a,pa)&&(a.cas||"00:00")>="17:00")||probiha(a,so)||probiha(a,ne); }
+  return probiha(a,sel);
 }
 
-/* ---------- odkaz do Google Kalendáře ---------- */
 function gcal(a){
   const p=new URLSearchParams({action:"TEMPLATE",text:a.nazev,ctz:"Europe/Prague",location:a.misto||""});
-  const d=a.datum.replaceAll("-",""), pad=n=>String(n).padStart(2,"0");
+  const d=a.datum.replaceAll("-",""),pad=n=>String(n).padStart(2,"0");
   if(!a.cas){ p.set("dates",`${d}/${plus(konec(a),1).replaceAll("-","")}`); }
-  else{
-    let [h,m]=a.cas.split(":").map(Number), kd=konec(a), kh, km;
+  else{ let [h,m]=a.cas.split(":").map(Number),kd=konec(a),kh,km;
     if(a.konec_cas){[kh,km]=a.konec_cas.split(":").map(Number);} else {kh=h+2;km=m;if(kh>=24){kh-=24;kd=plus(kd,1);}}
-    p.set("dates",`${d}T${pad(h)}${pad(m)}00/${kd.replaceAll("-","")}T${pad(kh)}${pad(km)}00`);
-  }
-  p.set("details",[a.url&&`Info: ${a.url}`, a.vstupenky&&a.vstupenky!==a.url&&`Vstupenky: ${a.vstupenky}`, a.cena&&`Cena: ${a.cena}`].filter(Boolean).join("\n"));
+    p.set("dates",`${d}T${pad(h)}${pad(m)}00/${kd.replaceAll("-","")}T${pad(kh)}${pad(km)}00`); }
+  p.set("details",[a.url&&`Info: ${a.url}`,a.vstupenky&&a.vstupenky!==a.url&&`Vstupenky: ${a.vstupenky}`,a.cena&&`Cena: ${a.cena}`].filter(Boolean).join("\n"));
   return "https://calendar.google.com/calendar/render?"+p;
 }
 
-/* ---------- kalendář ---------- */
-function mesice(){
-  const t=dnes(), posl=AKCE.reduce((m,a)=>a.datum>m?a.datum:m,t);
-  const out=[]; let y=+t.slice(0,4), m=+t.slice(5,7)-1;
-  const [ky,km]=[+posl.slice(0,4), +posl.slice(5,7)-1];
-  while(y<ky || (y===ky && m<=km)){ out.push([y,m]); m++; if(m>11){m=0;y++;} }
-  return out;
-}
-function kreslitKalendar(){
-  const ms=mesice(); const i=Math.max(0,Math.min(S.mesic,ms.length-1)); S.mesic=i;
-  const [y,m]=ms[i];
-  document.getElementById("calTitle").innerHTML = `${MES[m]}<small>${y}</small>`;
-  document.getElementById("prev").disabled = i===0;
-  document.getElementById("next").disabled = i===ms.length-1;
-
-  const zaklad=AKCE.filter(zakladFiltr), t=dnes();
-  const prvni=`${y}-${String(m+1).padStart(2,"0")}-01`;
-  const posun=(dow(prvni)+6)%7;
-  const dniVMes=new Date(y,m+1,0).getDate();
-  const rozsah = S.view==="den" ? [S.den] : S.view==="dnes" ? [t] : S.view==="zitra" ? [plus(t,1)] : S.view==="vikend" ? vikend() : [];
-  let html=["po","út","st","čt","pá","so","ne"].map(d=>`<div class="wd">${d}</div>`).join("");
-  for(let k=0;k<posun;k++) html+=`<div class="day out" aria-hidden="true"></div>`;
-  for(let d=1; d<=dniVMes; d++){
-    const iso=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const den=zaklad.filter(a=>probiha(a,iso));
-    const cls=["day", iso<t?"past":"", !den.length?"none":"", iso===t?"today":"",
-      S.view==="den"&&S.den===iso?"sel":"", S.view!=="den"&&rozsah.includes(iso)?"inrange":""].join(" ");
-    const label=`${DNY[dow(iso)]} ${d}. ${MES2[m]}: ${den.length} akcí`;
-    html+=`<button class="${cls}" data-day="${iso}" aria-label="${label}" ${!den.length?"disabled":""}>
-      <span class="d">${d}</span>
-      <span class="dots">${(()=>{const p={};den.forEach(a=>p[a.typ]=(p[a.typ]||0)+1);
-        return Object.entries(p).sort((x,y)=>y[1]-x[1]).slice(0,5).map(([ty])=>`<i style="background:var(--d-${ty})"></i>`).join("");})()}</span>
-</button>`;
+/* ---------- pás dnů ---------- */
+function kreslitDny(){
+  const t=dnes(), z=AKCE.filter(zaklad), posl=AKCE.reduce((m,a)=>a.datum>m?a.datum:m,t);
+  const pocet=sel=>z.filter(a=>vyber(a,sel)).length;
+  const novych=z.filter(nova).length;
+  let h=`<button class="chip special" data-sel="vse" aria-pressed="${S.sel==="vse"}"><span class="d">Vše</span><span class="c">${z.length}</span></button>`;
+  h+=`<button class="chip special" data-sel="nove" aria-pressed="${S.sel==="nove"}"><span class="d">Nové</span><span class="c">${novych?`<i></i>`:""}${novych}</span></button>`;
+  h+=`<button class="chip special" data-sel="vikend" aria-pressed="${S.sel==="vikend"}"><span class="d">Víkend</span><span class="c">${pocet("vikend")}</span></button>`;
+  h+=`<span class="sep"></span>`;
+  for(let i=0;i<PASMO;i++){
+    const d=plus(t,i), n=z.filter(a=>probiha(a,d));
+    const maNove=n.some(nova), w=dow(d);
+    const popis = i===0?"dnes": i===1?"zítra": DNY2[w];
+    h+=`<button class="chip ${w===0||w===6?"we":""} ${n.length?"":"empty"}" data-sel="${d}" aria-pressed="${S.sel===d}"
+      aria-label="${DNY[w]} ${kratce(d)}, ${n.length} akcí">
+      <span class="w">${popis}</span><span class="d">${+d.slice(8)}${+d.slice(8)===1||i===0?`<small class="mono" style="font-size:10px;font-weight:400;margin-left:3px">${MES2[+d.slice(5,7)-1]}</small>`:""}</span>
+      <span class="c">${maNove?"<i></i>":""}${n.length}</span></button>`;
   }
-  document.getElementById("cal").innerHTML=html;
-}
-
-/* ---------- pohledy ---------- */
-const POHLEDY=[["nove","Nové"],["dnes","Dnes"],["zitra","Zítra"],["vikend","Víkend"],["vse","Vše"]];
-function kreslitPohledy(){
-  const zaklad=AKCE.filter(zakladFiltr);
-  let html=POHLEDY.map(([k,n])=>{
-    const c=zaklad.filter(a=>vPohledu(a,k)).length;
-    return `<button class="view ${k==="nove"&&c?"has-new":""}" role="tab" data-view="${k}" aria-selected="${S.view===k}">${n}<sup>${c}</sup></button>`;
-  }).join("");
-  if(S.view==="den") html+=`<button class="view" role="tab" aria-selected="true">${DNY[dow(S.den)]} ${kratce(S.den)}</button>`;
-  document.getElementById("views").innerHTML=html;
+  const mimo = S.sel.match(/^\d{4}/) && S.sel>plus(t,PASMO-1);
+  h+=`<label class="chip special datepick" ${mimo?'aria-pressed="true"':""}><span class="d">${mimo?kratce(S.sel):"Jiný den"}</span><span class="c">${mimo?pocet(S.sel):"📅"}</span>
+    <input type="date" id="pick" min="${t}" max="${posl}" aria-label="Vybrat jiný den"></label>`;
+  const el=document.getElementById("days"); const sx=el.scrollLeft;
+  el.innerHTML=h; el.scrollLeft=sx;
 }
 
 /* ---------- seznam ---------- */
 function radek(a){
-  const flags=[];
-  if(novaOdMinula(a)||(S.view==="nove")) flags.push(`<span class="flag-new">nové</span>`);
-  if(a.stav==="vyprodano") flags.push(`<span class="flag-sold">vyprodáno</span>`);
-  else if(a.stav==="posledni") flags.push(`<span class="flag-warn">poslední vstupenky</span>`);
-  else if(a.stav==="volno") flags.push(`<span class="flag-free">vstupenky v prodeji</span>`);
-  if(a.stav==="zruseno") flags.push(`<span class="flag-sold">zrušeno</span>`);
-  else if((a.chybi_behu||0)>=2) flags.push(`<span class="flag-warn">zrušeno?</span>`);
-  (a.zmeny||[]).slice(0,1).forEach(z=>flags.push(`<span class="flag-warn">${esc(z.co)}, ${kratce(z.kdy)}</span>`));
-  flags.push(`<span class="tag"><i style="background:var(--d-${a.typ})"></i>${TYPY[a.typ]||a.typ}</span>`);
-  if(a.cena) flags.push(`<span>${esc(a.cena)}</span>`);
-
-  const viceDni=a.konec_datum && a.konec_datum!==a.datum;
-  const cas = a.cas || (viceDni ? "celý den" : "—");
-  const pod = viceDni ? `<small>do ${kratce(a.konec_datum)}</small>` : a.konec_cas ? `<small>–${a.konec_cas}</small>` : "";
-  const skryta=SKRYTE.has(a.id);
-  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skryta?"hidden":""}">
+  const info=[];
+  info.push(`<span class="t"><i style="background:var(--c-${a.typ})"></i>${TYPY[a.typ]||a.typ}</span>`);
+  info.push(`<span>${esc(a.misto||"")}</span>`);
+  if(a.cena) info.push(`<span>${esc(a.cena)}</span>`);
+  if(nova(a)) info.push(`<span class="st-new">nové</span>`);
+  if(a.stav==="vyprodano") info.push(`<span class="st-sold">vyprodáno</span>`);
+  else if(a.stav==="posledni") info.push(`<span class="st-warn">poslední vstupenky</span>`);
+  if(a.stav==="zruseno") info.push(`<span class="st-sold">zrušeno</span>`);
+  else if((a.chybi_behu||0)>=2) info.push(`<span class="st-warn">možná zrušeno</span>`);
+  (a.zmeny||[]).slice(0,1).forEach(z=>info.push(`<span class="st-warn">${esc(z.co)} (${kratce(z.kdy)})</span>`));
+  const vice=a.konec_datum&&a.konec_datum!==a.datum;
+  const cas=a.cas||(vice?"celý den":"—");
+  const pod=vice?`<small>do ${kratce(a.konec_datum)}</small>`:a.konec_cas?`<small>–${a.konec_cas}</small>`:"";
+  const skr=SKRYTE.has(a.id);
+  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skr?"hidden":""}">
     <div class="time">${cas}${pod}</div>
-    <div>
-      <h4><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h4>
-      <div class="where">${esc(a.misto||"")}${a.znacky?` · ${esc(a.znacky)}`:""}</div>
-      <div class="flags">${flags.join("")}</div>
-    </div>
+    <div><h3><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h3>
+      <div class="info">${info.join("")}</div></div>
     <div class="acts">
-      <a class="cal-add" href="${gcal(a)}" target="_blank" rel="noopener">do kalendáře</a>
-      ${a.vstupenky?`<a href="${esc(a.vstupenky)}" target="_blank" rel="noopener">vstupenky</a>`:""}
-      <button data-hide="${a.id}">${skryta?"vrátit":"skrýt"}</button>
-    </div>
-  </article>`;
+      <a class="add" href="${gcal(a)}" target="_blank" rel="noopener" title="Přidat do Google Kalendáře">+ kalendář</a>
+      ${a.vstupenky&&a.stav!=="vyprodano"?`<a href="${esc(a.vstupenky)}" target="_blank" rel="noopener">vstupenky</a>`:""}
+      <button data-hide="${a.id}">${skr?"vrátit":"skrýt"}</button>
+    </div></article>`;
 }
 function kreslitSeznam(){
-  const t=dnes();
-  const vyber=AKCE.filter(a=>zakladFiltr(a)&&vPohledu(a));
+  const t=dnes(), jeDen=/^\d{4}/.test(S.sel);
+  const v=AKCE.filter(a=>zaklad(a)&&vyber(a));
   const el=document.getElementById("list");
-  if(!vyber.length){
-    el.innerHTML=`<p class="list-empty">${S.view==="nove"?"Za posledních sedm dní nikdo nic nového nevypsal.":"Tady je prázdno. Zkus jiný den nebo uvolni filtry."}</p>`;
-    return;
-  }
-  let html="", posl="";
-  const den=a=> S.view==="den" ? S.den : (a.datum<t ? t : a.datum);
-  vyber.sort((a,b)=>den(a).localeCompare(den(b)) || (a.cas||"99").localeCompare(b.cas||"99"));
-  for(const a of vyber){
-    const d=den(a);
-    if(d!==posl){
-      const n=vyber.filter(x=>den(x)===d).length;
-      const rel = d===t?"dnes" : d===plus(t,1)?"zítra" : "";
-      html+=`<div class="dayhead"><h3>${DNY[dow(d)]}<b>${+d.slice(8)}. ${+d.slice(5,7)}.</b></h3><span>${[rel,`${n} ${n===1?"akce":n<5?"akce":"akcí"}`].filter(Boolean).join(" · ")}</span></div>`;
-      posl=d;
-    }
-    html+=radek(a);
-  }
-  el.innerHTML=html;
+  if(!v.length){ el.innerHTML=`<p class="empty">${S.sel==="nove"?"Za posledních 7 dní nic nového nepřibylo.":"Nic tu není – zkus jiný den nebo uvolni filtry."}</p>`; return; }
+  const den=a=>jeDen?S.sel:(a.datum<t?t:a.datum);
+  v.sort((a,b)=>den(a).localeCompare(den(b))||(a.cas||"99").localeCompare(b.cas||"99"));
+  const skup={}; v.forEach(a=>(skup[den(a)]??=[]).push(a));
+  el.innerHTML=Object.entries(skup).map(([d,xs])=>{
+    const rel=d===t?"dnes":d===plus(t,1)?"zítra":"";
+    return `<div class="dayhead"><h2>${DNY[dow(d)]}</h2><span class="dt">${kratce(d)}</span>
+      <span class="n">${[rel,`${xs.length} ${xs.length===1?"akce":xs.length<5?"akce":"akcí"}`].filter(Boolean).join(" · ")}</span></div>
+      <div class="list">${xs.map(radek).join("")}</div>`;
+  }).join("");
 }
-
-function vse(){ kreslitPohledy(); kreslitKalendar(); kreslitSeznam(); }
+function vse(){ kreslitDny(); kreslitSeznam();
+  const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
 function ovladani(){
-  const pouzite=new Set(AKCE.map(a=>a.typ));
-  const typesEl=document.getElementById("types");
-  typesEl.innerHTML=Object.entries(TYPY).filter(([k])=>pouzite.has(k)).map(([k,n])=>
-    `<button class="type" style="--sw:var(--t-${k})" data-type="${k}" aria-pressed="false"><i style="background:var(--d-${k})"></i>${n}</button>`).join("");
-  typesEl.onclick=e=>{const b=e.target.closest(".type"); if(!b)return;
-    const k=b.dataset.type; S.typy.has(k)?S.typy.delete(k):S.typy.add(k);
-    b.setAttribute("aria-pressed",S.typy.has(k)); typesEl.classList.toggle("filtering",S.typy.size>0); vse();};
-
+  const pouz=new Set(AKCE.map(a=>a.typ));
+  const ty=document.getElementById("types");
+  ty.innerHTML=Object.entries(TYPY).filter(([k])=>pouz.has(k)).map(([k,n])=>
+    `<button class="type" data-type="${k}" aria-pressed="false"><i style="background:var(--c-${k})"></i>${n}</button>`).join("");
+  ty.onclick=e=>{const b=e.target.closest(".type");if(!b)return;const k=b.dataset.type;
+    S.typy.has(k)?S.typy.delete(k):S.typy.add(k);b.setAttribute("aria-pressed",S.typy.has(k));vse();};
   const sel=document.getElementById("place");
-  const mista=[...new Map(AKCE.map(a=>[a.zdroj,(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()]
-    .sort((x,y)=>x[1].localeCompare(y[1],"cs"));
+  const mista=[...new Map(AKCE.map(a=>[a.zdroj,(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
   sel.innerHTML+=mista.map(([k,n])=>`<option value="${k}">${esc(n)}</option>`).join("");
   sel.onchange=()=>{S.misto=sel.value;vse();};
   document.getElementById("q").oninput=e=>{S.q=e.target.value.trim();vse();};
   document.getElementById("hideSold").onchange=e=>{S.hideSold=e.target.checked;vse();};
   document.getElementById("showHidden").onchange=e=>{S.showHidden=e.target.checked;vse();};
-  document.getElementById("prev").onclick=()=>{S.mesic--;kreslitKalendar();};
-  document.getElementById("next").onclick=()=>{S.mesic++;kreslitKalendar();};
-  document.getElementById("cal").onclick=e=>{const b=e.target.closest(".day[data-day]"); if(!b||b.disabled)return;
-    if(S.view==="den"&&S.den===b.dataset.day){S.view="vse";S.den=null;} else {S.view="den";S.den=b.dataset.day;}
-    vse(); if(innerWidth<=860) document.getElementById("views").scrollIntoView({behavior:"smooth"});};
-  document.getElementById("views").onclick=e=>{const b=e.target.closest(".view[data-view]"); if(!b)return;
-    S.view=b.dataset.view; S.den=null; vse();};
-  document.getElementById("list").onclick=e=>{const b=e.target.closest("[data-hide]"); if(!b)return;
-    const id=b.dataset.hide; SKRYTE.has(id)?SKRYTE.delete(id):SKRYTE.add(id);
-    store("kv-skryte",JSON.stringify([...SKRYTE])); vse();};
+  document.getElementById("more").onclick=e=>{const f=document.getElementById("filters");f.classList.toggle("open");
+    e.currentTarget.setAttribute("aria-expanded",f.classList.contains("open"));};
+  const days=document.getElementById("days");
+  days.onclick=e=>{const b=e.target.closest("[data-sel]");if(!b)return;S.sel=b.dataset.sel;vse();window.scrollTo({top:0,behavior:"smooth"});};
+  days.onchange=e=>{if(e.target.id==="pick"&&e.target.value){S.sel=e.target.value;vse();}};
+  document.getElementById("list").onclick=e=>{const b=e.target.closest("[data-hide]");if(!b)return;const id=b.dataset.hide;
+    SKRYTE.has(id)?SKRYTE.delete(id):SKRYTE.add(id);store("kv-skryte",JSON.stringify([...SKRYTE]));vse();};
 }
 
-/* ---------- start ---------- */
 async function start(){
   try{
-    const [d,z]=await Promise.all([
-      fetch("data/akce.json",{cache:"no-store"}).then(r=>r.json()),
+    const [d,z]=await Promise.all([fetch("data/akce.json",{cache:"no-store"}).then(r=>r.json()),
       fetch("data/zdravi.json",{cache:"no-store"}).then(r=>r.json()).catch(()=>({}))]);
     META=d.meta||{}; AKCE=(d.akce||[]).filter(a=>konec(a)>=dnes());
     const kdy=META.vygenerovano?new Date(META.vygenerovano).toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):"?";
-    const zdroju=Object.keys(z).length;
-    document.getElementById("meta").innerHTML=`${AKCE.length} akcí, ${zdroju} scén<br>aktualizováno ${kdy}`;
-    S.mesic=0;
-    if(innerWidth<=860) document.getElementById("filters").removeAttribute("open");
-    if(AKCE.some(a=>zakladFiltr(a)&&nova7(a))) S.view="nove";
+    document.getElementById("meta").textContent=`${AKCE.length} akcí · ${Object.keys(z).length} scén · aktualizováno ${kdy}`;
+    S.sel = AKCE.some(nova) ? "nove" : dnes();
     ovladani(); vse();
-    const zpravy=[];
-    const stari = META.vygenerovano ? (Date.now()-new Date(META.vygenerovano))/36e5 : 999;
-    if(stari>30) zpravy.push(`<b>Data nejsou čerstvá</b> – poslední sběr proběhl před ${Math.round(stari/24)} dny.`);
-    const spatne=Object.values(z).filter(x=>!x.ok || x.varovani);
-    if(spatne.length) zpravy.push(`<b>Nefunguje:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}`);
-    const al=document.getElementById("alert");
-    if(zpravy.length){ al.innerHTML=zpravy.join("<br>"); al.hidden=false; }
+    const zpr=[], stari=META.vygenerovano?(Date.now()-new Date(META.vygenerovano))/36e5:999;
+    if(stari>30) zpr.push(`<b>Data nejsou čerstvá</b> – poslední sběr proběhl před ${Math.round(stari/24)} dny.`);
+    const spatne=Object.values(z).filter(x=>!x.ok||x.varovani);
+    if(spatne.length) zpr.push(`<b>Nefunguje:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}`);
+    if(zpr.length){const al=document.getElementById("alert");al.innerHTML=zpr.join("<br>");al.hidden=false;}
     document.getElementById("sources").innerHTML=Object.values(z).sort((a,b)=>a.nazev.localeCompare(b.nazev,"cs")).map(s=>
-      `<li class="${s.ok?"":"bad"}"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> ${s.ok?`<span class="num">${s.pocet}</span>`:"— nefunguje"}</li>`).join("");
-  }catch(e){
-    document.getElementById("meta").textContent="Program se nepodařilo načíst.";
-    console.error(e);
-  }
+      `<li class="${s.ok?"":"bad"}"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> <span class="mono">${s.ok?s.pocet:"✕"}</span></li>`).join("");
+  }catch(e){ document.getElementById("meta").textContent="Program se nepodařilo načíst."; console.error(e); }
 }
 start();
 </script>
