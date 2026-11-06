@@ -119,7 +119,6 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .ev .acts a:hover,.ev .acts button:hover{color:var(--ink);text-decoration:underline}
 .ev .acts .add{color:var(--accent);font-weight:600}
 .ev.cancel h3,.ev.cancel .time{text-decoration:line-through;color:var(--muted)}
-.ev.hidden{opacity:.45}
 @media (max-width:640px){
   .ev{grid-template-columns:48px 1fr;padding:12px 12px}
   .ev .acts{grid-column:2;margin-top:6px}
@@ -148,9 +147,9 @@ footer .bad{color:var(--sold)}
     <div class="filters" id="filters">
       <div id="types" style="display:contents"></div>
       <select id="place" aria-label="Místo"><option value="">Všechna místa</option></select>
+      <select id="when" aria-label="Čas začátku"><option value="">Kdykoli</option><option value="vecer">Po práci (od 17:00)</option><option value="pozde">Pozdě večer (od 21:00)</option><option value="den">Přes den (do 17:00)</option></select>
       <div class="grow"><input type="search" id="q" placeholder="Hledat…" aria-label="Hledat"></div>
       <label class="toggle"><input type="checkbox" id="hideSold"> bez vyprodaných</label>
-      <label class="toggle"><input type="checkbox" id="showHidden"> i skryté</label>
     </div>
   </div>
 
@@ -171,11 +170,10 @@ const DNY2=["ne","po","út","st","čt","pá","so"];
 const MES2=["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj","lis","pro"];
 const PASMO=21; // kolik dní ukazovat v pásu
 
-const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, showHidden:false};
-let AKCE=[], META={}, SKRYTE=new Set();
+const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:""};
+let AKCE=[], META={};
 
 function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null} }
-try{ SKRYTE=new Set(JSON.parse(store("kv-skryte")||"[]")); }catch(e){}
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const dnes=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Prague"}).format(new Date());
 const plus=(d,n)=>{const x=new Date(d+"T12:00:00");x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
@@ -187,7 +185,8 @@ const nova=a=>a.poprve_videno!==META.zalozeno && a.poprve_videno>=plus(dnes(),-7
 function vikend(){ const t=dnes(),w=dow(t); const pa=w===0?plus(t,-2):w===6?plus(t,-1):plus(t,5-w); return [pa,plus(pa,1),plus(pa,2)]; }
 
 function zaklad(a){
-  if(!S.showHidden && SKRYTE.has(a.id)) return false;
+  if(S.kdy){ const c=a.cas||""; if(!c) return false;
+    if(S.kdy==="vecer"&&c<"17:00") return false; if(S.kdy==="pozde"&&c<"21:00") return false; if(S.kdy==="den"&&c>="17:00") return false; }
   if(S.typy.size && !S.typy.has(a.typ)) return false;
   if(S.misto && a.zdroj!==S.misto) return false;
   if(S.hideSold && a.stav==="vyprodano") return false;
@@ -252,15 +251,13 @@ function radek(a){
   const vice=a.konec_datum&&a.konec_datum!==a.datum;
   const cas=a.cas||(vice?"celý den":"—");
   const pod=vice?`<small>do ${kratce(a.konec_datum)}</small>`:a.konec_cas?`<small>–${a.konec_cas}</small>`:"";
-  const skr=SKRYTE.has(a.id);
-  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skr?"hidden":""}">
+  return `<article class="ev ${a.stav==="zruseno"?"cancel":""}">
     <div class="time">${cas}${pod}</div>
     <div><h3><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h3>
       <div class="info">${info.join("")}</div></div>
     <div class="acts">
       <a class="add" href="${gcal(a)}" target="_blank" rel="noopener" title="Přidat do Google Kalendáře">+ kalendář</a>
       ${a.vstupenky&&a.stav!=="vyprodano"?`<a href="${esc(a.vstupenky)}" target="_blank" rel="noopener">vstupenky</a>`:""}
-      <button data-hide="${a.id}">${skr?"vrátit":"skrýt"}</button>
     </div></article>`;
 }
 function kreslitSeznam(){
@@ -279,7 +276,7 @@ function kreslitSeznam(){
   }).join("");
 }
 function vse(){ kreslitDny(); kreslitSeznam();
-  const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
+  const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
 function ovladani(){
@@ -295,14 +292,12 @@ function ovladani(){
   sel.onchange=()=>{S.misto=sel.value;vse();};
   document.getElementById("q").oninput=e=>{S.q=e.target.value.trim();vse();};
   document.getElementById("hideSold").onchange=e=>{S.hideSold=e.target.checked;vse();};
-  document.getElementById("showHidden").onchange=e=>{S.showHidden=e.target.checked;vse();};
+  document.getElementById("when").onchange=e=>{S.kdy=e.target.value;vse();};
   document.getElementById("more").onclick=e=>{const f=document.getElementById("filters");f.classList.toggle("open");
     e.currentTarget.setAttribute("aria-expanded",f.classList.contains("open"));};
   const days=document.getElementById("days");
   days.onclick=e=>{const b=e.target.closest("[data-sel]");if(!b)return;S.sel=b.dataset.sel;vse();window.scrollTo({top:0,behavior:"smooth"});};
   days.onchange=e=>{if(e.target.id==="pick"&&e.target.value){S.sel=e.target.value;vse();}};
-  document.getElementById("list").onclick=e=>{const b=e.target.closest("[data-hide]");if(!b)return;const id=b.dataset.hide;
-    SKRYTE.has(id)?SKRYTE.delete(id):SKRYTE.add(id);store("kv-skryte",JSON.stringify([...SKRYTE]));vse();};
 }
 
 async function start(){
