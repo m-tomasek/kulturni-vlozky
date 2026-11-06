@@ -1,0 +1,2 @@
+- **KIŠ** (kis): zdroj nevrátil žádné akce (změnil se web?)
+- **Improliga** (improliga): zdroj nevrátil žádné akce (změnil se web?)
