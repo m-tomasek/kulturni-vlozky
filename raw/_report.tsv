@@ -1,7 +1,7 @@
 pomezi-0	200	66134	https://pomezi.com/
-letka-0	200	1097927	https://www.klubletka.cz/program
+letka-0	200	1097775	https://www.klubletka.cz/program
 vosto5-0	200	42095	https://vosto5.cz/program/
-disk-0	200	27303	https://www.divadlodisk.cz/program
+disk-0	200	27278	https://www.divadlodisk.cz/program
 kis-0	200	11885	https://www.tyrkis.cz/program
 x10-0	200	66742	https://www.divadlox10.cz/cs/program
 malostranska-0	200	98698	https://www.malostranska-beseda.cz/club/program?year=2026&month=11
@@ -13,9 +13,7 @@ dejvicke-0	200	33400	https://www.dejvickedivadlo.cz/program?m=11&r=2026
 dejvicke-1	200	24705	https://www.dejvickedivadlo.cz/program?m=12&r=2026
 dejvicke-2	200	33400	https://www.dejvickedivadlo.cz/program?m=1&r=2027
 vysehrad-0	200	75249	https://praha-vysehrad.cz/cs/program/
-jazzdock-0	200	166309	https://www.jazzdock.cz/cs/program/2026/11
-jazzdock-1	200	158410	https://www.jazzdock.cz/cs/program/2026/12
-jazzdock-2	200	150238	https://www.jazzdock.cz/cs/program/2027/01
+jazzdock-0	200	190969	https://www.jazzdock.cz/cs/program
 galaxie-0	200	109831	https://www.stanicegalaxie.cz/program
 galaxie-1	200	110382	https://www.stanicegalaxie.cz/program?p0100=2
 galaxie-2	200	108359	https://www.stanicegalaxie.cz/program?p0100=3
@@ -23,3 +21,4 @@ improliga-0	200	49617	https://improliga.cz/kalendar-predstaveni/
 improliga-ical	200	49617	https://improliga.cz/kalendar-predstaveni/?ical=1
 improliga-api	404	151	https://improliga.cz/wp-json/tribe/events/v1/events?per_page=50
 improliga-feed	200	5303	https://improliga.cz/feed/
+jazzdock-strana2	200	209970	https://www.jazzdock.cz/cs/program?page=2
