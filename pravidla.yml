@@ -1,0 +1,41 @@
+# Pravidla filtrování a zařazení akcí.
+# Hledá se bez ohledu na velikost písmen a diakritiku.
+
+# Akce s těmito stavy se nezobrazují (uzavřená představení)
+vynechat_stavy: [zadano]
+
+# Vynechat, pokud se slovo objeví v NÁZVU nebo ŠTÍTCÍCH akce
+vynechat_v_nazvu_a_stitcich:
+  - pro zvane
+  - pro skoly
+  - pro skolky
+  - firemni
+  - pro deti
+  - pro nejmensi
+  - rodiny s detmi
+  - pohadk
+  - audiowalk
+  - nepretrzite
+  - v oteviraci dobe
+  - detsky program
+
+# Vynechat, pokud se vzor (regulární výraz) objeví v POPISU akce
+vynechat_v_popisu:
+  - '\bpro deti\b'
+  - '\bpro nejmensi\b'
+  - '\bod \d+ (let|mesicu)\b'
+  - '\bpro vsechny \d+\s*\+'
+  - '\bpohadka\b'
+
+# Zařazení do typu podle klíčových slov (první shoda vyhrává).
+# Hledá se v názvu, štítcích a popisu; když nic nesedí, platí typ ze scraperu.
+typy:
+  improvizace: [impro, improliga, imperfectionists, zapas v divadelni improvizaci]
+  vystava: [vystava, vernisaz, exhibition]
+  prednaska: [prednaska, debata, diskuze, beseda s, autorske cteni, literarni vecer, podcast, talk show, talkshow]
+  tanec: [tanec, tanecni, performance, pohybov]
+  koncert: [koncert, krest, kapela, band, jazz, rock, folk, swing, klezmer, hip-hop, pop music, sanson, hudebn]
+  film: [film, promitani, kino]
+  festival: [festival, prehlidka]
+  spolecenska: [ples, pruvod, trh, setkani, workshop, lekce]
+  divadlo: [loutk, inscenace, divadl, kabaret, komedie, cteni]

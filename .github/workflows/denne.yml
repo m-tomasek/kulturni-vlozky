@@ -1,0 +1,65 @@
+name: Denní sběr akcí
+
+on:
+  schedule:
+    - cron: "17 4 * * *"   # každé ráno kolem 5:17 / 6:17 pražského času
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - run.py
+      - scrapers/**
+      - pravidla.yml
+      - zdroje.yml
+      - .github/workflows/denne.yml
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: zapis-do-repa
+  cancel-in-progress: false
+
+jobs:
+  sber:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Sběr akcí
+        run: python run.py
+      - name: Uložit data
+        run: |
+          if git ls-files --error-unmatch data/problemy.md >/dev/null 2>&1 && git diff --quiet -- data/problemy.md; then
+            echo "PROBLEMY_ZMENA=0" >> "$GITHUB_ENV"
+          else
+            echo "PROBLEMY_ZMENA=1" >> "$GITHUB_ENV"
+          fi
+          git config user.name "kulturni-vlozky-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data
+          git commit -m "Data $(TZ=Europe/Prague date +%F)" || echo "beze změn"
+          git pull --rebase
+          git push
+      - name: Nahlásit problémy se zdroji
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NAZEV="Problém se zdroji"
+          CISLO=$(gh issue list --state open --search "in:title $NAZEV" --json number --jq '.[0].number')
+          if [ -s data/problemy.md ] && [ "$PROBLEMY_ZMENA" = "1" ]; then
+            TELO="$(printf 'Běh %s našel problémy:\n\n%s\n\nNapiš Claudovi: „oprav zdroj …“.' "$(TZ=Europe/Prague date '+%-d. %-m. %Y')" "$(cat data/problemy.md)")"
+            if [ -n "$CISLO" ]; then
+              gh issue comment "$CISLO" --body "$TELO"
+            else
+              gh issue create --title "$NAZEV" --body "$TELO"
+            fi
+          elif [ ! -s data/problemy.md ] && [ -n "$CISLO" ]; then
+            gh issue close "$CISLO" --comment "Všechny zdroje zase fungují."
+          fi

@@ -1,10 +1,10 @@
 # Kulturní vložky – seznam sledovaných zdrojů
-# horizont_dni: jak daleko dopředu se akce sbírají
+# horizont_dni: jak daleko dopředu se akce sbírají (dál zdroje stejně většinou nevidí)
 # typ: primarni = web pořadatele (má přednost), agregator = sbírá akce jiných
 # aktivni: false = zdroj se dočasně nesleduje
 # urls: stránky programu (kvůli dalším měsícům může jich být víc)
 
-horizont_dni: 60
+horizont_dni: 120
 
 zdroje:
   - id: pomezi
