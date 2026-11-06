@@ -1,0 +1,132 @@
+{
+ "pomezi": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 25,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Pomezí",
+  "url": "https://pomezi.com/"
+ },
+ "letka": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 18,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Klub Letka",
+  "url": "https://www.klubletka.cz/program"
+ },
+ "vosto5": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 6,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Vosto5",
+  "url": "https://vosto5.cz/program/"
+ },
+ "disk": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 15,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Divadlo DISK",
+  "url": "https://www.divadlodisk.cz/program"
+ },
+ "kis": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 8,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "KIŠ",
+  "url": "https://www.tyrkis.cz/program"
+ },
+ "x10": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 47,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Divadlo X10",
+  "url": "https://www.divadlox10.cz/cs/program"
+ },
+ "malostranska": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 58,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Malostranská beseda",
+  "url": "https://www.malostranska-beseda.cz/club/program?year=2026&month=11"
+ },
+ "cinoherni": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 52,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Činoherní klub",
+  "url": "https://cinoherniklub.cz/divadlo/?s=t"
+ },
+ "zdjc": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 70,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Žižkovské divadlo Járy Cimrmana",
+  "url": "https://zdjc.cz/program/"
+ },
+ "dejvicke": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 60,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Dejvické divadlo",
+  "url": "https://www.dejvickedivadlo.cz/program?m=11&r=2026"
+ },
+ "vysehrad": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 9,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Vyšehrad",
+  "url": "https://praha-vysehrad.cz/cs/program/"
+ },
+ "galaxie": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 82,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Stanice Galaxie",
+  "url": "https://www.stanicegalaxie.cz/program"
+ },
+ "improliga": {
+  "ok": true,
+  "chyba": null,
+  "chyb_v_rade": 0,
+  "pocet": 17,
+  "posledni_ok": "2026-11-06T13:06+01:00",
+  "posledni_pokus": "2026-11-06T13:06+01:00",
+  "nazev": "Improliga",
+  "url": "https://improliga.cz/kalendar-predstaveni/"
+ }
+}
