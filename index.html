@@ -7,7 +7,7 @@
 <meta name="description" content="Program menších pražských scén na jednom místě.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ---------- tokeny ---------- */
 :root{
@@ -34,8 +34,8 @@
   --step-2:clamp(1.5rem,1.1vw + 1.25rem,2.1rem);
   --step-4:clamp(2.6rem,4.2vw + 1.6rem,5rem);
 
-  --serif:"Instrument Serif",Georgia,serif;
-  --sans:"Schibsted Grotesk","Helvetica Neue",Helvetica,sans-serif;
+  --sans:"Archivo","Helvetica Neue",Helvetica,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 :root:not([data-theme="light"]){color-scheme:light dark}
 @media (prefers-color-scheme: dark){
@@ -53,7 +53,7 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--surface);color:var(--ink);font:400 var(--step-0)/1.5 var(--sans);
-  font-feature-settings:"ss01";-webkit-font-smoothing:antialiased}
+  font-stretch:100%;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-underline-offset:.18em;text-decoration-thickness:1px}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
@@ -65,9 +65,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* ---------- hlavička: asymetrická, zarovnaná dolů ---------- */
 .masthead{display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px 32px;
   padding-bottom:20px;border-bottom:1px solid var(--ink)}
-.masthead h1{font:400 var(--step-4)/.9 var(--serif);letter-spacing:-.02em;margin:0}
-.masthead h1 em{font-style:italic}
-.masthead p{margin:0;color:var(--ink-muted);font-size:var(--step--1);text-align:right;max-width:24ch}
+.masthead h1{font-family:var(--sans);font-weight:850;font-stretch:62%;font-size:var(--step-4);line-height:.86;
+  letter-spacing:-.01em;text-transform:uppercase;margin:0}
+.masthead h1 span{display:block;font-weight:300;font-stretch:62%}
+.masthead p{margin:0;color:var(--ink-muted);font-size:var(--step--1);text-align:right;max-width:36ch}
 
 /* ---------- rozvržení ---------- */
 .layout{display:grid;grid-template-columns:340px 1fr;gap:0 56px;margin-top:28px}
@@ -81,7 +82,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 /* ---------- kalendář ---------- */
 .cal-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
-.cal-head h2{font:400 var(--step-2)/1 var(--serif);margin:0;text-transform:lowercase}
+.cal-head h2{font-family:var(--sans);font-weight:800;font-stretch:75%;font-size:var(--step-2);line-height:1;
+  text-transform:uppercase;letter-spacing:.01em;margin:0}
+.cal-head h2 small{font-weight:400;font-family:var(--mono);font-size:var(--step--1);letter-spacing:0;margin-left:8px;color:var(--ink-muted)}
 .cal-nav{display:flex;gap:2px}
 .cal-nav button{width:32px;height:32px;border-radius:4px;color:var(--ink-muted);font-size:18px}
 .cal-nav button:hover{background:var(--rule);color:var(--ink)}
@@ -135,12 +138,14 @@ details.filters>summary::-webkit-details-marker{display:none}
 /* ---------- seznam ---------- */
 .dayhead{display:flex;align-items:baseline;gap:12px;margin:34px 0 4px;position:sticky;top:0;
   background:var(--surface);padding:8px 0 6px;z-index:2;border-bottom:1px solid var(--ink)}
-.dayhead h3{font:400 var(--step-2)/1.1 var(--serif);margin:0}
+.dayhead h3{font-family:var(--sans);font-weight:800;font-stretch:75%;font-size:var(--step-2);line-height:1.05;
+  text-transform:uppercase;letter-spacing:.005em;margin:0}
+.dayhead h3 b{font-family:var(--mono);font-weight:500;font-size:.62em;letter-spacing:0;margin-left:.5em;vertical-align:.12em}
 .dayhead span{color:var(--ink-muted);font-size:var(--step--1)}
 .ev{display:grid;grid-template-columns:62px 1fr auto;gap:2px 18px;padding:14px 0;border-bottom:1px solid var(--rule)}
 .ev .time{font-variant-numeric:tabular-nums;font-weight:500;padding-top:1px}
 .ev .time small{display:block;color:var(--ink-muted);font-weight:400;font-size:var(--step--1)}
-.ev h4{margin:0;font:500 var(--step-1)/1.25 var(--sans);letter-spacing:-.005em}
+.ev h4{margin:0;font-family:var(--sans);font-weight:650;font-stretch:88%;font-size:var(--step-1);line-height:1.2}
 .ev h4 a{text-decoration:none}
 .ev h4 a:hover{text-decoration:underline}
 .ev .where{color:var(--ink-muted);font-size:var(--step--1);margin-top:2px}
@@ -161,7 +166,7 @@ details.filters>summary::-webkit-details-marker{display:none}
   .ev{grid-template-columns:52px 1fr;gap:2px 12px}
   .ev .acts{grid-column:2;flex-direction:row;justify-content:flex-start;gap:16px;margin-top:8px}
 }
-.list-empty{padding:48px 0;color:var(--ink-muted);font:400 var(--step-1)/1.4 var(--serif);font-style:italic}
+.list-empty{padding:48px 0;color:var(--ink-muted);font-size:var(--step-1)}
 
 /* ---------- patička ---------- */
 .health{margin-top:72px;padding-top:16px;border-top:1px solid var(--rule);font-size:var(--step--1);color:var(--ink-muted);
@@ -170,12 +175,18 @@ details.filters>summary::-webkit-details-marker{display:none}
 .health li{break-inside:avoid;padding:2px 0}
 .health .bad{color:var(--sold)}
 @media (max-width:860px){.health{grid-template-columns:1fr}.health ul{columns:1}}
+
+.ev .time,.day .d,.cal .wd,.view sup,.health .num,.masthead p,.label{font-family:var(--mono)}
+.ev .time{font-size:var(--step--1);font-weight:500;padding-top:4px}
+.label{letter-spacing:.04em}
+.view{font-weight:600;font-stretch:88%;text-transform:uppercase;letter-spacing:.03em;font-size:var(--step--1)}
+.type{font-stretch:92%}
 </style>
 </head>
 <body>
 <div class="page">
   <header class="masthead">
-    <h1>Kulturní <em>vložky</em></h1>
+    <h1>Kulturní <span>vložky</span></h1>
     <p id="meta">Načítám program…</p>
   </header>
 
@@ -295,7 +306,7 @@ function mesice(){
 function kreslitKalendar(){
   const ms=mesice(); const i=Math.max(0,Math.min(S.mesic,ms.length-1)); S.mesic=i;
   const [y,m]=ms[i];
-  document.getElementById("calTitle").textContent = `${MES[m]}${y!==+dnes().slice(0,4)?" "+y:""}`;
+  document.getElementById("calTitle").innerHTML = `${MES[m]}<small>${y}</small>`;
   document.getElementById("prev").disabled = i===0;
   document.getElementById("next").disabled = i===ms.length-1;
 
@@ -378,7 +389,7 @@ function kreslitSeznam(){
     if(d!==posl){
       const n=vyber.filter(x=>den(x)===d).length;
       const rel = d===t?"dnes" : d===plus(t,1)?"zítra" : "";
-      html+=`<div class="dayhead"><h3>${DNY[dow(d)]} ${+d.slice(8)}. ${MES2[+d.slice(5,7)-1]}</h3><span>${[rel,`${n} ${n===1?"akce":n<5?"akce":"akcí"}`].filter(Boolean).join(" · ")}</span></div>`;
+      html+=`<div class="dayhead"><h3>${DNY[dow(d)]}<b>${+d.slice(8)}. ${+d.slice(5,7)}.</b></h3><span>${[rel,`${n} ${n===1?"akce":n<5?"akce":"akcí"}`].filter(Boolean).join(" · ")}</span></div>`;
       posl=d;
     }
     html+=radek(a);
