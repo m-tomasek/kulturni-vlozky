@@ -26,8 +26,10 @@
   --t-festival:#B8EEEE; --t-film:#D9DEE6;        --t-spolecenska:#DDF5A6;
   --t-jine:#E3E7EC;
 
-  /* pastelové plochy */
-  --p-lemon:#FFF3A8; --p-sky:#DDEBFF; --p-mint:#D8F4E5; --p-pink:#FFDCE8; --p-lilac:#E9E1FF;
+  /* sytější barvy teček – stejné v kalendáři, legendě i seznamu */
+  --d-divadlo:#E0457B; --d-improvizace:#E3A600; --d-koncert:#2F7FE6; --d-tanec:#8257E5;
+  --d-prednaska:#12A27A; --d-vystava:#EE7A2B; --d-festival:#0BA9B8; --d-film:#6F7C90;
+  --d-spolecenska:#7FA816; --d-jine:#A2ABB8;
 
   --sold:#D01F4B; --free:#0E8656; --warn:#9A6500;
 
@@ -48,7 +50,9 @@
     --t-divadlo:#FFB3CF; --t-improvizace:#FFE873; --t-koncert:#A3D3FF; --t-tanec:#C9B6FF;
     --t-prednaska:#A3EBC9; --t-vystava:#FFC69A; --t-festival:#A3E8E8; --t-film:#B9C2CF;
     --t-spolecenska:#D2F08A; --t-jine:#6A7380;
-    --p-lemon:#3A3517; --p-sky:#1B2A40; --p-mint:#17342A; --p-pink:#3D1E2B; --p-lilac:#2A2346;
+    --d-divadlo:#FF6E9E; --d-improvizace:#FFC933; --d-koncert:#5EA2FF; --d-tanec:#A98BFF;
+    --d-prednaska:#3DD3A3; --d-vystava:#FF9A55; --d-festival:#36D3E0; --d-film:#9AA6B8;
+    --d-spolecenska:#AEDB3A; --d-jine:#6E7887;
     --sold:#FF7A98; --free:#5DD39E; --warn:#F2C14E;
   }
 }
@@ -99,8 +103,11 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .day{position:relative;min-width:0;height:52px;border-top:1px solid var(--rule);padding:5px 4px;
   display:flex;flex-direction:column;justify-content:space-between;text-align:left;border-radius:0}
 .day .d{font-size:var(--step--1);font-variant-numeric:tabular-nums;line-height:1}
-.day .dots{display:flex;flex-wrap:wrap;gap:2px;min-height:5px;max-width:42px}
-.day .dots i{width:5px;height:5px;border-radius:50%;display:block}
+.day .dots{display:flex;flex-wrap:wrap;gap:3px;min-height:7px;max-width:44px}
+.day .dots i{width:7px;height:7px;border-radius:50%;display:block}
+.day .n{position:absolute;right:4px;top:5px;font-family:var(--mono);font-size:10px;color:var(--ink-muted)}
+.day.sel .n{color:var(--surface);opacity:.75}
+.day.sel .dots i{box-shadow:0 0 0 1.5px var(--surface)}
 .day.out{visibility:hidden}
 .day.past .d,.day.none .d{color:var(--rule-strong)}
 .day.none{cursor:default}
@@ -185,39 +192,9 @@ details.filters>summary::-webkit-details-marker{display:none}
 .label{letter-spacing:.04em}
 .view{font-weight:600;font-stretch:88%;text-transform:uppercase;letter-spacing:.03em;font-size:var(--step--1)}
 .type{font-stretch:92%}
-
-/* ---------- pastelové plochy po celém webu ---------- */
-.masthead{background:var(--p-lemon);padding:clamp(20px,3vw,34px) clamp(16px,3vw,32px) 22px;border-bottom:0}
-.side{background:var(--p-sky);padding:18px 18px 20px}
-.cal{border-top-color:color-mix(in srgb,var(--ink) 12%,transparent)}
-.day{border-top:2px solid var(--p-sky);border-left:2px solid var(--p-sky)}
-.day:not(.none):hover{outline:2px solid var(--ink);outline-offset:-2px}
-.day.past .d,.day.none .d{color:color-mix(in srgb,var(--ink) 30%,transparent)}
-.day.today{box-shadow:inset 0 0 0 2px var(--signal)}
-.day.inrange:not(.sel){outline:2px solid var(--ink);outline-offset:-2px}
-.day .dots{display:none}
-.day .n{font-family:var(--mono);font-size:10px;color:color-mix(in srgb,var(--ink) 70%,transparent);align-self:flex-end}
-.day.sel .n{color:var(--surface)}
-.day.sel,.day.sel:hover{background:var(--ink)!important;color:var(--surface)}
-details.filters{background:var(--p-mint);margin:20px -18px -20px;padding:4px 18px 20px}
-details.filters>summary{border-top:0!important}
-.legend{margin-top:16px}
-.type{background:var(--surface-raised);border-color:transparent}
-.type[aria-pressed="true"]{background:var(--sw);box-shadow:inset 0 0 0 1.5px var(--ink)}
-.side-tools select,.side-tools input[type=search]{border-color:transparent}
-.views{border-bottom:0;gap:6px;margin-bottom:0}
-.view{padding:7px 12px;border-radius:999px;border-bottom:0;margin-bottom:0}
-.view[aria-selected="true"]{background:var(--p-pink);color:var(--ink)}
-.view:hover{background:color-mix(in srgb,var(--p-pink) 50%,transparent)}
-.dayhead{background:var(--p-lilac);border-bottom:0;padding:10px 14px;margin:30px 0 8px}
-.ev{border-bottom:0;margin-bottom:6px;padding:12px 14px 12px 16px;
-  background:color-mix(in srgb,var(--tc) 22%,var(--surface-raised));border-left:6px solid var(--tc)}
-.ev.cancel{background:var(--surface-raised)}
-.health{background:var(--p-mint);padding:18px;border-top:0}
-.alert{background:var(--p-pink);padding:12px 16px;margin:16px 0 0;font-size:var(--step--1);line-height:1.45}
-.alert b{font-weight:650}
+.alert{border-left:3px solid var(--sold);padding:8px 12px;margin:0 0 14px;font-size:var(--step--1);color:var(--ink-muted)}
+.alert b{color:var(--ink);font-weight:600}
 .alert[hidden]{display:none}
-@media (max-width:560px){.ev{padding-left:12px}}
 </style>
 </head>
 <body>
@@ -361,17 +338,11 @@ function kreslitKalendar(){
     const cls=["day", iso<t?"past":"", !den.length?"none":"", iso===t?"today":"",
       S.view==="den"&&S.den===iso?"sel":"", S.view!=="den"&&rozsah.includes(iso)?"inrange":""].join(" ");
     const label=`${DNY[dow(iso)]} ${d}. ${MES2[m]}: ${den.length} akcí`;
-    let heat="";
-    if(den.length){
-      const pocty={}; den.forEach(a=>pocty[a.typ]=(pocty[a.typ]||0)+1);
-      // svislé pruhy v poměru typů akcí daného dne
-      let x=0; const pruhy=[];
-      Object.entries(pocty).sort((a,b)=>b[1]-a[1]).forEach(([ty,c])=>{
-        const w=c/den.length*100; pruhy.push(`var(--t-${ty}) ${x}% ${x+w}%`); x+=w; });
-      heat=`background:linear-gradient(90deg,${pruhy.join(",")})`;
-    }
-    html+=`<button class="${cls}" data-day="${iso}" aria-label="${label}" style="${heat}" ${!den.length?"disabled":""}>
-      <span class="d">${d}</span>${den.length?`<span class="n">${den.length}</span>`:""}</button>`;
+    html+=`<button class="${cls}" data-day="${iso}" aria-label="${label}" ${!den.length?"disabled":""}>
+      <span class="d">${d}</span>
+      <span class="dots">${(()=>{const p={};den.forEach(a=>p[a.typ]=(p[a.typ]||0)+1);
+        return Object.entries(p).sort((x,y)=>y[1]-x[1]).slice(0,5).map(([ty])=>`<i style="background:var(--d-${ty})"></i>`).join("");})()}</span>
+</button>`;
   }
   document.getElementById("cal").innerHTML=html;
 }
@@ -398,14 +369,14 @@ function radek(a){
   if(a.stav==="zruseno") flags.push(`<span class="flag-sold">zrušeno</span>`);
   else if((a.chybi_behu||0)>=2) flags.push(`<span class="flag-warn">zrušeno?</span>`);
   (a.zmeny||[]).slice(0,1).forEach(z=>flags.push(`<span class="flag-warn">${esc(z.co)}, ${kratce(z.kdy)}</span>`));
-  flags.push(`<span class="tag"><i style="background:var(--t-${a.typ})"></i>${TYPY[a.typ]||a.typ}</span>`);
+  flags.push(`<span class="tag"><i style="background:var(--d-${a.typ})"></i>${TYPY[a.typ]||a.typ}</span>`);
   if(a.cena) flags.push(`<span>${esc(a.cena)}</span>`);
 
   const viceDni=a.konec_datum && a.konec_datum!==a.datum;
   const cas = a.cas || (viceDni ? "celý den" : "—");
   const pod = viceDni ? `<small>do ${kratce(a.konec_datum)}</small>` : a.konec_cas ? `<small>–${a.konec_cas}</small>` : "";
   const skryta=SKRYTE.has(a.id);
-  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skryta?"hidden":""}" style="--tc:var(--t-${a.typ})">
+  return `<article class="ev ${a.stav==="zruseno"?"cancel":""} ${skryta?"hidden":""}">
     <div class="time">${cas}${pod}</div>
     <div>
       <h4><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h4>
@@ -450,7 +421,7 @@ function ovladani(){
   const pouzite=new Set(AKCE.map(a=>a.typ));
   const typesEl=document.getElementById("types");
   typesEl.innerHTML=Object.entries(TYPY).filter(([k])=>pouzite.has(k)).map(([k,n])=>
-    `<button class="type" style="--sw:var(--t-${k})" data-type="${k}" aria-pressed="false"><i style="background:var(--t-${k})"></i>${n}</button>`).join("");
+    `<button class="type" style="--sw:var(--t-${k})" data-type="${k}" aria-pressed="false"><i style="background:var(--d-${k})"></i>${n}</button>`).join("");
   typesEl.onclick=e=>{const b=e.target.closest(".type"); if(!b)return;
     const k=b.dataset.type; S.typy.has(k)?S.typy.delete(k):S.typy.add(k);
     b.setAttribute("aria-pressed",S.typy.has(k)); typesEl.classList.toggle("filtering",S.typy.size>0); vse();};
@@ -489,12 +460,11 @@ async function start(){
     if(innerWidth<=860) document.getElementById("filters").removeAttribute("open");
     if(AKCE.some(a=>zakladFiltr(a)&&nova7(a))) S.view="nove";
     ovladani(); vse();
-    // kontrola: neaktuální data a nefunkční zdroje
     const zpravy=[];
     const stari = META.vygenerovano ? (Date.now()-new Date(META.vygenerovano))/36e5 : 999;
-    if(stari>30) zpravy.push(`<b>Data nejsou čerstvá</b> – poslední úspěšný sběr byl před ${Math.round(stari/24)} dny. Denní běh na GitHubu se nejspíš zastavil.`);
+    if(stari>30) zpravy.push(`<b>Data nejsou čerstvá</b> – poslední sběr proběhl před ${Math.round(stari/24)} dny.`);
     const spatne=Object.values(z).filter(x=>!x.ok || x.varovani);
-    if(spatne.length) zpravy.push(`<b>Problém se zdroji:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}. Jejich akce tu můžou chybět nebo být zastaralé.`);
+    if(spatne.length) zpravy.push(`<b>Nefunguje:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}`);
     const al=document.getElementById("alert");
     if(zpravy.length){ al.innerHTML=zpravy.join("<br>"); al.hidden=false; }
     document.getElementById("sources").innerHTML=Object.values(z).sort((a,b)=>a.nazev.localeCompare(b.nazev,"cs")).map(s=>
