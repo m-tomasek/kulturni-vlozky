@@ -1,0 +1,105 @@
+# Kulturní vložky – seznam sledovaných zdrojů
+# horizont_dni: jak daleko dopředu se akce sbírají
+# typ: primarni = web pořadatele (má přednost), agregator = sbírá akce jiných
+# aktivni: false = zdroj se dočasně nesleduje
+# urls: stránky programu (kvůli dalším měsícům může jich být víc)
+
+horizont_dni: 60
+
+zdroje:
+  - id: pomezi
+    nazev: Pomezí
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://pomezi.com/
+
+  - id: letka
+    nazev: Klub Letka
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.klubletka.cz/program
+
+  - id: vosto5
+    nazev: Vosto5
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://vosto5.cz/program/
+
+  - id: disk
+    nazev: Divadlo DISK
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.divadlodisk.cz/program
+
+  - id: kis
+    nazev: KIŠ
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.tyrkis.cz/program
+
+  - id: x10
+    nazev: Divadlo X10
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.divadlox10.cz/cs/program
+
+  - id: malostranska
+    nazev: Malostranská beseda
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.malostranska-beseda.cz/club/program?year={rok}&month={mesic}
+      - https://www.malostranska-beseda.cz/club/program?year={rok+1m}&month={mesic+1m}
+      - https://www.malostranska-beseda.cz/club/program?year={rok+2m}&month={mesic+2m}
+
+  - id: cinoherni
+    nazev: Činoherní klub
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://cinoherniklub.cz/divadlo/?s=t
+
+  - id: zdjc
+    nazev: Žižkovské divadlo Járy Cimrmana
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://zdjc.cz/program/
+
+  - id: dejvicke
+    nazev: Dejvické divadlo
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.dejvickedivadlo.cz/program?m={mesic}&r={rok}
+      - https://www.dejvickedivadlo.cz/program?m={mesic+1m}&r={rok+1m}
+      - https://www.dejvickedivadlo.cz/program?m={mesic+2m}&r={rok+2m}
+
+  - id: vysehrad
+    nazev: Vyšehrad
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://praha-vysehrad.cz/cs/program/
+
+  - id: galaxie
+    nazev: Stanice Galaxie
+    typ: agregator
+    aktivni: true
+    urls:
+      - https://www.stanicegalaxie.cz/program
+      - https://www.stanicegalaxie.cz/program?p0100=2
+      - https://www.stanicegalaxie.cz/program?p0100=3
+
+  - id: improliga
+    nazev: Improliga
+    typ: agregator
+    aktivni: true
+    urls:
+      - https://improliga.cz/kalendar-predstaveni/
