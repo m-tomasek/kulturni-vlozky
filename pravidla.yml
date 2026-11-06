@@ -18,6 +18,8 @@ vynechat_v_nazvu_a_stitcich:
   - nepretrzite
   - v oteviraci dobe
   - detsky program
+  - detem
+  - children
 
 # Vynechat, pokud se vzor (regulární výraz) objeví v POPISU akce
 vynechat_v_popisu:

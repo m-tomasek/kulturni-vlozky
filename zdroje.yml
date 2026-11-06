@@ -91,7 +91,7 @@ zdroje:
   - id: jazzdock
     nazev: Jazz Dock
     typ: primarni
-    aktivni: false
+    aktivni: true
     urls:
       - https://www.jazzdock.cz/cs/program
 
