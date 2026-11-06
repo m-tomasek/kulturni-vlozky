@@ -88,6 +88,13 @@ zdroje:
     urls:
       - https://praha-vysehrad.cz/cs/program/
 
+  - id: jazzdock
+    nazev: Jazz Dock
+    typ: primarni
+    aktivni: false
+    urls:
+      - https://www.jazzdock.cz/cs/program
+
   - id: galaxie
     nazev: Stanice Galaxie
     typ: agregator
