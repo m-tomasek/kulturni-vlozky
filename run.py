@@ -176,7 +176,7 @@ def slouc(akce_podle_zdroje, typy_zdroju):
 
 # ---------------------------------------------------------------- porovnání s minulým během
 
-def porovnej(nove, minule, ok_zdroje, dnes):
+def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
     dnes_s = dnes.isoformat()
     min_podle_id = {a["id"]: a for a in minule}
     pouzite = set()
@@ -224,7 +224,8 @@ def porovnej(nove, minule, ok_zdroje, dnes):
         else:
             if a["stav"] == "zruseno":
                 continue  # o zrušené akci, kterou jsme nikdy neviděli, není co hlásit
-            a["poprve_videno"] = dnes_s
+            # první sběr nového zdroje není „novinka“ – akce tam už byly vypsané
+            a["poprve_videno"] = zalozeno if (a["zdroj"] in nove_zdroje and zalozeno) else dnes_s
             a["zmeny"] = []
             statistika["nove"] += 1
         vysledek.append(a)
@@ -267,6 +268,7 @@ def main():
     stahni = vytvor_stahovac()
 
     podle_zdroje, typy_zdroju, ok_zdroje, problemy = {}, {}, set(), []
+    nove_zdroje = set()
     vynechane = {}
     for z in cfg["zdroje"]:
         if not z.get("aktivni", True):
@@ -275,6 +277,8 @@ def main():
         typy_zdroju[zid] = z.get("typ", "primarni")
         zz = dict(z, urls=[rozbal(u, dnes) for u in z["urls"]], _horizont=(horizont - dnes).days,
                   _mista=mista_cache.setdefault(zid, {}))
+        if zid not in zdravi:
+            nove_zdroje.add(zid)
         stav = zdravi.get(zid, {})
         try:
             surove = nacti(zid).ziskej(stahni, zz, dnes)
@@ -318,7 +322,8 @@ def main():
         podle_zdroje[zid] = vybrane
 
     sloucene, rozpory = slouc(podle_zdroje, typy_zdroju)
-    akce, stat = porovnej(sloucene, minule_data.get("akce", []), ok_zdroje, dnes)
+    zalozeno = minule_data.get("meta", {}).get("zalozeno")
+    akce, stat = porovnej(sloucene, minule_data.get("akce", []), ok_zdroje, dnes, nove_zdroje, zalozeno)
     akce.sort(key=lambda a: (a["datum"], a["cas"] or "99:99", a["nazev"]))
 
     meta = minule_data.get("meta", {})
