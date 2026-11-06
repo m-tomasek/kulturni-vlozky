@@ -95,6 +95,27 @@ zdroje:
     urls:
       - https://www.jazzdock.cz/cs/program
 
+  - id: alta
+    nazev: Studio ALTA
+    typ: primarni
+    aktivni: false
+    urls:
+      - https://www.altart.cz/
+
+  - id: alfred
+    nazev: Alfred ve dvoře
+    typ: primarni
+    aktivni: false
+    urls:
+      - https://www.alfredvedvore.cz/
+
+  - id: hrdinu
+    nazev: Studio Hrdinů
+    typ: primarni
+    aktivni: false
+    urls:
+      - https://studiohrdinu.cz/en/program/
+
   - id: galaxie
     nazev: Stanice Galaxie
     typ: agregator

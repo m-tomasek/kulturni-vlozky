@@ -21,7 +21,10 @@ PRUZKUM = {
     "improliga-ical": "https://improliga.cz/kalendar-predstaveni/?ical=1",
     "improliga-api": "https://improliga.cz/wp-json/tribe/events/v1/events?per_page=50",
     "improliga-feed": "https://improliga.cz/feed/",
-    "jazzdock-strana2": "https://www.jazzdock.cz/cs/program?page=2",
+    "alta-program": "https://www.altart.cz/program/",
+    "alta-goout": "https://goout.net/cs/studio-alta/vzwnn/events/",
+    "alfred-program": "https://www.alfredvedvore.cz/program/",
+    "hrdinu-cs": "https://studiohrdinu.cz/program/",
 }
 
 
