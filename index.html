@@ -11,22 +11,22 @@
 <style>
 /* ---------- tokeny ---------- */
 :root{
-  --surface:#FAF8F4;        /* papír */
+  --surface:#F3F5F8;        /* chladná bílá */
   --surface-raised:#FFFFFF;
-  --ink:#24211D;            /* hlavní text */
-  --ink-muted:#7D776E;      /* vedlejší text */
-  --rule:#E6E0D6;           /* linky */
-  --rule-strong:#CFC7BA;
-  --signal:#C4553E;         /* jediný sytý akcent: nové, dnešek */
-  --focus:#3D6F9E;
+  --ink:#10141A;            /* hlavní text */
+  --ink-muted:#626C78;      /* vedlejší text */
+  --rule:#DCE1E8;           /* linky */
+  --rule-strong:#B6BFCA;
+  --signal:#2E45F0;         /* jediný sytý akcent: nové, dnešek */
+  --focus:#2E45F0;
 
   /* pastely = typy akcí */
-  --t-divadlo:#F5D3CB;  --t-improvizace:#F9E3A1; --t-koncert:#CBDFF1;
-  --t-tanec:#DCD5EE;    --t-prednaska:#D2E8D9;   --t-vystava:#F2DCC3;
-  --t-festival:#F6D0DF; --t-film:#D7DCE4;        --t-spolecenska:#E3EAC4;
-  --t-jine:#E9E4DC;
+  --t-divadlo:#FFC4DA;  --t-improvizace:#FFEE8A; --t-koncert:#B8DEFF;
+  --t-tanec:#D7C8FF;    --t-prednaska:#B9F0D6;   --t-vystava:#FFD4B0;
+  --t-festival:#B8EEEE; --t-film:#D9DEE6;        --t-spolecenska:#DDF5A6;
+  --t-jine:#E3E7EC;
 
-  --sold:#B3483A; --free:#3F7A55; --warn:#9A6A12;
+  --sold:#D01F4B; --free:#0E8656; --warn:#9A6500;
 
   --step--1:clamp(.78rem,.16vw + .74rem,.86rem);
   --step-0:clamp(.95rem,.25vw + .89rem,1.06rem);
@@ -40,12 +40,12 @@
 :root:not([data-theme="light"]){color-scheme:light dark}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --surface:#191816; --surface-raised:#211F1C; --ink:#EDE8E1; --ink-muted:#9B948A;
-    --rule:#2F2C28; --rule-strong:#45403A; --signal:#E8846D; --focus:#8DB6DD;
-    --t-divadlo:#E9B9AE; --t-improvizace:#EDD27F; --t-koncert:#A9C8E6; --t-tanec:#C4B8E6;
-    --t-prednaska:#AFD6BC; --t-vystava:#E6C49E; --t-festival:#EBB1C9; --t-film:#B9C1CE;
-    --t-spolecenska:#CDD99B; --t-jine:#8E877D;
-    --sold:#E68A7C; --free:#86C39C; --warn:#D9B05E;
+    --surface:#0E1116; --surface-raised:#161A21; --ink:#E8ECF2; --ink-muted:#8892A0;
+    --rule:#222832; --rule-strong:#343C48; --signal:#7F92FF; --focus:#7F92FF;
+    --t-divadlo:#FFB3CF; --t-improvizace:#FFE873; --t-koncert:#A3D3FF; --t-tanec:#C9B6FF;
+    --t-prednaska:#A3EBC9; --t-vystava:#FFC69A; --t-festival:#A3E8E8; --t-film:#B9C2CF;
+    --t-spolecenska:#D2F08A; --t-jine:#6A7380;
+    --sold:#FF7A98; --free:#5DD39E; --warn:#F2C14E;
   }
 }
 
@@ -115,7 +115,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .type i{width:9px;height:9px;border-radius:50%}
 .type:hover{border-color:var(--rule-strong)}
 .type[aria-pressed="true"]{background:var(--sw);border-color:transparent}
-.type[aria-pressed="true"]{color:#24211D}
+.type[aria-pressed="true"]{color:#10141A}
 .types.filtering .type[aria-pressed="false"]{color:var(--ink-muted)}
 details.filters>summary{list-style:none;cursor:pointer;margin-top:22px;font-size:var(--step--1);color:var(--ink-muted);display:none}
 details.filters>summary::-webkit-details-marker{display:none}
@@ -438,7 +438,7 @@ async function start(){
     META=d.meta||{}; AKCE=(d.akce||[]).filter(a=>konec(a)>=dnes());
     const kdy=META.vygenerovano?new Date(META.vygenerovano).toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):"?";
     const zdroju=Object.keys(z).length;
-    document.getElementById("meta").innerHTML=`${AKCE.length} akcí z ${zdroju} menších pražských scén.<br>Aktualizováno ${kdy}.`;
+    document.getElementById("meta").innerHTML=`${AKCE.length} akcí, ${zdroju} scén<br>aktualizováno ${kdy}`;
     S.mesic=0;
     if(innerWidth<=860) document.getElementById("filters").removeAttribute("open");
     if(AKCE.some(a=>zakladFiltr(a)&&nova7(a))) S.view="nove";
