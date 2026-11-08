@@ -1,0 +1,69 @@
+# Záložní běh pro GitLab (na GitHubu se nepoužívá).
+# Potřebná proměnná v Settings > CI/CD > Variables: PROJEKT_TOKEN
+#   (Project access token, role Maintainer, práva api + write_repository; Masked)
+# Plány (Build > Pipeline schedules):
+#   1) denně v 05:00, proměnná JOB=sber
+#   2) denně v 12:00, proměnná JOB=hlidac
+
+default:
+  image: python:3.12-slim
+
+stages: [sber, nasazeni]
+
+sber:
+  stage: sber
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $JOB == "sber"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq git curl >/dev/null
+    - pip install -q -r requirements.txt
+  script:
+    - python run.py
+    - git config user.name "kulturni-vlozky-bot"
+    - git config user.email "bot@users.noreply.gitlab.com"
+    - git add data
+    - git commit -m "Data $(TZ=Europe/Prague date +%F) [skip ci]" || echo "beze změn"
+    - git pull --rebase "https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "${CI_DEFAULT_BRANCH}"
+    - git push "https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
+    # problémy se zdroji -> issue (přijde e-mail)
+    - |
+      if [ -s data/problemy.md ]; then
+        curl -s --request POST --header "PRIVATE-TOKEN: ${PROJEKT_TOKEN}" \
+          --data-urlencode "title=Problém se zdroji $(TZ=Europe/Prague date +%F)" \
+          --data-urlencode "description=$(cat data/problemy.md)" \
+          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/issues" >/dev/null
+      fi
+
+hlidac:
+  stage: sber
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $JOB == "hlidac"'
+  script:
+    # selže (a GitLab pošle e-mail), pokud jsou data starší než 30 h
+    - |
+      python3 - <<'PY'
+      import json, datetime as dt, sys
+      m = json.load(open("data/akce.json"))["meta"]
+      t = dt.datetime.fromisoformat(m["vygenerovano"])
+      h = (dt.datetime.now(dt.timezone.utc) - t).total_seconds() / 3600
+      print(f"Data jsou stará {h:.0f} h")
+      sys.exit(1 if h > 30 else 0)
+      PY
+
+pages:
+  stage: nasazeni
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /skip ci/'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $JOB == "sber"'
+      when: on_success
+  needs:
+    - job: sber
+      optional: true
+  script:
+    - mkdir -p public/data
+    - cp index.html public/
+    - cp data/*.json public/data/
+  pages: true
+  artifacts:
+    paths: [public]
