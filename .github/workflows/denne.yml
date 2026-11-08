@@ -4,14 +4,6 @@ on:
   schedule:
     - cron: "17 4 * * *"   # každé ráno kolem 5:17 / 6:17 pražského času
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - run.py
-      - scrapers/**
-      - pravidla.yml
-      - zdroje.yml
-      - .github/workflows/denne.yml
 
 permissions:
   contents: write

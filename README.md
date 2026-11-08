@@ -28,5 +28,5 @@ skripty v GitHub Actions, výsledek je na stránce **https://m-tomasek.github.io
 
 ## Nový zdroj
 
-Napiš Claudovi „přidej zdroj …“. Workflow *Snapshot zdrojů* stáhne stránku do `raw/`,
-podle ní se napíše scraper.
+Napiš Claudovi „přidej zdroj …“. Workflow *Snapshot zdrojů* (ruční spuštění) stáhne stránky a nabídne je ke stažení
+jako dočasný soubor (nejsou v repu), podle nich se napíše scraper.
