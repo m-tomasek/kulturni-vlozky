@@ -131,3 +131,10 @@ zdroje:
     aktivni: true
     urls:
       - https://improliga.cz/kalendar-predstaveni/
+
+  - id: bioctvrtky
+    nazev: Biologické čtvrtky
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://bioctvrtky.cz/category/program-na-aktualni-semestr/
