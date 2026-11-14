@@ -1,4 +1,2 @@
 # název url  (stahuje úloha snapshot, výsledek je v artefaktech)
-skaut-rybarna-program https://www.skautskyinstitut.cz/rybarna-program
-planetum-js https://www.planetum.cz/_nuxt/BNI4J8t8.js
-kasarna-detail https://kasarnakarlin.cz/cs/program/2026/11/17/sametove-kasarny-obcan-havel
+planetum-json https://shop.planetum.cz/web/program/?from=2026-11-15&branch=&full=1&lang=cs

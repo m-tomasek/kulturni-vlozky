@@ -1,10 +1,10 @@
-"""Kasárna Karlín – dlaždice akcí na /cs/program (datum v <time datetime>, čas na stránce není)."""
+"""Kasárna Karlín – dlaždice akcí na /cs/program (datum v <time datetime>, čas až na stránce akce)."""
 import datetime as dt
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 
-from .spolecne import akce, cisty
+from .spolecne import akce, cas, cisty
 
 
 def ziskej(stahni, zdroj, dnes):
@@ -24,8 +24,18 @@ def ziskej(stahni, zdroj, dnes):
                 continue
             videno.add(odkaz)
             vst = dl.select_one("a.btn[href^=http]")
+            c = kc = None
+            if datum >= dnes:  # čas je jen na stránce akce
+                try:
+                    d = BeautifulSoup(stahni(odkaz), "lxml").select_one(".field-name--field-event-time")
+                    if d:
+                        casy = d.get_text(" ").split("–")
+                        c = cas(casy[0])
+                        kc = cas(casy[1]) if len(casy) > 1 else None
+                except Exception:  # noqa: BLE001 – bez času se akce pořád hodí
+                    pass
             vysledek.append(akce(
-                nazev=nazev, datum=datum, cas=None, misto="Kasárna Karlín", url=odkaz,
+                nazev=nazev, datum=datum, cas=c, konec_cas=kc, misto="Kasárna Karlín", url=odkaz,
                 vstupenky=vst["href"] if vst else None, typ=None,
             ))
     return vysledek
