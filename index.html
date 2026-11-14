@@ -113,6 +113,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .ev .info .t{display:inline-flex;align-items:center;gap:5px;color:var(--ink)}
 .ev .info .t i{width:7px;height:7px;border-radius:50%}
 .st-new{color:var(--accent);font-weight:600}
+.gooutlbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;padding:0 6px;border:1px solid var(--rule-strong);border-radius:4px;color:var(--muted)}
 .st-sold{color:var(--sold)}.st-free{color:var(--free)}.st-warn{color:var(--warn)}
 .ev .acts{display:flex;align-items:flex-start;gap:12px;font-size:var(--s-1);white-space:nowrap;padding-top:3px}
 .ev .acts a,.ev .acts button{color:var(--muted);text-decoration:none}
@@ -168,6 +169,7 @@ footer .bad{color:var(--sold)}
       <select id="when" aria-label="Čas začátku"><option value="">Kdykoli</option><option value="vecer">Po práci (od 17:00)</option><option value="pozde">Pozdě večer (od 21:00)</option><option value="den">Přes den (do 17:00)</option></select>
       <div class="grow"><input type="search" id="q" placeholder="Hledat…" aria-label="Hledat"></div>
       <label class="toggle"><input type="checkbox" id="hideSold"> bez vyprodaných</label>
+      <label class="toggle"><input type="checkbox" id="bezGoout"> bez GoOut</label>
     </div>
   </div>
 
@@ -193,7 +195,8 @@ const DNY2=["ne","po","út","st","čt","pá","so"];
 const MES2=["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj","lis","pro"];
 const PASMO=21; // kolik dní ukazovat v pásu
 
-const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:""};
+const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false};
+const GOOUT="goout";
 let AKCE=[], META={};
 
 function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null} }
@@ -213,6 +216,7 @@ function zaklad(a){
   if(S.typy.size && !S.typy.has(a.typ)) return false;
   if(S.misto && a.zdroj!==S.misto) return false;
   if(S.hideSold && a.stav==="vyprodano") return false;
+  if(S.bezGoout && a.zdroj===GOOUT) return false;
   if(S.q){ const q=S.q.toLocaleLowerCase("cs"); if(!`${a.nazev} ${a.misto} ${a.znacky||""}`.toLocaleLowerCase("cs").includes(q)) return false; }
   return true;
 }
@@ -264,6 +268,7 @@ function radek(a){
   const info=[];
   info.push(`<span class="t"><i style="background:var(--c-${a.typ})"></i>${TYPY[a.typ]||a.typ}</span>`);
   info.push(`<span>${esc(a.misto||"")}</span>`);
+  if(a.zdroj===GOOUT) info.push(`<span class="gooutlbl">GoOut</span>`);
   if(a.cena) info.push(`<span>${esc(a.cena)}</span>`);
   if(nova(a)) info.push(`<span class="st-new">nové</span>`);
   if(a.stav==="vyprodano") info.push(`<span class="st-sold">vyprodáno</span>`);
@@ -299,7 +304,7 @@ function kreslitSeznam(){
   }).join("");
 }
 function vse(){ kreslitDny(); kreslitSeznam(); kreslitMapu();
-  const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
+  const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0)+(S.bezGoout?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
 function ovladani(){
@@ -310,11 +315,12 @@ function ovladani(){
   ty.onclick=e=>{const b=e.target.closest(".type");if(!b)return;const k=b.dataset.type;
     S.typy.has(k)?S.typy.delete(k):S.typy.add(k);b.setAttribute("aria-pressed",S.typy.has(k));vse();};
   const sel=document.getElementById("place");
-  const mista=[...new Map(AKCE.map(a=>[a.zdroj,(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
+  const mista=[...new Map(AKCE.map(a=>[a.zdroj,a.zdroj===GOOUT?"GoOut (vše)":(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
   sel.innerHTML+=mista.map(([k,n])=>`<option value="${k}">${esc(n)}</option>`).join("");
   sel.onchange=()=>{S.misto=sel.value;vse();};
   document.getElementById("q").oninput=e=>{S.q=e.target.value.trim();vse();};
   document.getElementById("hideSold").onchange=e=>{S.hideSold=e.target.checked;vse();};
+  document.getElementById("bezGoout").onchange=e=>{S.bezGoout=e.target.checked;vse();};
   document.getElementById("when").onchange=e=>{S.kdy=e.target.value;vse();};
   document.getElementById("more").onclick=e=>{const f=document.getElementById("filters");f.classList.toggle("open");
     e.currentTarget.setAttribute("aria-expanded",f.classList.contains("open"));};
@@ -367,8 +373,9 @@ const MISTA=[
 const bezd=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 const kl=new Map();
 function poloha(a){
-  const t=` ${bezd(a.misto)} ${a.zdroj} `;
+  const t=` ${bezd(a.misto)} ${a.zdroj===GOOUT?"":a.zdroj} `;
   if(kl.has(t)) return kl.get(t);
+  if(a.poloha){ const m={n:(a.misto||"").split(" – ")[0],p:a.poloha}; kl.set(t,m); return m; }
   const m=MISTA.find(m=>m.k.some(k=>new RegExp(k.endsWith("*")?`(^|[^a-z0-9])${k.slice(0,-1)}`:`(^|[^a-z0-9])${k}($|[^a-z0-9])`).test(t)))||null;
   kl.set(t,m); return m;
 }
