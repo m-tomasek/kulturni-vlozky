@@ -2,7 +2,9 @@
 
 Pořady pro děti a školy se vynechávají podle skrytého parametru "filtrace věku"
 (a podle nadtitulku "Pro děti"); ponechá se pořad, který má i jinou cílovku než děti.
+Pořady, které se ve sledovaném období stále opakují (MAX_OPAKOVANI a víc termínů), se vynechají celé.
 """
+import collections
 import datetime as dt
 import json
 
@@ -10,6 +12,7 @@ from .spolecne import akce, bez_diakritiky, cisty
 
 API = "https://shop.planetum.cz/web/program/?from={od}&branch=&full=1&lang=cs"
 DETSKE = ("det", "zs", "ms", "rodin", "skol")
+MAX_OPAKOVANI = 4
 TYPY = {"projekce": "film", "prednaska": "prednaska", "porad": None}
 
 
@@ -52,4 +55,5 @@ def ziskej(stahni, zdroj, dnes):
         if posledni >= konec or posledni <= od:
             break
         od = posledni + dt.timedelta(days=1)
-    return vysledek
+    pocty = collections.Counter((a["nazev"].lower(), a["misto"]) for a in vysledek)
+    return [a for a in vysledek if pocty[(a["nazev"].lower(), a["misto"])] < MAX_OPAKOVANI]

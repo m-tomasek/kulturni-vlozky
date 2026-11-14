@@ -1,2 +1,6 @@
 # název url  (stahuje úloha snapshot, výsledek je v artefaktech)
-planetum-json https://shop.planetum.cz/web/program/?from=2026-11-15&branch=&full=1&lang=cs
+goout-praha https://goout.net/cs/praha/
+goout-akce https://goout.net/cs/praha/akce/
+goout-sitemap https://goout.net/sitemap.xml
+goout-api1-json https://goout.net/services/entities/v1/schedules?languages%5B%5D=cs&cityIds%5B%5D=101&limit=24
+goout-api2-json https://goout.net/services/feeder/v1/events.json?city=101&lang=cs
