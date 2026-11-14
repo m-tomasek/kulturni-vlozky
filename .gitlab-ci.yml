@@ -1,9 +1,20 @@
-# Záložní běh pro GitLab (na GitHubu se nepoužívá).
-# Potřebná proměnná v Settings > CI/CD > Variables: PROJEKT_TOKEN
+# Denní běh na GitLabu.
+# Spouští se jen z plánu (Build > Pipeline schedules) nebo ručně (Run pipeline).
+# Proměnná v Settings > CI/CD > Variables: PROJEKT_TOKEN
 #   (Project access token, role Maintainer, práva api + write_repository; Masked)
-# Plány (Build > Pipeline schedules):
-#   1) denně v 05:00, proměnná JOB=sber
-#   2) denně v 12:00, proměnná JOB=hlidac
+#   Bez něj se web nasadí, ale data se neuloží zpět do repa (ztratí se paměť změn).
+# Plány (input "job"; výchozí je sber):
+#   1) denně v 05:13, input job = sber (nebo nechat výchozí)
+#   2) denně v 12:37, input job = hlidac
+spec:
+  inputs:
+    job:
+      default: sber
+      options: [sber, hlidac]
+---
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE =~ /^(schedule|web|api)$/'
 
 default:
   image: python:3.12-slim
@@ -13,32 +24,38 @@ stages: [sber, nasazeni]
 sber:
   stage: sber
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $JOB == "sber"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && "$[[ inputs.job ]]" == "sber"'
+    - if: '$CI_PIPELINE_SOURCE =~ /^(web|api)$/'
   before_script:
     - apt-get update -qq && apt-get install -y -qq git curl >/dev/null
     - pip install -q -r requirements.txt
   script:
     - python run.py
-    - git config user.name "kulturni-vlozky-bot"
-    - git config user.email "bot@users.noreply.gitlab.com"
-    - git add data
-    - git commit -m "Data $(TZ=Europe/Prague date +%F) [skip ci]" || echo "beze změn"
-    - git pull --rebase "https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "${CI_DEFAULT_BRANCH}"
-    - git push "https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
-    # problémy se zdroji -> issue (přijde e-mail)
     - |
-      if [ -s data/problemy.md ]; then
-        curl -s --request POST --header "PRIVATE-TOKEN: ${PROJEKT_TOKEN}" \
-          --data-urlencode "title=Problém se zdroji $(TZ=Europe/Prague date +%F)" \
-          --data-urlencode "description=$(cat data/problemy.md)" \
-          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/issues" >/dev/null
+      if [ -n "$PROJEKT_TOKEN" ]; then
+        git config user.name "kulturni-vlozky-bot"
+        git config user.email "bot@users.noreply.gitlab.com"
+        git add data
+        git commit -m "Data $(TZ=Europe/Prague date +%F) [skip ci]" || echo "beze změn"
+        git push "https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
+        # problémy se zdroji -> issue (přijde e-mail)
+        if [ -s data/problemy.md ]; then
+          curl -s --request POST --header "PRIVATE-TOKEN: ${PROJEKT_TOKEN}" \
+            --data-urlencode "title=Problém se zdroji $(TZ=Europe/Prague date +%F)" \
+            --data-urlencode "description=$(cat data/problemy.md)" \
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/issues" >/dev/null
+        fi
+      else
+        echo "PROJEKT_TOKEN není nastaven – data se neukládají do repa"
       fi
+  artifacts:
+    paths: [data]
+    expire_in: 2 days
 
 hlidac:
   stage: sber
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $JOB == "hlidac"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && "$[[ inputs.job ]]" == "hlidac"'
   script:
     # selže (a GitLab pošle e-mail), pokud jsou data starší než 30 h
     - |
@@ -54,16 +71,14 @@ hlidac:
 pages:
   stage: nasazeni
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /skip ci/'
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && $JOB == "sber"'
-      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && "$[[ inputs.job ]]" == "sber"'
+    - if: '$CI_PIPELINE_SOURCE =~ /^(web|api)$/'
   needs:
     - job: sber
-      optional: true
+      artifacts: true
   script:
     - mkdir -p public/data
     - cp index.html public/
     - cp data/*.json public/data/
-  pages: true
   artifacts:
     paths: [public]
