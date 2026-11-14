@@ -189,3 +189,12 @@ zdroje:
     aktivni: true
     urls:
       - https://www.planetum.cz/program
+
+  - id: goout
+    nazev: GoOut (celá Praha)
+    typ: agregator
+    aktivni: true
+    mesto_id: 101748113
+    dni: 21
+    urls:
+      - https://goout.net/cs/praha/akce/

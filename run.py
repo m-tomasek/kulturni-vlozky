@@ -140,13 +140,12 @@ def urci_typ(a, pr):
 def slouc(akce_podle_zdroje, typy_zdroju):
     """Odstraní duplicity mezi zdroji; primární zdroj má přednost před agregátorem."""
     poradi = sorted(akce_podle_zdroje, key=lambda z: 0 if typy_zdroju[z] == "primarni" else 1)
-    vysledek, rozpory = [], 0
+    vysledek, rozpory, podle_dne = [], 0, {}
     for zid in poradi:
         for a in akce_podle_zdroje[zid]:
             shoda = None
-            for b in vysledek:
-                if b["datum"] != a["datum"]:
-                    continue
+            den = podle_dne.setdefault(a["datum"], [])
+            for b in den:
                 ma, mb = minuty(a["cas"]), minuty(b["cas"])
                 if ma is not None and mb is not None and abs(ma - mb) > 60:
                     continue
@@ -155,12 +154,14 @@ def slouc(akce_podle_zdroje, typy_zdroju):
                     break
             if shoda is None:
                 vysledek.append(a)
+                den.append(a)
                 continue
             if shoda["zdroj"] == a["zdroj"]:
                 # stejný zdroj, stejná akce (např. dva výpisy) – nech jednu
                 if a["cas"] == shoda["cas"]:
                     continue
                 vysledek.append(a)
+                den.append(a)
                 continue
             # jiný zdroj: doplň chybějící údaje, ale primární údaje nepřepisuj
             if (a["cas"] != shoda["cas"] and a["cas"] and shoda["cas"]) or (
