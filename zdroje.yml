@@ -182,3 +182,10 @@ zdroje:
     aktivni: true
     urls:
       - https://redutajazzclub.cz/program-cs
+
+  - id: planetum
+    nazev: Planetárium a hvězdárny
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.planetum.cz/program

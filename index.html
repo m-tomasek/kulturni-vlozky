@@ -364,7 +364,7 @@ const MISTA=[
   {n:"Hvězdárna Ďáblice",k:["dablic*"],p:[50.1336,14.4695]},
   {n:"Planetárium Praha",k:["planetari*","planetum"],p:[50.1053,14.4297]},
 ];
-const bezd=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const bezd=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 const kl=new Map();
 function poloha(a){
   const t=` ${bezd(a.misto)} ${a.zdroj} `;
