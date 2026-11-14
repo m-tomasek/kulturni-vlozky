@@ -138,3 +138,47 @@ zdroje:
     aktivni: true
     urls:
       - https://bioctvrtky.cz/category/program-na-aktualni-semestr/
+
+  - id: rockcafe
+    nazev: Rock Café
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://rockcafe.cz/cs/program/
+      - https://rockcafe.cz/cs/program/{rok+1m}/{mesic2+1m}
+      - https://rockcafe.cz/cs/program/{rok+2m}/{mesic2+2m}
+
+  - id: kasarna
+    nazev: Kasárna Karlín
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://kasarnakarlin.cz/cs/program
+
+  - id: dox
+    nazev: DOX
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.dox.cz/program
+
+  - id: biooko
+    nazev: Bio Oko
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.biooko.net/cs/program
+
+  - id: rudolfinum
+    nazev: Galerie Rudolfinum
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://www.galerierudolfinum.cz/wp-json/tribe/events/v1/events?per_page=50
+
+  - id: reduta
+    nazev: Reduta Jazz Club
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://redutajazzclub.cz/program-cs

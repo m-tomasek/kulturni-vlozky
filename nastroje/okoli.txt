@@ -1,0 +1,5 @@
+# soubor|hledaný text  (výřezy kolem výskytů -> raw/_okoli.txt)
+planetum-js.js|useApiFetch("/
+planetum-js.js|useApiFetch(`/
+planetum-js.js|program/
+kasarna-detail.html|<time

@@ -131,6 +131,24 @@ footer ul{list-style:none;margin:0;padding:0;columns:3;column-gap:24px}
 footer li{break-inside:avoid;padding:1px 0}
 footer .bad{color:var(--sold)}
 @media (max-width:640px){footer ul{columns:2}}
+/* mapa */
+.topr{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.mapbtn{font-family:var(--mono);font-size:var(--s-1);padding:4px 10px;border:1px solid var(--rule-strong);border-radius:999px;background:var(--panel)}
+.mapbtn:hover{border-color:var(--ink)}
+.mapwrap{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
+.mapwrap[hidden]{display:none}
+.maphead{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--rule)}
+.maphead b{font-weight:800;font-stretch:75%;text-transform:uppercase;font-size:var(--s1)}
+.maphead span{flex:1;font-size:var(--s-1);color:var(--muted)}
+.maphead button{font-size:var(--s-1);padding:4px 12px;border:1px solid var(--rule-strong);border-radius:999px;background:var(--panel)}
+#mapel{flex:1;min-height:0}
+.leaflet-popup-content{font:400 13px/1.4 var(--sans);margin:10px 12px}
+.leaflet-popup-content h4{margin:0 0 4px;font-size:14px}
+.leaflet-popup-content ul{margin:0;padding:0;list-style:none;max-height:220px;overflow:auto}
+.leaflet-popup-content li{padding:2px 0}
+.leaflet-popup-content .mono{color:#646E7A;font-size:11.5px;margin-right:4px}
+.pin{display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--accent);color:#fff;
+  font:600 11px/1 var(--mono);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -138,7 +156,7 @@ footer .bad{color:var(--sold)}
 <div class="page">
   <header class="top">
     <h1>Kulturní <span>vložky</span></h1>
-    <p id="meta">načítám…</p>
+    <div class="topr"><p id="meta">načítám…</p><button class="mapbtn" id="mapBtn" aria-controls="mapa">Mapa</button></div>
   </header>
 
   <div class="bar">
@@ -160,6 +178,11 @@ footer .bad{color:var(--sold)}
     <h2>Sledované scény</h2>
     <ul id="sources"></ul>
   </footer>
+</div>
+
+<div class="mapwrap" id="mapa" hidden role="dialog" aria-label="Mapa míst">
+  <div class="maphead"><b>Mapa</b><span id="mapinfo"></span><button id="mapClose">Zavřít</button></div>
+  <div id="mapel"></div>
 </div>
 
 <script>
@@ -275,7 +298,7 @@ function kreslitSeznam(){
       <div class="list">${xs.map(radek).join("")}</div>`;
   }).join("");
 }
-function vse(){ kreslitDny(); kreslitSeznam();
+function vse(){ kreslitDny(); kreslitSeznam(); kreslitMapu();
   const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
@@ -299,6 +322,97 @@ function ovladani(){
   days.onclick=e=>{const b=e.target.closest("[data-sel]");if(!b)return;S.sel=b.dataset.sel;vse();window.scrollTo({top:0,behavior:"smooth"});};
   days.onchange=e=>{if(e.target.id==="pick"&&e.target.value){S.sel=e.target.value;vse();}};
 }
+
+/* ---------- mapa ---------- */
+// Přibližné polohy míst. k = klíčová slova (malými písmeny, bez diakritiky), hledají se v "místo + zdroj".
+// Slovo s * na konci je začátek slova (dejvick* = dejvické, dejvického…). Pořadí je důležité: konkrétnější místa před obecnými.
+const MISTA=[
+  {n:"Kino Galaxie (Háje)",k:["galaxie"],p:[50.0306,14.5264]},
+  {n:"Jízdárna Pražského hradu",k:["jizdarn*"],p:[50.0927,14.3990]},
+  {n:"Dejvické divadlo",k:["dejvick*"],p:[50.1055,14.3917]},
+  {n:"Pomezí – Náprstkovo muzeum",k:["naprstk*"],p:[50.0846,14.4152]},
+  {n:"Pomezí – Laichterův dům",k:["laichter*"],p:[50.0770,14.4448]},
+  {n:"Pomezí – Winternitzova vila",k:["winternitz*"],p:[50.0698,14.3966]},
+  {n:"Pomezí",k:["pomezi"],p:[50.0918,14.4372]},
+  {n:"Skautský institut v Rybárně",k:["rybarn*"],p:[50.0857,14.4078]},
+  {n:"Skautský institut",k:["skautsk*"],p:[50.0869,14.4208]},
+  {n:"Karlínské Spektrum",k:["karlinske spektrum","kis"],p:[50.0928,14.4490]},
+  {n:"Kasárna Karlín",k:["kasarna karlin","kasarna"],p:[50.0920,14.4425]},
+  {n:"Alfred ve dvoře",k:["alfred"],p:[50.1003,14.4298]},
+  {n:"Studio ALTA",k:["alta"],p:[50.1043,14.4339]},
+  {n:"Činoherní klub",k:["cinoherni*"],p:[50.0790,14.4283]},
+  {n:"Divadlo DISK",k:["disk"],p:[50.0861,14.4167]},
+  {n:"Studio Hrdinů",k:["hrdinu"],p:[50.1015,14.4336]},
+  {n:"Divadlo Kámen",k:["kamen"],p:[50.0968,14.4640]},
+  {n:"Divadlo D21",k:["d21"],p:[50.0738,14.4402]},
+  {n:"Divadlo Bez hranic",k:["bez hranic"],p:[50.0645,14.4312]},
+  {n:"Studio Citadela",k:["citadela"],p:[50.0913,14.4290]},
+  {n:"Jazz Dock",k:["jazz dock","jazzdock"],p:[50.0742,14.4107]},
+  {n:"Klub Letka",k:["letka"],p:[50.1000,14.4280]},
+  {n:"Malostranská beseda",k:["malostransk*"],p:[50.0880,14.4036]},
+  {n:"Vzlet (Vosto5)",k:["vzlet","vosto5"],p:[50.0712,14.4498]},
+  {n:"Vyšehrad",k:["vysehrad"],p:[50.0645,14.4182]},
+  {n:"Divadlo X10",k:["x10"],p:[50.0805,14.4254]},
+  {n:"Žižkovské divadlo J. C.",k:["zizkovske*","cimrman*","zdjc"],p:[50.0838,14.4478]},
+  {n:"Viničná 7 (Biologické čtvrtky)",k:["vinicn*","bioctvrtky"],p:[50.0712,14.4228]},
+  {n:"Reduta Jazz Club",k:["reduta"],p:[50.0817,14.4183]},
+  {n:"Rock Café",k:["rock cafe","rockcafe"],p:[50.0820,14.4194]},
+  {n:"Bio Oko",k:["bio oko","biooko"],p:[50.0999,14.4312]},
+  {n:"Galerie Rudolfinum",k:["rudolfin*"],p:[50.0899,14.4153]},
+  {n:"DOX",k:["dox"],p:[50.1066,14.4487]},
+  {n:"Štefánikova hvězdárna",k:["stefanikov*","petrin*"],p:[50.0813,14.3990]},
+  {n:"Hvězdárna Ďáblice",k:["dablic*"],p:[50.1336,14.4695]},
+  {n:"Planetárium Praha",k:["planetari*","planetum"],p:[50.1053,14.4297]},
+];
+const bezd=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const kl=new Map();
+function poloha(a){
+  const t=` ${bezd(a.misto)} ${a.zdroj} `;
+  if(kl.has(t)) return kl.get(t);
+  const m=MISTA.find(m=>m.k.some(k=>new RegExp(k.endsWith("*")?`(^|[^a-z0-9])${k.slice(0,-1)}`:`(^|[^a-z0-9])${k}($|[^a-z0-9])`).test(t)))||null;
+  kl.set(t,m); return m;
+}
+let MAPA=null, VRSTVA=null;
+function nactiLeaflet(){
+  return new Promise((ok,chyba)=>{
+    if(window.L) return ok();
+    const c=document.createElement("link"); c.rel="stylesheet";
+    c.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"; document.head.appendChild(c);
+    const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+    s.onload=ok; s.onerror=chyba; document.head.appendChild(s);
+  });
+}
+function kreslitMapu(){
+  if(!MAPA||document.getElementById("mapa").hidden) return;
+  const v=AKCE.filter(a=>zaklad(a)&&vyber(a)), sk=new Map(); let bez=0;
+  v.forEach(a=>{const m=poloha(a); if(!m){bez++;return;} if(!sk.has(m)) sk.set(m,[]); sk.get(m).push(a);});
+  VRSTVA.clearLayers();
+  const t=dnes();
+  sk.forEach((xs,m)=>{
+    xs.sort((a,b)=>(a.datum<t?t:a.datum).localeCompare(b.datum<t?t:b.datum)||(a.cas||"99").localeCompare(b.cas||"99"));
+    const r=Math.round(Math.min(40,20+Math.sqrt(xs.length)*3));
+    const ik=L.divIcon({className:"",html:`<div class="pin" style="width:${r}px;height:${r}px">${xs.length}</div>`,iconSize:[r,r],iconAnchor:[r/2,r/2]});
+    const html=`<h4>${esc(m.n)}</h4><ul>${xs.slice(0,15).map(a=>`<li><span class="mono">${kratce(a.datum<t?t:a.datum)} ${a.cas||""}</span><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></li>`).join("")}${xs.length>15?`<li>… a dalších ${xs.length-15}</li>`:""}</ul>`;
+    L.marker(m.p,{icon:ik,title:m.n}).bindPopup(html,{maxWidth:300}).addTo(VRSTVA);
+  });
+  const vyb=S.sel==="vse"?"všechny dny":S.sel==="nove"?"nové akce":S.sel==="vikend"?"víkend":`${DNY[dow(S.sel)]} ${kratce(S.sel)}`;
+  document.getElementById("mapinfo").textContent=`${v.length-bez} akcí na ${sk.size} místech · ${vyb}, podle filtrů${bez?` · ${bez} bez polohy`:""} · polohy jsou přibližné`;
+}
+async function otevritMapu(){
+  const w=document.getElementById("mapa"); w.hidden=false; document.body.style.overflow="hidden";
+  try{ await nactiLeaflet(); }catch(e){ document.getElementById("mapinfo").textContent="Mapu se nepodařilo načíst."; return; }
+  if(!MAPA){
+    MAPA=L.map("mapel",{zoomControl:true}).setView([50.087,14.43],13);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(MAPA);
+    VRSTVA=L.layerGroup().addTo(MAPA);
+  }
+  setTimeout(()=>MAPA.invalidateSize(),0);
+  kreslitMapu();
+}
+function zavritMapu(){ document.getElementById("mapa").hidden=true; document.body.style.overflow=""; }
+document.getElementById("mapBtn").onclick=otevritMapu;
+document.getElementById("mapClose").onclick=zavritMapu;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") zavritMapu(); });
 
 async function start(){
   try{

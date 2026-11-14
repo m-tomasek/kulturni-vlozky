@@ -6,11 +6,12 @@
 # Plány (input "job"; výchozí je sber):
 #   1) denně v 05:13, input job = sber (nebo nechat výchozí)
 #   2) denně v 12:37, input job = hlidac
+# Ruční běh s input job = snapshot stáhne stránky z nastroje/pruzkum.txt (artefakt raw/).
 spec:
   inputs:
     job:
       default: sber
-      options: [sber, hlidac]
+      options: [sber, hlidac, snapshot]
 ---
 workflow:
   rules:
@@ -24,8 +25,7 @@ stages: [sber, nasazeni]
 sber:
   stage: sber
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && "$[[ inputs.job ]]" == "sber"'
-    - if: '$CI_PIPELINE_SOURCE =~ /^(web|api)$/'
+    - if: '"$[[ inputs.job ]]" == "sber"'
   before_script:
     - apt-get update -qq && apt-get install -y -qq git curl >/dev/null
     - pip install -q -r requirements.txt
@@ -55,7 +55,7 @@ sber:
 hlidac:
   stage: sber
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && "$[[ inputs.job ]]" == "hlidac"'
+    - if: '"$[[ inputs.job ]]" == "hlidac"'
   script:
     # selže (a GitLab pošle e-mail), pokud jsou data starší než 30 h
     - |
@@ -68,11 +68,22 @@ hlidac:
       sys.exit(1 if h > 30 else 0)
       PY
 
+snapshot:
+  stage: sber
+  rules:
+    - if: '"$[[ inputs.job ]]" == "snapshot"'
+  script:
+    - pip install -q requests pyyaml beautifulsoup4 lxml
+    - python nastroje/snapshot.py --pruzkum
+    - python nastroje/prohlidni.py
+  artifacts:
+    paths: [raw]
+    expire_in: 7 days
+
 pages:
   stage: nasazeni
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && "$[[ inputs.job ]]" == "sber"'
-    - if: '$CI_PIPELINE_SOURCE =~ /^(web|api)$/'
+    - if: '"$[[ inputs.job ]]" == "sber"'
   needs:
     - job: sber
       artifacts: true

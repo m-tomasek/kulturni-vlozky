@@ -14,18 +14,17 @@ import yaml
 
 KOREN = pathlib.Path(__file__).resolve().parent.parent
 RAW = KOREN / "raw"
-UA = "Mozilla/5.0 (X11; Linux x86_64) KulturniVlozky/0.1 (+https://github.com/m-tomasek/kulturni-vlozky)"
+UA = "Mozilla/5.0 (X11; Linux x86_64) KulturniVlozky/0.1 (+https://gitlab.com/michal.tomasek/kulturni-vlozky)"
 
-# Doplňkové adresy jen pro průzkum (hotové kalendářové exporty apod.)
-PRUZKUM = {
-    "improliga-ical": "https://improliga.cz/kalendar-predstaveni/?ical=1",
-    "improliga-api": "https://improliga.cz/wp-json/tribe/events/v1/events?per_page=50",
-    "improliga-feed": "https://improliga.cz/feed/",
-    "alta-program": "https://www.altart.cz/program/",
-    "alta-goout": "https://goout.net/cs/studio-alta/vzwnn/events/",
-    "alfred-program": "https://www.alfredvedvore.cz/program/",
-    "hrdinu-cs": "https://studiohrdinu.cz/program/",
-}
+# Doplňkové adresy jen pro průzkum: soubor nastroje/pruzkum.txt, řádek "název url".
+# S parametrem --pruzkum se stahují jen tyto adresy (bez zdrojů ze zdroje.yml).
+PRUZKUM = {}
+_soubor = KOREN / "nastroje" / "pruzkum.txt"
+if _soubor.exists():
+    for _r in _soubor.read_text(encoding="utf-8").splitlines():
+        if _r.strip() and not _r.startswith("#"):
+            _n, _u = _r.split(None, 1)
+            PRUZKUM[_n] = _u.strip()
 
 
 def posun_mesic(dnes, o):
@@ -56,18 +55,20 @@ def main():
     cfg = yaml.safe_load((KOREN / "zdroje.yml").read_text(encoding="utf-8"))
     report = []
     ulohy = []
-    for z in cfg["zdroje"]:
+    for z in ([] if "--pruzkum" in sys.argv else cfg["zdroje"]):
         for i, u in enumerate(z["urls"]):
             ulohy.append((f"{z['id']}-{i}", rozbal(u, dnes)))
     ulohy += list(PRUZKUM.items())
     for nazev, url in ulohy:
         try:
             kod, obsah = stahni(url)
-            pripona = "json" if url.endswith("per_page=50") else "html"
+            pripona = "json" if ("json" in nazev or url.endswith("per_page=50")) else "html"
             if "ical" in nazev:
                 pripona = "ics"
             if "feed" in nazev:
                 pripona = "xml"
+            if nazev.endswith("-js"):
+                pripona = "js"
             if "strana" in nazev:
                 pripona = "txt"
             (RAW / f"{nazev}.{pripona}").write_bytes(obsah)
