@@ -266,6 +266,10 @@ def main():
 
     minule_data = nacti_json(DATA / "akce.json", {"akce": [], "meta": {}})
     zdravi = nacti_json(DATA / "zdravi.json", {})
+    # vypnuté (aktivni: false) nebo smazané zdroje: pryč z přehledu i s jejich akcemi
+    aktivni = {z["id"] for z in cfg["zdroje"] if z.get("aktivni", True)}
+    zdravi = {k: v for k, v in zdravi.items() if k in aktivni}
+    minule_data["akce"] = [a for a in minule_data.get("akce", []) if a.get("zdroj") in aktivni]
     mista_cache = nacti_json(DATA / "mista.json", {})
     stahni = vytvor_stahovac()
 

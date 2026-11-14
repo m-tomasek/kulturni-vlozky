@@ -186,7 +186,7 @@ zdroje:
   - id: planetum
     nazev: Planetárium a hvězdárny
     typ: primarni
-    aktivni: true
+    aktivni: false
     urls:
       - https://www.planetum.cz/program
 
