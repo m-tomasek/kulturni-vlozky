@@ -137,6 +137,74 @@ footer li{break-inside:avoid;padding:1px 0}
 footer .bad{color:var(--sold)}
 footer .go{font-size:10.5px;color:var(--faint);margin-left:4px}
 @media (max-width:640px){footer ul{columns:2}}
+/* přepínač zobrazení */
+.pohled{display:inline-flex;padding:2px;border:1px solid var(--rule-strong);border-radius:999px;background:var(--panel)}
+.pohled button{font-family:var(--mono);font-size:var(--s-1);padding:3px 11px;border-radius:999px;color:var(--muted)}
+.pohled button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+body.kal .page{max-width:1180px}
+body.kal .days{display:none}
+body.kal .bar{padding-top:12px}
+
+/* kalendář */
+#kal{margin-top:22px}
+.khlava{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.khlava h2{margin:0;font-weight:850;font-stretch:70%;font-size:var(--s2);text-transform:uppercase;line-height:1;min-width:8.5em}
+.khlava h2 span{font-weight:300}
+.knav{display:inline-flex;gap:4px}
+.knav button,.kdnes{width:34px;height:34px;border:1px solid var(--rule-strong);border-radius:8px;background:var(--panel);font-size:1.1rem;line-height:1}
+.kdnes{width:auto;padding:0 12px;font-size:var(--s-1);font-family:var(--mono)}
+.knav button:disabled{opacity:.35;cursor:default}
+.ksouhrn{flex:1 1 220px;font-size:var(--s-1);color:var(--muted);text-align:right}
+.kobsah{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:start}
+.kmrizka{position:sticky;top:96px}
+.ktyden{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.kdny{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 2px 4px}
+.kdny span:nth-child(n+6){color:var(--ink)}
+.kr+.kr{margin-top:6px}
+.kd{position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;
+  aspect-ratio:1/0.92;min-height:62px;padding:7px 8px 8px;border-radius:10px;border:1px solid var(--rule);
+  background:color-mix(in srgb,var(--accent) calc(var(--h,0)*1%),var(--panel));transition:border-color .12s,transform .12s}
+.kd:hover:not(:disabled){border-color:var(--rule-strong)}
+.kd.we{border-color:var(--rule-strong)}
+.kd .kn{font-weight:800;font-stretch:78%;font-size:1.25rem;line-height:1}
+.kd .kc{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.kd .kb{display:flex;width:100%;height:4px;border-radius:2px;overflow:hidden;background:var(--rule)}
+.kd .kb i{display:block;height:100%}
+.kd .kx{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.kd.dnes .kn{color:var(--accent)}
+.kd.dnes{box-shadow:inset 0 0 0 1px var(--accent)}
+.kd[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
+.kd:disabled{cursor:default;background:transparent;border-style:dashed}
+.kd:disabled .kn{color:var(--faint);font-weight:500}
+.kd.prazdna{visibility:hidden}
+.klegenda{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:var(--s-1);color:var(--muted)}
+.klegenda .st{display:inline-flex;gap:3px}
+.klegenda .st i{width:16px;height:10px;border-radius:3px;border:1px solid var(--rule)}
+.klegenda .kx{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:8px}
+.kagenda .dayhead{margin-top:0}
+.kagenda .dnav{display:inline-flex;gap:4px;margin-left:auto}
+.kagenda .dnav button{width:30px;height:30px;border:1px solid var(--rule);border-radius:8px;background:var(--panel)}
+.kg{display:flex;align-items:baseline;gap:8px;margin:18px 0 6px;font-family:var(--mono);font-size:var(--s-1);font-weight:500;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.kg b{font-weight:500;color:var(--ink)}
+.kagenda details{margin-top:18px}
+.kagenda summary{cursor:pointer;font-size:var(--s-1);color:var(--muted);padding:6px 0}
+.kagenda summary b{color:var(--ink);font-weight:600}
+.kagenda .ev{grid-template-columns:52px 1fr}
+.kagenda .ev .acts{grid-column:2;margin-top:4px}
+@media (max-width:900px){
+  .kobsah{grid-template-columns:1fr;gap:18px}
+  .kmrizka{position:static}
+  .ksouhrn{text-align:left;flex-basis:100%;order:3}
+}
+@media (max-width:520px){
+  .ktyden{gap:3px}.kr+.kr{margin-top:3px}
+  .kd{min-height:46px;aspect-ratio:auto;padding:5px 5px 6px;border-radius:8px}
+  .kd .kn{font-size:1rem}
+  .kd .kc{font-size:10px}
+  .kd .kx{top:5px;right:5px;width:6px;height:6px}
+}
+
 /* mapa */
 .topr{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .mapbtn{font-family:var(--mono);font-size:var(--s-1);padding:4px 10px;border:1px solid var(--rule-strong);border-radius:999px;background:var(--panel)}
@@ -162,7 +230,12 @@ footer .go{font-size:10.5px;color:var(--faint);margin-left:4px}
 <div class="page">
   <header class="top">
     <div><h1>Kulturní <span>vložky</span></h1><p class="pod">kulturní program v Praze na jednom místě</p></div>
-    <div class="topr"><p id="meta">načítám…</p><button class="mapbtn" id="mapBtn" aria-controls="mapa">Mapa</button></div>
+    <div class="topr"><p id="meta">načítám…</p>
+      <div class="pohled" role="tablist" aria-label="Zobrazení">
+        <button role="tab" id="tabSeznam" aria-selected="true" aria-controls="list">Seznam</button>
+        <button role="tab" id="tabKal" aria-selected="false" aria-controls="kal">Kalendář</button>
+      </div>
+      <button class="mapbtn" id="mapBtn" aria-controls="mapa">Mapa</button></div>
   </header>
 
   <div class="bar">
@@ -180,7 +253,8 @@ footer .go{font-size:10.5px;color:var(--faint);margin-left:4px}
 
   <div class="alert" id="alert" hidden></div>
   <p id="stav" class="sr" role="status" aria-live="polite"></p>
-  <main id="list"></main>
+  <main id="list" role="tabpanel" aria-labelledby="tabSeznam"></main>
+  <section id="kal" role="tabpanel" aria-labelledby="tabKal" hidden></section>
 
   <footer>
     <h2>Sledované zdroje</h2>
@@ -202,7 +276,11 @@ const MES2=["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj"
 const PASMO=21; // kolik dní ukazovat v pásu
 const STROP=400; // kolik akcí vykreslit najednou (zbytek po kliknutí)
 
-const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false, vseRadky:false};
+const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false, vseRadky:false,
+  pohled:"seznam", mesic:"", kalDen:""};
+const MESICE=["leden","únor","březen","duben","květen","červen","červenec","srpen","září","říjen","listopad","prosinec"];
+const MESL=["lednu","únoru","březnu","dubnu","květnu","červnu","červenci","srpnu","září","říjnu","listopadu","prosinci"];
+const MESG=["ledna","února","března","dubna","května","června","července","srpna","září","října","listopadu","prosince"];
 const GOOUT="goout";
 let AKCE=[], META={};
 
@@ -315,7 +393,7 @@ function kreslitSeznam(){
   }).join("")+(celkem>v.length?`<p class="nic"><button class="mapbtn" id="vic">Zobrazit zbylých ${celkem-v.length} akcí</button></p>`:"");
   const vic=document.getElementById("vic"); if(vic) vic.onclick=()=>{S.vseRadky=true;kreslitSeznam();};
 }
-function vse(){ S.vseRadky=false; kreslitDny(); kreslitSeznam(); kreslitMapu();
+function vse(){ S.vseRadky=false; kreslitDny(); if(S.pohled==="kal") kreslitKal(); else kreslitSeznam(); kreslitMapu();
   const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0)+(S.bezGoout?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
@@ -340,6 +418,138 @@ function ovladani(){
   const days=document.getElementById("days");
   days.onclick=e=>{const b=e.target.closest("[data-sel]");if(!b)return;S.sel=b.dataset.sel;vse();window.scrollTo({top:0,behavior:"smooth"});};
   days.onchange=e=>{if(e.target.id==="pick"&&e.target.value){S.sel=e.target.value;vse();}};
+}
+
+/* ---------- kalendář ----------
+   Měsíční mřížka: odstín dne = kolik akcí ten den začíná (podle filtrů), proužek = poměr typů, tečka = nové akce.
+   Výstavy a vícedenní akce se do počtu nepočítají (byly by v každém dni) – jsou v programu dne zvlášť. */
+const vicedenni=a=>a.konec_datum&&a.konec_datum!==a.datum;
+const akci=n=>`${n} ${n===1?"akce":n>1&&n<5?"akce":"akcí"}`;
+const mesicPlus=(m,n)=>{const [r,x]=m.split("-").map(Number);const d=new Date(r,x-1+n,1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;};
+const poslDen=()=>AKCE.reduce((m,a)=>a.datum>m?a.datum:m,dnes());
+const CASTI=[["Přes den",a=>a.cas&&a.cas<"17:00"],["Večer",a=>a.cas>="17:00"&&a.cas<"21:00"],
+  ["Pozdě večer a noc",a=>a.cas>="21:00"],["Čas neuveden",a=>!a.cas]];
+
+function prepniPohled(p, fokus){
+  S.pohled=p; const kal=p==="kal";
+  document.body.classList.toggle("kal",kal);
+  document.getElementById("list").hidden=kal; document.getElementById("kal").hidden=!kal;
+  document.getElementById("tabSeznam").setAttribute("aria-selected",!kal);
+  document.getElementById("tabKal").setAttribute("aria-selected",kal);
+  if(kal){
+    const t=dnes(); S.kalDen=/^\d{4}/.test(S.sel)&&S.sel>=t?S.sel:(S.kalDen&&S.kalDen>=t?S.kalDen:t);
+    S.mesic=S.kalDen.slice(0,7);
+  }
+  try{ localStorage.setItem("pohled",p); }catch(e){}
+  try{ history.replaceState(null,"",kal?"#kalendar":location.pathname+location.search); }catch(e){}
+  vse();
+  if(fokus&&kal) document.querySelector('#kal .kd[tabindex="0"]')?.focus({preventScroll:true});
+}
+
+function vyberDen(d, fokus){
+  const t=dnes(), posl=poslDen();
+  if(d<t) d=t; if(d>posl) d=posl;
+  S.kalDen=d; S.sel=d; S.mesic=d.slice(0,7);
+  vse();
+  if(fokus) document.querySelector(`#kal .kd[data-d="${d}"]`)?.focus({preventScroll:true});
+}
+
+function kreslitKal(){
+  const el=document.getElementById("kal"), t=dnes(), posl=poslDen();
+  if(!S.kalDen) S.kalDen=t; if(!S.mesic) S.mesic=S.kalDen.slice(0,7);
+  const [r,m]=S.mesic.split("-").map(Number), dniMes=new Date(r,m,0).getDate();
+  const prvni=`${S.mesic}-01`, posledni=`${S.mesic}-${String(dniMes).padStart(2,"0")}`;
+  const z=AKCE.filter(zaklad);
+  const dny={};
+  for(const a of z){
+    if(vicedenni(a)||a.datum<prvni||a.datum>posledni) continue;
+    const x=(dny[a.datum]??={n:0,typy:{},nove:0}); x.n++; x.typy[a.typ]=(x.typy[a.typ]||0)+1; if(nova(a)) x.nove++;
+  }
+  const hodnoty=Object.values(dny).map(x=>x.n), max=Math.max(1,...hodnoty), celkem=hodnoty.reduce((s,n)=>s+n,0);
+  const nej=Object.entries(dny).sort((a,b)=>b[1].n-a[1].n)[0];
+  // odstín: odmocnina, ať jsou rozdíly vidět i mezi slabšími dny; strop 34 % barvy
+  const odstin=n=>n?Math.round(6+28*Math.sqrt(n/max)):0;
+
+  let mrizka=`<div class="ktyden kdny" aria-hidden="true">${["po","út","st","čt","pá","so","ne"].map(d=>`<span>${d}</span>`).join("")}</div>`;
+  const posun=(dow(prvni)+6)%7; let bunky=[];
+  for(let i=0;i<posun;i++) bunky.push(`<span class="kd prazdna" role="gridcell" aria-hidden="true"></span>`);
+  for(let den=1;den<=dniMes;den++){
+    const d=`${S.mesic}-${String(den).padStart(2,"0")}`, x=dny[d], w=dow(d);
+    const mimo=d<t||d>posl, n=x?x.n:0, vyb=d===S.kalDen;
+    const typy=x?Object.entries(x.typy).sort((a,b)=>b[1]-a[1]):[];
+    const prouzek=typy.map(([k,c])=>`<i style="width:${100*c/n}%;background:var(--c-${k})"></i>`).join("");
+    const popis=`${d===t?"dnes, ":d===plus(t,1)?"zítra, ":""}${DNY[w]} ${den}. ${MESG[m-1]}, ${mimo?"bez programu":akci(n)}${x&&x.nove?`, z toho ${x.nove} nových`:""}`;
+    bunky.push(`<button class="kd${w===0||w===6?" we":""}${d===t?" dnes":""}" role="gridcell" data-d="${d}" style="--h:${mimo?0:odstin(n)}"
+      aria-selected="${vyb}" tabindex="${vyb?0:-1}" aria-label="${popis}" ${mimo?"disabled":""}>
+      <span class="kn">${den}</span>${x&&x.nove?`<i class="kx"></i>`:""}
+      ${mimo?"":`<span class="kc">${n||"–"}</span><span class="kb">${prouzek}</span>`}</button>`);
+  }
+  while(bunky.length%7) bunky.push(`<span class="kd prazdna" role="gridcell" aria-hidden="true"></span>`);
+  // týdny, které celé proběhly, se nekreslí – mřížka v aktuálním měsíci začíná týdnem s dneškem
+  const pondeli=plus(t,-((dow(t)+6)%7));
+  for(let i=0;i<bunky.length;i+=7){
+    const konecTydne=plus(prvni,i-posun+6);
+    if(konecTydne<pondeli) continue;
+    mrizka+=`<div class="ktyden kr" role="row">${bunky.slice(i,i+7).join("")}</div>`;
+  }
+
+  const legenda=`<div class="klegenda" aria-hidden="true">méně <span class="st">${[0,10,20,34].map(h=>`<i style="background:color-mix(in srgb,var(--accent) ${h}%,var(--panel))"></i>`).join("")}</span> víc akcí
+    <i class="kx"></i> nové za týden</div>`;
+  const souhrn=celkem?`V ${MESL[m-1]} ${akci(celkem)} · nejvíc ${DNY[dow(nej[0])]} ${kratce(nej[0])} (${nej[1].n})`:"V tomto měsíci nic podle filtrů";
+
+  el.innerHTML=`<div class="khlava">
+      <h2>${MESICE[m-1]} <span>${r}</span></h2>
+      <div class="knav"><button id="kPred" aria-label="Předchozí měsíc" ${S.mesic<=t.slice(0,7)?"disabled":""}>‹</button>
+        <button id="kDal" aria-label="Další měsíc" ${S.mesic>=posl.slice(0,7)?"disabled":""}>›</button></div>
+      <button class="kdnes" id="kDnes">Dnes</button>
+      <span class="ksouhrn">${souhrn}</span></div>
+    <div class="kobsah">
+      <div class="kmrizka"><div role="grid" aria-label="${MESICE[m-1]} ${r}" id="kGrid">${mrizka}</div>${legenda}</div>
+      <div class="kagenda" id="kAgenda">${agendaDne(S.kalDen,z)}</div>
+    </div>`;
+  el.querySelector("#kPred").onclick=()=>{S.mesic=mesicPlus(S.mesic,-1);const p=`${S.mesic}-01`;vyberDen(p<t?t:p);};
+  el.querySelector("#kDal").onclick=()=>{S.mesic=mesicPlus(S.mesic,1);vyberDen(`${S.mesic}-01`);};
+  el.querySelector("#kDnes").onclick=()=>vyberDen(t,true);
+  el.querySelector("#kAgenda .dnav")?.addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(b) vyberDen(plus(S.kalDen,+b.dataset.k));});
+}
+
+function agendaDne(d, z){
+  const t=dnes(), v=z.filter(a=>probiha(a,d));
+  const jedn=v.filter(a=>!vicedenni(a)).sort((a,b)=>(a.cas||"99").localeCompare(b.cas||"99"));
+  const dlouhe=v.filter(vicedenni).sort((a,b)=>konec(a).localeCompare(konec(b)));
+  document.getElementById("stav").textContent=`${DNY[dow(d)]} ${kratce(d)}: ${akci(jedn.length)}${dlouhe.length?` a ${dlouhe.length} probíhajících`:""}.`;
+  const rel=d===t?"dnes":d===plus(t,1)?"zítra":"";
+  let h=`<div class="dayhead"><h2>${DNY[dow(d)]} <span class="dt">${kratce(d)}</span></h2>
+    <span class="n">${[rel,akci(jedn.length)].filter(Boolean).join(" · ")}</span>
+    <span class="dnav"><button data-k="-1" aria-label="Předchozí den" ${d<=t?"disabled":""}>‹</button><button data-k="1" aria-label="Další den" ${d>=poslDen()?"disabled":""}>›</button></span></div>`;
+  if(!jedn.length&&!dlouhe.length) return h+`<p class="nic">Tento den nic – zkus jiný den nebo uvolni filtry.</p>`;
+  for(const [nazev,f] of CASTI){
+    const xs=jedn.filter(f); if(!xs.length) continue;
+    h+=`<h3 class="kg">${nazev} <b>${xs.length}</b></h3><div class="list">${xs.map(radek).join("")}</div>`;
+  }
+  if(dlouhe.length) h+=`<details${jedn.length?"":" open"}><summary>Probíhá i tento den: výstavy a vícedenní akce <b>${dlouhe.length}</b></summary>
+    <div class="list">${dlouhe.map(radek).join("")}</div></details>`;
+  return h;
+}
+
+function ovladaniKal(){
+  document.getElementById("tabSeznam").onclick=()=>prepniPohled("seznam");
+  document.getElementById("tabKal").onclick=()=>prepniPohled("kal",true);
+  document.querySelector(".pohled").onkeydown=e=>{ if(e.key==="ArrowLeft"||e.key==="ArrowRight"){ e.preventDefault();
+    const dalsi=S.pohled==="kal"?"seznam":"kal"; prepniPohled(dalsi); document.getElementById(dalsi==="kal"?"tabKal":"tabSeznam").focus(); } };
+  const kal=document.getElementById("kal");
+  kal.addEventListener("click",e=>{ const b=e.target.closest(".kd[data-d]"); if(!b||b.disabled) return;
+    vyberDen(b.dataset.d, true);
+    if(matchMedia("(max-width:900px)").matches) document.getElementById("kAgenda").scrollIntoView({behavior:"smooth",block:"start"}); });
+  kal.addEventListener("keydown",e=>{ const b=e.target.closest(".kd[data-d]"); if(!b) return;
+    const krok={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];
+    let d=null;
+    if(krok) d=plus(b.dataset.d,krok);
+    else if(e.key==="Home") d=plus(b.dataset.d,-((dow(b.dataset.d)+6)%7));
+    else if(e.key==="End") d=plus(b.dataset.d,6-((dow(b.dataset.d)+6)%7));
+    else if(e.key==="PageUp"||e.key==="PageDown"){ const m=mesicPlus(b.dataset.d.slice(0,7),e.key==="PageUp"?-1:1);
+      d=`${m}-${String(Math.min(+b.dataset.d.slice(8),new Date(+m.slice(0,4),+m.slice(5),0).getDate())).padStart(2,"0")}`; }
+    if(d){ e.preventDefault(); vyberDen(d,true); } });
 }
 
 /* ---------- mapa ---------- */
@@ -452,7 +662,9 @@ async function start(){
     const brzy=casti.filter(c=>c.od<=hranice), pozdeji=casti.filter(c=>c.od>hranice);
     (await Promise.all([nacti(p.prubezne.soubor), ...brzy.map(c=>nacti(c.soubor))])).forEach(pridej);
     S.sel=t;
-    ovladani(); vse();
+    ovladani(); ovladaniKal();
+    let chci="seznam"; try{ chci=location.hash==="#kalendar"?"kal":(localStorage.getItem("pohled")||"seznam"); }catch(e){}
+    if(chci==="kal") prepniPohled("kal"); else vse();
     popisMeta(scen, p.celkem, pozdeji.length?"načítám další týdny…":"");
     const zpr=[], stari=META.vygenerovano?(Date.now()-new Date(META.vygenerovano))/36e5:999;
     if(stari>30) zpr.push(`<b>Data nejsou čerstvá</b> – poslední sběr proběhl před ${Math.round(stari/24)} dny.`);
