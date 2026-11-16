@@ -49,6 +49,18 @@ def odvod_rok(den, mesic, dnes=None):
     return min(kandidati, key=lambda d: abs((d - dnes).days) if d >= dnes - dt.timedelta(days=120) else 10**6)
 
 
+def zacatek_pred(den, mesic, konec):
+    """Začátek rozsahu bez roku: poslední datum den.mesic., které není po konci rozsahu."""
+    for rok in (konec.year, konec.year - 1):
+        try:
+            d = dt.date(rok, mesic, den)
+        except ValueError:
+            continue
+        if d <= konec:
+            return d
+    return konec
+
+
 def cas(s):
     """'19:30' / '19.30' / '19.00' -> 'HH:MM' nebo None."""
     m = re.search(r"\b(\d{1,2})[:.](\d{2})\b", s or "")

@@ -36,13 +36,14 @@
   }
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:190px}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--s0)/1.5 var(--sans);-webkit-font-smoothing:antialiased}
 a{color:inherit;text-underline-offset:.18em;text-decoration-thickness:1px}
 button,input,select{font:inherit;color:inherit}
 button{background:none;border:0;padding:0;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .mono{font-family:var(--mono)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 .page{max-width:880px;margin:0 auto;padding:28px 16px 80px}
 
@@ -66,7 +67,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .chip .c{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
 .chip .c i{width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .chip.we{background:var(--weekend)}
-.chip.empty{opacity:.45}
+.chip.empty{border-style:dashed}.chip.empty .d{color:var(--muted)}
 .chip.special{min-width:auto;justify-content:center;gap:4px;padding:7px 12px}
 .chip.special .d{font-size:1.02rem;font-stretch:88%;text-transform:uppercase;letter-spacing:.02em}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
@@ -74,6 +75,8 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .sep{flex:0 0 1px;background:var(--rule);margin:6px 4px 18px}
 .datepick{position:relative}
 .datepick input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.datepick:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.datepick.sel{background:var(--accent-soft);border-color:var(--accent)}
 
 .filters{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:0 0 12px}
 .type{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--rule);
@@ -100,7 +103,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 /* seznam */
 .dayhead{display:flex;align-items:baseline;gap:10px;margin:32px 0 6px}
 .dayhead h2{margin:0;font-weight:800;font-stretch:75%;font-size:var(--s2);text-transform:uppercase;line-height:1}
-.dayhead .dt{font-family:var(--mono);font-size:var(--s0);font-weight:500}
+.dayhead .dt{font-family:var(--mono);font-size:var(--s0);font-weight:500;font-stretch:100%;text-transform:none;margin-left:6px}
 .dayhead .n{font-size:var(--s-1);color:var(--muted)}
 .list{background:var(--panel);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
 .ev{display:grid;grid-template-columns:60px 1fr auto;gap:2px 16px;padding:13px 16px;border-top:1px solid var(--rule)}
@@ -124,7 +127,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
   .ev{grid-template-columns:48px 1fr;padding:12px 12px}
   .ev .acts{grid-column:2;margin-top:6px}
 }
-.empty{padding:48px 0;color:var(--muted);text-align:center}
+.nic{padding:48px 0;color:var(--muted);text-align:center}
 
 footer{margin-top:56px;font-size:var(--s-1);color:var(--muted)}
 footer h2{font-size:var(--s-1);font-family:var(--mono);font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin:0 0 8px}
@@ -174,6 +177,7 @@ footer .bad{color:var(--sold)}
   </div>
 
   <div class="alert" id="alert" hidden></div>
+  <p id="stav" class="sr" role="status" aria-live="polite"></p>
   <main id="list"></main>
 
   <footer>
@@ -182,7 +186,7 @@ footer .bad{color:var(--sold)}
   </footer>
 </div>
 
-<div class="mapwrap" id="mapa" hidden role="dialog" aria-label="Mapa míst">
+<div class="mapwrap" id="mapa" hidden role="dialog" aria-modal="true" aria-label="Mapa míst">
   <div class="maphead"><b>Mapa</b><span id="mapinfo"></span><button id="mapClose">Zavřít</button></div>
   <div id="mapel"></div>
 </div>
@@ -194,13 +198,14 @@ const DNY=["neděle","pondělí","úterý","středa","čtvrtek","pátek","sobota
 const DNY2=["ne","po","út","st","čt","pá","so"];
 const MES2=["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj","lis","pro"];
 const PASMO=21; // kolik dní ukazovat v pásu
+const STROP=400; // kolik akcí vykreslit najednou (zbytek po kliknutí)
 
-const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false};
+const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false, vseRadky:false};
 const GOOUT="goout";
 let AKCE=[], META={};
 
-function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null} }
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const odkaz=u=>/^https?:\/\//i.test(u||"")?esc(u):"#"; // cizí data: do href jen http(s)
 const dnes=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Prague"}).format(new Date());
 const plus=(d,n)=>{const x=new Date(d+"T12:00:00");x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
 const dow=d=>new Date(d+"T12:00:00").getDay();
@@ -232,7 +237,7 @@ function gcal(a){
   const d=a.datum.replaceAll("-",""),pad=n=>String(n).padStart(2,"0");
   if(!a.cas){ p.set("dates",`${d}/${plus(konec(a),1).replaceAll("-","")}`); }
   else{ let [h,m]=a.cas.split(":").map(Number),kd=konec(a),kh,km;
-    if(a.konec_cas){[kh,km]=a.konec_cas.split(":").map(Number);} else {kh=h+2;km=m;if(kh>=24){kh-=24;kd=plus(kd,1);}}
+    if(a.konec_cas){[kh,km]=a.konec_cas.split(":").map(Number);if(!a.konec_datum&&a.konec_cas<a.cas)kd=plus(kd,1);} else {kh=h+2;km=m;if(kh>=24){kh-=24;kd=plus(kd,1);}}
     p.set("dates",`${d}T${pad(h)}${pad(m)}00/${kd.replaceAll("-","")}T${pad(kh)}${pad(km)}00`); }
   p.set("details",[a.url&&`Info: ${a.url}`,a.vstupenky&&a.vstupenky!==a.url&&`Vstupenky: ${a.vstupenky}`,a.cena&&`Cena: ${a.cena}`].filter(Boolean).join("\n"));
   return "https://calendar.google.com/calendar/render?"+p;
@@ -252,15 +257,17 @@ function kreslitDny(){
     const maNove=n.some(nova), w=dow(d);
     const popis = i===0?"dnes": i===1?"zítra": DNY2[w];
     h+=`<button class="chip ${w===0||w===6?"we":""} ${n.length?"":"empty"}" data-sel="${d}" aria-pressed="${S.sel===d}"
-      aria-label="${DNY[w]} ${kratce(d)}, ${n.length} akcí">
+      aria-label="${i<2?popis+", ":""}${DNY[w]} ${kratce(d)}, ${n.length} akcí">
       <span class="w">${popis}</span><span class="d">${+d.slice(8)}${+d.slice(8)===1||i===0?`<small class="mono" style="font-size:10px;font-weight:400;margin-left:3px">${MES2[+d.slice(5,7)-1]}</small>`:""}</span>
       <span class="c">${maNove?"<i></i>":""}${n.length}</span></button>`;
   }
   const mimo = S.sel.match(/^\d{4}/) && S.sel>plus(t,PASMO-1);
-  h+=`<label class="chip special datepick" ${mimo?'aria-pressed="true"':""}><span class="d">${mimo?kratce(S.sel):"Jiný den"}</span><span class="c">${mimo?pocet(S.sel):"📅"}</span>
-    <input type="date" id="pick" min="${t}" max="${posl}" aria-label="Vybrat jiný den"></label>`;
+  h+=`<label class="chip special datepick${mimo?" sel":""}"><span class="d">${mimo?kratce(S.sel):"Jiný den"}</span><span class="c">${mimo?pocet(S.sel):"📅"}</span>
+    <input type="date" id="pick" min="${t}" max="${posl}" aria-label="${mimo?`Vybraný den ${kratce(S.sel)}, změnit`:"Vybrat jiný den"}"></label>`;
   const el=document.getElementById("days"); const sx=el.scrollLeft;
+  const f=document.activeElement, fs=el.contains(f)?(f.id==="pick"?"#pick":f.dataset.sel?`[data-sel="${f.dataset.sel}"]`:null):null;
   el.innerHTML=h; el.scrollLeft=sx;
+  if(fs) el.querySelector(fs)?.focus({preventScroll:true}); // překreslení nesmí sebrat fokus klávesnici
 }
 
 /* ---------- seznam ---------- */
@@ -280,30 +287,33 @@ function radek(a){
   const cas=a.cas||(vice?"celý den":"—");
   const pod=vice?`<small>do ${kratce(a.konec_datum)}</small>`:a.konec_cas?`<small>–${a.konec_cas}</small>`:"";
   return `<article class="ev ${a.stav==="zruseno"?"cancel":""}">
-    <div class="time">${cas}${pod}</div>
-    <div><h3><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h3>
+    <div class="time">${esc(cas)}${pod}</div>
+    <div><h3><a href="${odkaz(a.url||a.vstupenky)}" target="_blank" rel="noopener">${esc(a.nazev)}</a></h3>
       <div class="info">${info.join("")}</div></div>
     <div class="acts">
       <a class="add" href="${gcal(a)}" target="_blank" rel="noopener" title="Přidat do Google Kalendáře">+ kalendář</a>
-      ${a.vstupenky&&a.stav!=="vyprodano"?`<a href="${esc(a.vstupenky)}" target="_blank" rel="noopener">vstupenky</a>`:""}
+      ${a.vstupenky&&a.stav!=="vyprodano"?`<a href="${odkaz(a.vstupenky)}" target="_blank" rel="noopener">vstupenky</a>`:""}
     </div></article>`;
 }
 function kreslitSeznam(){
   const t=dnes(), jeDen=/^\d{4}/.test(S.sel);
-  const v=AKCE.filter(a=>zaklad(a)&&vyber(a));
-  const el=document.getElementById("list");
-  if(!v.length){ el.innerHTML=`<p class="empty">${S.sel==="nove"?"Za posledních 7 dní nic nového nepřibylo.":"Nic tu není – zkus jiný den nebo uvolni filtry."}</p>`; return; }
+  let v=AKCE.filter(a=>zaklad(a)&&vyber(a));
+  const el=document.getElementById("list"), celkem=v.length;
+  document.getElementById("stav").textContent=celkem?`Zobrazeno ${celkem} akcí.`:"Žádná akce neodpovídá výběru.";
+  if(!v.length){ el.innerHTML=`<p class="nic">${S.sel==="nove"?"Za posledních 7 dní nic nového nepřibylo.":"Nic tu není – zkus jiný den nebo uvolni filtry."}</p>`; return; }
   const den=a=>jeDen?S.sel:(a.datum<t?t:a.datum);
   v.sort((a,b)=>den(a).localeCompare(den(b))||(a.cas||"99").localeCompare(b.cas||"99"));
+  if(!S.vseRadky&&v.length>STROP) v=v.slice(0,STROP);
   const skup={}; v.forEach(a=>(skup[den(a)]??=[]).push(a));
   el.innerHTML=Object.entries(skup).map(([d,xs])=>{
     const rel=d===t?"dnes":d===plus(t,1)?"zítra":"";
-    return `<div class="dayhead"><h2>${DNY[dow(d)]}</h2><span class="dt">${kratce(d)}</span>
+    return `<div class="dayhead"><h2>${DNY[dow(d)]} <span class="dt">${kratce(d)}</span></h2>
       <span class="n">${[rel,`${xs.length} ${xs.length===1?"akce":xs.length<5?"akce":"akcí"}`].filter(Boolean).join(" · ")}</span></div>
       <div class="list">${xs.map(radek).join("")}</div>`;
-  }).join("");
+  }).join("")+(celkem>v.length?`<p class="nic"><button class="mapbtn" id="vic">Zobrazit zbylých ${celkem-v.length} akcí</button></p>`:"");
+  const vic=document.getElementById("vic"); if(vic) vic.onclick=()=>{S.vseRadky=true;kreslitSeznam();};
 }
-function vse(){ kreslitDny(); kreslitSeznam(); kreslitMapu();
+function vse(){ S.vseRadky=false; kreslitDny(); kreslitSeznam(); kreslitMapu();
   const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0)+(S.bezGoout?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
@@ -318,7 +328,7 @@ function ovladani(){
   const mista=[...new Map(AKCE.map(a=>[a.zdroj,a.zdroj===GOOUT?"GoOut (vše)":(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
   sel.innerHTML+=mista.map(([k,n])=>`<option value="${k}">${esc(n)}</option>`).join("");
   sel.onchange=()=>{S.misto=sel.value;vse();};
-  document.getElementById("q").oninput=e=>{S.q=e.target.value.trim();vse();};
+  let qT; document.getElementById("q").oninput=e=>{clearTimeout(qT);qT=setTimeout(()=>{S.q=e.target.value.trim();vse();},180);};
   document.getElementById("hideSold").onchange=e=>{S.hideSold=e.target.checked;vse();};
   document.getElementById("bezGoout").onchange=e=>{S.bezGoout=e.target.checked;vse();};
   document.getElementById("when").onchange=e=>{S.kdy=e.target.value;vse();};
@@ -384,8 +394,8 @@ function nactiLeaflet(){
   return new Promise((ok,chyba)=>{
     if(window.L) return ok();
     const c=document.createElement("link"); c.rel="stylesheet";
-    c.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"; document.head.appendChild(c);
-    const s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+    c.href="vendor/leaflet/leaflet.css"; document.head.appendChild(c);
+    const s=document.createElement("script"); s.src="vendor/leaflet/leaflet.js";
     s.onload=ok; s.onerror=chyba; document.head.appendChild(s);
   });
 }
@@ -399,7 +409,7 @@ function kreslitMapu(){
     xs.sort((a,b)=>(a.datum<t?t:a.datum).localeCompare(b.datum<t?t:b.datum)||(a.cas||"99").localeCompare(b.cas||"99"));
     const r=Math.round(Math.min(40,20+Math.sqrt(xs.length)*3));
     const ik=L.divIcon({className:"",html:`<div class="pin" style="width:${r}px;height:${r}px">${xs.length}</div>`,iconSize:[r,r],iconAnchor:[r/2,r/2]});
-    const html=`<h4>${esc(m.n)}</h4><ul>${xs.slice(0,15).map(a=>`<li><span class="mono">${kratce(a.datum<t?t:a.datum)} ${a.cas||""}</span><a href="${esc(a.url||a.vstupenky||"#")}" target="_blank" rel="noopener">${esc(a.nazev)}</a></li>`).join("")}${xs.length>15?`<li>… a dalších ${xs.length-15}</li>`:""}</ul>`;
+    const html=`<h4>${esc(m.n)}</h4><ul>${xs.slice(0,15).map(a=>`<li><span class="mono">${kratce(a.datum<t?t:a.datum)} ${a.cas||""}</span><a href="${odkaz(a.url||a.vstupenky)}" target="_blank" rel="noopener">${esc(a.nazev)}</a></li>`).join("")}${xs.length>15?`<li>… a dalších ${xs.length-15}</li>`:""}</ul>`;
     L.marker(m.p,{icon:ik,title:m.n}).bindPopup(html,{maxWidth:300}).addTo(VRSTVA);
   });
   const vyb=S.sel==="vse"?"všechny dny":S.sel==="nove"?"nové akce":S.sel==="vikend"?"víkend":`${DNY[dow(S.sel)]} ${kratce(S.sel)}`;
@@ -407,6 +417,7 @@ function kreslitMapu(){
 }
 async function otevritMapu(){
   const w=document.getElementById("mapa"); w.hidden=false; document.body.style.overflow="hidden";
+  document.querySelector(".page").inert=true; document.getElementById("mapClose").focus();
   try{ await nactiLeaflet(); }catch(e){ document.getElementById("mapinfo").textContent="Mapu se nepodařilo načíst."; return; }
   if(!MAPA){
     MAPA=L.map("mapel",{zoomControl:true}).setView([50.087,14.43],13);
@@ -416,15 +427,16 @@ async function otevritMapu(){
   setTimeout(()=>MAPA.invalidateSize(),0);
   kreslitMapu();
 }
-function zavritMapu(){ document.getElementById("mapa").hidden=true; document.body.style.overflow=""; }
+function zavritMapu(){ const w=document.getElementById("mapa"); if(w.hidden) return; w.hidden=true; document.body.style.overflow="";
+  document.querySelector(".page").inert=false; document.getElementById("mapBtn").focus(); }
 document.getElementById("mapBtn").onclick=otevritMapu;
 document.getElementById("mapClose").onclick=zavritMapu;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") zavritMapu(); });
 
 async function start(){
   try{
-    const [d,z]=await Promise.all([fetch("data/akce.json",{cache:"no-store"}).then(r=>r.json()),
-      fetch("data/zdravi.json",{cache:"no-store"}).then(r=>r.json()).catch(()=>({}))]);
+    const [d,z]=await Promise.all([fetch("data/akce.json",{cache:"no-cache"}).then(r=>r.json()),
+      fetch("data/zdravi.json",{cache:"no-cache"}).then(r=>r.json()).catch(()=>({}))]);
     META=d.meta||{}; AKCE=(d.akce||[]).filter(a=>konec(a)>=dnes());
     const kdy=META.vygenerovano?new Date(META.vygenerovano).toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):"?";
     document.getElementById("meta").textContent=`${AKCE.length} akcí · ${Object.keys(z).length} scén · aktualizováno ${kdy}`;
@@ -436,7 +448,7 @@ async function start(){
     if(spatne.length) zpr.push(`<b>Nefunguje:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}`);
     if(zpr.length){const al=document.getElementById("alert");al.innerHTML=zpr.join("<br>");al.hidden=false;}
     document.getElementById("sources").innerHTML=Object.values(z).sort((a,b)=>a.nazev.localeCompare(b.nazev,"cs")).map(s=>
-      `<li class="${s.ok?"":"bad"}"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> <span class="mono">${s.ok?s.pocet:"✕"}</span></li>`).join("");
+      `<li class="${s.ok?"":"bad"}"><a href="${odkaz(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> <span class="mono">${s.ok?s.pocet:"✕"}</span></li>`).join("");
   }catch(e){ document.getElementById("meta").textContent="Program se nepodařilo načíst."; console.error(e); }
 }
 start();

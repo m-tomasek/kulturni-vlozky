@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 
 RAW = pathlib.Path(__file__).resolve().parent.parent / "raw"
 DATUM = re.compile(r"\b\d{1,2}\.\s?\d{1,2}\.|\b\d{1,2}\.\s?(led|úno|bře|dub|kvě|čer|črv|srp|zář|říj|lis|pro)|\b\d{4}-\d{2}-\d{2}|"
-                   r"\b(po|út|st|čt|pá|so|ne)\b\.?\s*\d{1,2}\.", re.I)
+                   r"\b(po|út|st|čt|pá|so|ne)\b\.?\s*\d{1,2}\.", re.IGNORECASE)
 
 
 def cesta(el, hloubka=3):
@@ -87,7 +87,7 @@ def prehled(soubor):
     odkazy = []
     for a in s.find_all("a", href=True):
         h = a["href"]
-        if re.search(r"program|akce|kalendar|event|udalost|vystav|porad", h, re.I) and h not in odkazy:
+        if re.search(r"program|akce|kalendar|event|udalost|vystav|porad", h, re.IGNORECASE) and h not in odkazy:
             odkazy.append(h)
     out.append("odkazy na program: " + " ".join(odkazy[:25]))
     if len(odkazy) < 5:

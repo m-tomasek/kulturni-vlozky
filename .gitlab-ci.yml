@@ -1,7 +1,7 @@
 # Denní běh na GitLabu.
-# Spouští se jen z plánu (Build > Pipeline schedules) nebo ručně (Run pipeline).
+# Spouští se jen z plánu (Build > Pipeline schedules) nebo ručně (Run pipeline), a jen na hlavní větvi.
 # Proměnná v Settings > CI/CD > Variables: PROJEKT_TOKEN
-#   (Project access token, role Maintainer, práva api + write_repository; Masked)
+#   (Project access token, role Maintainer, práva api + write_repository; Masked + Protected)
 #   Bez něj se web nasadí, ale data se neuloží zpět do repa (ztratí se paměť změn).
 # Plány (input "job"; výchozí je sber):
 #   1) denně v 05:13, input job = sber (nebo nechat výchozí)
@@ -15,7 +15,7 @@ spec:
 ---
 workflow:
   rules:
-    - if: '$CI_PIPELINE_SOURCE =~ /^(schedule|web|api)$/'
+    - if: '$CI_PIPELINE_SOURCE =~ /^(schedule|web|api)$/ && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
 
 default:
   image: python:3.12-slim
@@ -24,27 +24,29 @@ stages: [sber, nasazeni]
 
 sber:
   stage: sber
+  timeout: 25 minutes
   rules:
     - if: '"$[[ inputs.job ]]" == "sber"'
   before_script:
-    - apt-get update -qq && apt-get install -y -qq git curl >/dev/null
-    - pip install -q -r requirements.txt
+    - apt-get update -qq && apt-get install -y -qq git >/dev/null
+    - pip install -q --root-user-action=ignore -r requirements.txt
   script:
+    # testy logiky (bez sítě): když neprojdou, sběr se nespustí a nic se nepřepíše
+    - python -m unittest discover -s tests
     - python run.py
     - |
       if [ -n "$PROJEKT_TOKEN" ]; then
+        REMOTE="https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
         git config user.name "kulturni-vlozky-bot"
         git config user.email "bot@users.noreply.gitlab.com"
         git add data
-        git commit -m "Data $(TZ=Europe/Prague date +%F) [skip ci]" || echo "beze změn"
-        git push "https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
-        # problémy se zdroji -> issue (přijde e-mail)
-        if [ -s data/problemy.md ]; then
-          curl -s --request POST --header "PRIVATE-TOKEN: ${PROJEKT_TOKEN}" \
-            --data-urlencode "title=Problém se zdroji $(TZ=Europe/Prague date +%F)" \
-            --data-urlencode "description=$(cat data/problemy.md)" \
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/issues" >/dev/null
-        fi
+        git commit -q -m "Data $(TZ=Europe/Prague date +%F) [skip ci]" || echo "beze změn"
+        # mezitím mohl do repa přibýt jiný commit (úprava kódu) – zařadit se za něj
+        git fetch -q "$REMOTE" "${CI_DEFAULT_BRANCH}"
+        git rebase -q FETCH_HEAD
+        git push -q "$REMOTE" "HEAD:${CI_DEFAULT_BRANCH}"
+        # problémy se zdroji -> jedno issue (přijde e-mail); když vše funguje, issue se zavře
+        python nastroje/issue.py
       else
         echo "PROJEKT_TOKEN není nastaven – data se neukládají do repa"
       fi
@@ -73,7 +75,7 @@ snapshot:
   rules:
     - if: '"$[[ inputs.job ]]" == "snapshot"'
   script:
-    - pip install -q requests pyyaml beautifulsoup4 lxml
+    - pip install -q --root-user-action=ignore -r requirements.txt
     - python nastroje/snapshot.py --pruzkum
     - python nastroje/prohlidni.py
   artifacts:
@@ -91,5 +93,7 @@ pages:
     - mkdir -p public/data
     - cp index.html public/
     - cp data/*.json public/data/
+    # mapová knihovna z npm s ověřeným otiskem (web ji nebere z cizího CDN)
+    - python nastroje/leaflet.py public/vendor/leaflet
   artifacts:
     paths: [public]

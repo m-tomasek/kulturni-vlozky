@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from .spolecne import akce, cas, cisty, odvod_rok
+from .spolecne import akce, cas, cisty, odvod_rok, zacatek_pred
 
 
 def ziskej(stahni, zdroj, dnes):
@@ -18,8 +18,12 @@ def ziskej(stahni, zdroj, dnes):
             datumy = re.findall(r"(\d{1,2})\.\s*(\d{1,2})\.", d)
             if not datumy:
                 continue
-            zac = odvod_rok(int(datumy[0][0]), int(datumy[0][1]), dnes)
-            kon = odvod_rok(int(datumy[1][0]), int(datumy[1][1]), zac) if len(datumy) > 1 else None
+            if len(datumy) > 1:
+                # rozsah: rok určíme podle konce (ten je blízko dneška), začátek je poslední takové datum před koncem
+                kon = odvod_rok(int(datumy[1][0]), int(datumy[1][1]), dnes)
+                zac = zacatek_pred(int(datumy[0][0]), int(datumy[0][1]), kon)
+            else:
+                zac, kon = odvod_rok(int(datumy[0][0]), int(datumy[0][1]), dnes), None
             tagy = " · ".join(cisty(t.get_text()) for t in it.select(".tag__text"))
             btn = it.select_one(".schedule-item__button")
             btn_t = cisty(btn.get_text()).lower() if btn else ""

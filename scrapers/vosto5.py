@@ -2,7 +2,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from .spolecne import MESICE, akce, bez_diakritiky, cas, cisty, odvod_rok
+from .spolecne import akce, bez_diakritiky, cas, cisty, odvod_rok
 
 
 def ziskej(stahni, zdroj, dnes):

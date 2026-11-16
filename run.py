@@ -24,10 +24,11 @@ from scrapers.spolecne import bez_diakritiky, norm
 
 KOREN = pathlib.Path(__file__).resolve().parent
 DATA = KOREN / "data"
-UA = "Mozilla/5.0 (X11; Linux x86_64) KulturniVlozky/1.0 (+https://github.com/m-tomasek/kulturni-vlozky)"
+UA = "Mozilla/5.0 (X11; Linux x86_64) KulturniVlozky/1.0 (+https://gitlab.com/michal.tomasek/kulturni-vlozky)"
 PRAHA = ZoneInfo("Europe/Prague")
 ZMIZELA_ZRUSENO_PO = 3      # po kolika bězích bez akce ve zdroji ji odstranit
 ZMIZELA_OZNACIT_PO = 2      # od kolika běhů ukazovat „zrušeno?“
+VAROVANI_MAX_BEHU = 3       # kolik běhů po sobě hlásit podezřele nízký počet, než se přijme jako nový normál
 PAD_ZDROJE = 0.4            # zdroj vrátil méně než 40 % akcí oproti minule → problém
 
 STOP = {"a", "v", "ve", "na", "do", "s", "se", "z", "the", "of", "and", "i", "u", "k", "o"}
@@ -64,7 +65,11 @@ def vytvor_stahovac():
                 return r.text
             except requests.RequestException as e:
                 posledni = e
-                time.sleep(2 * (pokus + 1))
+                kod = getattr(getattr(e, "response", None), "status_code", None)
+                if kod is not None and 400 <= kod < 500 and kod not in (408, 429):
+                    break  # chyba na naší straně (404, 403…) – opakování nepomůže
+                if pokus < 2:
+                    time.sleep(2 * (pokus + 1))
         raise posledni
 
     return stahni
@@ -84,6 +89,18 @@ def podobne(a, b):
     if sa <= sb or sb <= sa:
         return any(len(w) >= 4 for w in prunik)
     return len(prunik) / len(sa | sb) >= 0.5
+
+
+OBECNA_MISTA = {"galerie", "gallery", "divadlo", "theatre", "klub", "club", "kino", "bio", "studio", "jazz", "cafe",
+                "kavarna", "bar", "centrum", "praha", "prague", "scena", "sal", "velky", "maly", "dum", "music", "hall"}
+
+
+def stejne_misto(a, b):
+    """Jsou dvě akce (podle názvu místa) na stejné scéně? Bez údaje o místě to nevíme → ano."""
+    na, nb = norm(a.get("misto") or ""), norm(b.get("misto") or "")
+    if not na or not nb or na == nb:
+        return True
+    return bool({w for w in na.split() if len(w) >= 3} & {w for w in nb.split() if len(w) >= 3} - OBECNA_MISTA)
 
 
 def minuty(c):
@@ -149,7 +166,12 @@ def slouc(akce_podle_zdroje, typy_zdroju):
                 ma, mb = minuty(a["cas"]), minuty(b["cas"])
                 if ma is not None and mb is not None and abs(ma - mb) > 60:
                     continue
-                if podobne(a["nazev"], b["nazev"]):
+                if not podobne(a["nazev"], b["nazev"]):
+                    continue
+                # stejný název ve stejný čas na jiné scéně je jiná akce (Vernisáž, Jam session…);
+                # jiný název místa u úplně shodného delšího názvu bereme jako tutéž akci (KIŠ × Karlínské Spektrum)
+                if stejne_misto(a, b) or (b["zdroj"] != a["zdroj"] and norm(a["nazev"]) == norm(b["nazev"])
+                                          and len(slova(a["nazev"])) >= 3):
                     shoda = b
                     break
             if shoda is None:
@@ -283,7 +305,7 @@ def main():
         typy_zdroju[zid] = z.get("typ", "primarni")
         zz = dict(z, urls=[rozbal(u, dnes) for u in z["urls"]], _horizont=(horizont - dnes).days,
                   _mista=mista_cache.setdefault(zid, {}))
-        if zid not in zdravi:
+        if not zdravi.get(zid, {}).get("posledni_ok"):
             nove_zdroje.add(zid)
         stav = zdravi.get(zid, {})
         try:
@@ -306,7 +328,9 @@ def main():
             chyba = "zdroj nevrátil žádné akce (změnil se web?)"
         if chyba is None and sum(1 for a in budouci if not a["nazev"]) > len(budouci) / 2:
             chyba = "akce bez názvů – web se asi změnil"
-        if chyba is None and minule_pocet and minule_pocet >= 5 and len(budouci) < PAD_ZDROJE * minule_pocet:
+        if (chyba is None and minule_pocet and minule_pocet >= 5 and len(budouci) < PAD_ZDROJE * minule_pocet
+                and stav.get("varovani_behu", 0) < VAROVANI_MAX_BEHU):
+            # po VAROVANI_MAX_BEHU bězích se nižší počet bere jako nový normál (konec sezóny apod.)
             varovani = f"jen {len(budouci)} akcí místo obvyklých {minule_pocet}"
         if chyba:
             stav["chyb_v_rade"] = stav.get("chyb_v_rade", 0) + 1
@@ -320,6 +344,7 @@ def main():
                 problemy.append(f"- **{z['nazev']}**: {varovani} – možná se změnil web")
             else:
                 ok_zdroje.add(zid)
+            stav["varovani_behu"] = stav.get("varovani_behu", 0) + 1 if varovani else 0
             stav.pop("nefunguje_od", None)
             stav.update(ok=True, chyba=None, varovani=varovani, chyb_v_rade=0,
                         pocet=len(budouci) if not varovani else minule_pocet,
@@ -356,6 +381,11 @@ def main():
         horizont_dni=(horizont - dnes).days,
         statistika=dict(stat, rozpory=rozpory, vynechano=vynechane, celkem=len(akce)),
     )
+    for a in akce:
+        a.pop("popis", None)  # jen pro pravidla výše; web ho neukazuje a zbytečně by nafukoval soubor
+        for k in ("url", "vstupenky"):
+            if a.get(k) and not str(a[k]).lower().startswith(("http://", "https://")):
+                a[k] = None  # cizí weby: nikdy nepustit javascript: apod. do odkazu
     uloz_json(DATA / "akce.json", {"meta": meta, "akce": akce})
     uloz_json(DATA / "zdravi.json", zdravi)
     uloz_json(DATA / "mista.json", mista_cache)

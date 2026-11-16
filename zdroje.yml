@@ -198,3 +198,11 @@ zdroje:
     dni: 21
     urls:
       - https://goout.net/cs/praha/akce/
+
+  - id: slampoetry
+    nazev: Slam poetry (Praha)
+    typ: primarni
+    aktivni: true
+    web: https://www.slampoetry.cz/c/program
+    urls:
+      - https://calendar.google.com/calendar/ical/t8vqr4blffhs1h01j9cdk1gsfc%40group.calendar.google.com/public/basic.ics
