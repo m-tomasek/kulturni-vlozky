@@ -1,7 +1,7 @@
 # Kulturní vložky
 
 Kulturní program v Praze na jednom místě: weby divadel, klubů, kin a galerií a k tomu celý GoOut. Každé ráno je sbírají
-skripty v GitLab CI, výsledek je na stránce **https://michal.tomasek.gitlab.io/kulturni-vlozky/**.
+skripty v GitLab CI, výsledek je na stránce **https://kulturni-vlozky-c1b433.gitlab.io**.
 
 ## Co kde je
 
