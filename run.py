@@ -28,7 +28,8 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) KulturniVlozky/1.0 (+https://gitlab.com/mi
 PRAHA = ZoneInfo("Europe/Prague")
 ZMIZELA_ZRUSENO_PO = 3      # po kolika bězích bez akce ve zdroji ji odstranit
 ZMIZELA_OZNACIT_PO = 2      # od kolika běhů ukazovat „zrušeno?“
-VAROVANI_MAX_BEHU = 3       # kolik běhů po sobě hlásit podezřele nízký počet, než se přijme jako nový normál
+HLASIT_PO = 2               # výpadek webu se hlásí až při tolikátém neúspěšném běhu po sobě
+VAROVANI_MAX_BEHU = 4       # kolik běhů po sobě hlásit podezřele nízký počet, než se přijme jako nový normál
 PAD_ZDROJE = 0.4            # zdroj vrátil méně než 40 % akcí oproti minule → problém
 
 STOP = {"a", "v", "ve", "na", "do", "s", "se", "z", "the", "of", "and", "i", "u", "k", "o"}
@@ -45,6 +46,13 @@ def nacti_json(cesta, vychozi):
 
 def uloz_json(cesta, data):
     cesta.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+
+def uloz_akce(cesta, meta, akce):
+    """Jedna akce = jeden řádek: soubor je menší a denní rozdíl v repu obsahuje jen změněné akce."""
+    radky = ",\n".join(json.dumps(a, ensure_ascii=False, separators=(",", ":")) for a in akce)
+    cesta.write_text('{"meta":' + json.dumps(meta, ensure_ascii=False) + ',\n"akce":[\n' + radky + "\n]}\n",
+                     encoding="utf-8")
 
 
 def vytvor_stahovac():
@@ -73,6 +81,26 @@ def vytvor_stahovac():
         raise posledni
 
     return stahni
+
+
+def mekky_stahovac(stahni, adresy):
+    """Stahovač pro jeden zdroj: když selže jedna z jeho hlavních adres, vrátí prázdnou stránku a chybu si
+    zapamatuje – ostatní adresy (jiné měsíce) se tak neztratí. Jiné adresy (detaily akcí) selžou normálně."""
+    hlavni = set(adresy)
+
+    def f(url):
+        try:
+            text = stahni(url)
+        except requests.RequestException as e:
+            if url not in hlavni or len(hlavni) < 2:
+                raise
+            f.chyby.append((url, e))
+            return ""
+        f.uspechy += 1
+        return text
+
+    f.chyby, f.uspechy = [], 0
+    return f
 
 
 def slova(nazev):
@@ -249,7 +277,7 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
             if a["stav"] == "zruseno":
                 continue  # o zrušené akci, kterou jsme nikdy neviděli, není co hlásit
             # první sběr nového zdroje není „novinka“ – akce tam už byly vypsané
-            a["poprve_videno"] = zalozeno if (a["zdroj"] in nove_zdroje and zalozeno) else dnes_s
+            a["poprve_videno"] = zalozeno if ((a["zdroj"] in nove_zdroje or a.get("_okraj")) and zalozeno) else dnes_s
             a["zmeny"] = []
             statistika["nove"] += 1
         vysledek.append(a)
@@ -298,9 +326,13 @@ def main():
     podle_zdroje, typy_zdroju, ok_zdroje, problemy = {}, {}, set(), []
     nove_zdroje = set()
     vynechane = {}
-    for z in cfg["zdroje"]:
-        if not z.get("aktivni", True):
-            continue
+    # Zdroj, který napoprvé selže na síti (výpadek, chyba 5xx), dostane druhý pokus až na konci běhu –
+    # krátké poruchy webů bývají za pár minut pryč.
+    fronta = [(z, False) for z in cfg["zdroje"] if z.get("aktivni", True)]
+    i = 0
+    while i < len(fronta):
+        z, druhy_pokus = fronta[i]
+        i += 1
         zid = z["id"]
         typy_zdroju[zid] = z.get("typ", "primarni")
         zz = dict(z, urls=[rozbal(u, dnes) for u in z["urls"]], _horizont=(horizont - dnes).days,
@@ -308,27 +340,42 @@ def main():
         if not zdravi.get(zid, {}).get("posledni_ok"):
             nove_zdroje.add(zid)
         stav = zdravi.get(zid, {})
+        mekke = mekky_stahovac(stahni, zz["urls"])
+        sitova = False
         try:
-            surove = nacti(zid).ziskej(stahni, zz, dnes)
+            surove = nacti(zid).ziskej(mekke, zz, dnes)
             chyba = None
+            if mekke.chyby and not mekke.uspechy:
+                raise mekke.chyby[0][1]
         except requests.HTTPError as e:
+            sitova = e.response is None or e.response.status_code >= 500 or e.response.status_code in (408, 429)
             kod = e.response.status_code if e.response is not None else "?"
             surove, chyba = [], f"web vrací chybu {kod}" + (" (stránka zmizela nebo se přesunula)" if kod == 404 else "")
         except (requests.ConnectionError, requests.Timeout):
+            sitova = True
             surove, chyba = [], "web je nedostupný (neodpovídá)"
         except Exception as e:  # noqa: BLE001
             surove, chyba = [], f"web se asi změnil, skript ho neumí přečíst ({type(e).__name__})"
             traceback.print_exc()
+        if chyba and sitova and not druhy_pokus:
+            print(f"{zid}: {chyba} – zkusím znovu na konci běhu", file=sys.stderr)
+            fronta.append((z, True))
+            continue
         budouci = [a for a in surove if (a.get("konec_datum") or a["datum"]) >= dnes.isoformat()]
         minule_pocet = stav.get("pocet")
         varovani = None
+        if chyba is None and mekke.chyby and budouci:
+            # část adres zdroje se nenačetla: co máme, bereme, ale nic nepovažujeme za zrušené
+            varovani = f"nenačetla se část programu ({len(mekke.chyby)} z {len(mekke.chyby) + mekke.uspechy} stránek)"
+            for u, e in mekke.chyby:
+                print(f"{zid}: {u} – {e!r}", file=sys.stderr)
         if chyba is None and not budouci and surove:
             chyba = "zdroj ukazuje jen proběhlé akce"
         if chyba is None and not surove:
             chyba = "zdroj nevrátil žádné akce (změnil se web?)"
         if chyba is None and sum(1 for a in budouci if not a["nazev"]) > len(budouci) / 2:
             chyba = "akce bez názvů – web se asi změnil"
-        if (chyba is None and minule_pocet and minule_pocet >= 5 and len(budouci) < PAD_ZDROJE * minule_pocet
+        if (chyba is None and not varovani and minule_pocet and minule_pocet >= 5 and len(budouci) < PAD_ZDROJE * minule_pocet
                 and stav.get("varovani_behu", 0) < VAROVANI_MAX_BEHU):
             # po VAROVANI_MAX_BEHU bězích se nižší počet bere jako nový normál (konec sezóny apod.)
             varovani = f"jen {len(budouci)} akcí místo obvyklých {minule_pocet}"
@@ -337,17 +384,25 @@ def main():
             stav.setdefault("nefunguje_od", dnes.isoformat())
             stav.update(ok=False, chyba=chyba, varovani=None, posledni_pokus=ted.isoformat(timespec="minutes"))
             od = dt.date.fromisoformat(stav["nefunguje_od"]).strftime("%-d. %-m.")
-            problemy.append(f"- **{z['nazev']}**: {chyba} (nefunguje od {od}) – {stav['url'] if stav.get('url') else zz['urls'][0]}")
+            # jednodenní výpadek cizího webu není důvod k poplachu (akce zůstávají); hlásí se až druhý den po sobě.
+            # Chyba ve čtení (web se změnil) se hlásí hned – tu musí někdo opravit.
+            stav["hlasit"] = not sitova or stav["chyb_v_rade"] >= HLASIT_PO
+            if stav["hlasit"]:
+                problemy.append(f"- **{z['nazev']}**: {chyba} (nefunguje od {od}) – {stav['url'] if stav.get('url') else zz['urls'][0]}")
+            else:
+                print(f"{zid}: {chyba} – zatím nehlásím (první den)", file=sys.stderr)
         else:
+            stav["varovani_behu"] = stav.get("varovani_behu", 0) + 1 if varovani else 0
+            stav["hlasit"] = bool(varovani) and stav["varovani_behu"] >= HLASIT_PO
             if varovani:
-                # podezřelý pokles: akce bereme, ale nic ze zdroje nepovažujeme za zrušené
-                problemy.append(f"- **{z['nazev']}**: {varovani} – možná se změnil web")
+                # podezřelý pokles nebo neúplné načtení: akce bereme, ale nic ze zdroje nepovažujeme za zrušené
+                if stav["hlasit"]:
+                    problemy.append(f"- **{z['nazev']}**: {varovani} – možná se změnil web")
             else:
                 ok_zdroje.add(zid)
-            stav["varovani_behu"] = stav.get("varovani_behu", 0) + 1 if varovani else 0
             stav.pop("nefunguje_od", None)
             stav.update(ok=True, chyba=None, varovani=varovani, chyb_v_rade=0,
-                        pocet=len(budouci) if not varovani else minule_pocet,
+                        pocet=len(budouci) if not varovani else (minule_pocet or len(budouci)),
                         posledni_ok=ted.isoformat(timespec="minutes"), posledni_pokus=ted.isoformat(timespec="minutes"))
         stav["nazev"] = z["nazev"]
         stav["url"] = zz["urls"][0]
@@ -362,6 +417,8 @@ def main():
                 vynechane[duvod.split(":")[0]] = vynechane.get(duvod.split(":")[0], 0) + 1
                 continue
             a["zdroj"] = zid
+            if z.get("dni") and a["datum"] >= (dnes + dt.timedelta(days=int(z["dni"]) - 1)).isoformat():
+                a["_okraj"] = True  # jen se posunulo okno zdroje o den – to není novinka
             a["typ"] = urci_typ(a, pr)
             a.pop("mimo_prahu", None)
             a["id"] = ident(a)
@@ -382,11 +439,12 @@ def main():
         statistika=dict(stat, rozpory=rozpory, vynechano=vynechane, celkem=len(akce)),
     )
     for a in akce:
+        a.pop("_okraj", None)
         a.pop("popis", None)  # jen pro pravidla výše; web ho neukazuje a zbytečně by nafukoval soubor
         for k in ("url", "vstupenky"):
             if a.get(k) and not str(a[k]).lower().startswith(("http://", "https://")):
                 a[k] = None  # cizí weby: nikdy nepustit javascript: apod. do odkazu
-    uloz_json(DATA / "akce.json", {"meta": meta, "akce": akce})
+    uloz_akce(DATA / "akce.json", meta, akce)
     uloz_json(DATA / "zdravi.json", zdravi)
     uloz_json(DATA / "mista.json", mista_cache)
     (DATA / "problemy.md").write_text("\n".join(problemy) + ("\n" if problemy else ""), encoding="utf-8")

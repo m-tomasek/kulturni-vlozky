@@ -89,5 +89,104 @@ class Data(unittest.TestCase):
         self.assertIsNone(spolecne.cas("bez času"))
 
 
+class Odolnost(unittest.TestCase):
+    def test_jedna_spatna_adresa_neshodi_zdroj(self):
+        import requests
+
+        def stahni(url):
+            if url == "b":
+                raise requests.ConnectionError("x")
+            return "obsah " + url
+
+        m = run.mekky_stahovac(stahni, ["a", "b", "c"])
+        self.assertEqual([m("a"), m("b"), m("c")], ["obsah a", "", "obsah c"])
+        self.assertEqual((m.uspechy, len(m.chyby)), (2, 1))
+        with self.assertRaises(requests.ConnectionError):
+            run.mekky_stahovac(stahni, ["b"])("b")  # jediná adresa: chyba je chyba zdroje
+        with self.assertRaises(requests.ConnectionError):
+            run.mekky_stahovac(lambda u: stahni("b"), ["a", "c"])("detail")  # vedlejší adresa (detail akce)
+
+    def test_ulozeni_akci_po_radcich(self):
+        import json
+        import tempfile
+        akce = [a("x", 'Název s "uvozovkami"', "Scéna"), a("x", "Druhá", "Scéna")]
+        with tempfile.TemporaryDirectory() as d:
+            c = pathlib.Path(d) / "akce.json"
+            run.uloz_akce(c, {"zalozeno": "2026-11-01"}, akce)
+            self.assertEqual(json.loads(c.read_text(encoding="utf-8")), {"meta": {"zalozeno": "2026-11-01"}, "akce": akce})
+            self.assertEqual(len(c.read_text(encoding="utf-8").splitlines()), 5)
+
+    def test_posun_okna_agregatoru_neni_novinka(self):
+        x = a("goout", "Akce", "Scéna", _okraj=True)
+        x["id"] = run.ident(x)
+        v, _ = run.porovnej([x], [], {"goout"}, D, zalozeno="2026-10-01")
+        self.assertEqual(v[0]["poprve_videno"], "2026-10-01")
+
+
+class CelyBeh(unittest.TestCase):
+    """Celý běh run.main() nanečisto: bez sítě, v dočasné složce, se třemi vymyšlenými zdroji."""
+
+    def beh(self, slozka, pokusy):
+        import json
+        import types
+        from unittest import mock
+
+        import requests
+
+        def chyba500():
+            r = requests.Response()
+            r.status_code = 500
+            return requests.HTTPError(response=r)
+
+        def modul(zid):
+            def ziskej(stahni, zdroj, dnes):
+                pokusy[zid] = pokusy.get(zid, 0) + 1
+                if zid == "mrtvy" or (zid == "kolisavy" and pokusy[zid] == 1):
+                    raise chyba500()
+                return [spolecne.akce(nazev=f"Akce {zid} {i}", datum=dnes + dt.timedelta(days=i + 1), cas="19:00",
+                                      misto=zid, url="https://x.cz/") for i in range(3)]
+            return types.SimpleNamespace(ziskej=ziskej)
+
+        with mock.patch.object(run, "KOREN", slozka), mock.patch.object(run, "DATA", slozka / "data"), \
+                mock.patch.object(run, "nacti", modul), mock.patch.object(run, "vytvor_stahovac", lambda: None), \
+                mock.patch("builtins.print"):
+            run.main()
+        return (json.loads((slozka / "data" / "akce.json").read_text(encoding="utf-8")),
+                json.loads((slozka / "data" / "zdravi.json").read_text(encoding="utf-8")),
+                (slozka / "data" / "problemy.md").read_text(encoding="utf-8"))
+
+    def test_vypadky(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            slozka = pathlib.Path(d)
+            (slozka / "zdroje.yml").write_text("zdroje:\n" + "".join(
+                f"  - {{id: {z}, nazev: {z}, urls: ['https://{z}.cz/']}}\n" for z in ("dobry", "kolisavy", "mrtvy")), encoding="utf-8")
+            (slozka / "pravidla.yml").write_text((run.KOREN / "pravidla.yml").read_text(encoding="utf-8"), encoding="utf-8")
+            pokusy = {}
+            akce, zdravi, problemy = self.beh(slozka, pokusy)
+            # kolísavý zdroj dostal druhý pokus a prošel; mrtvý se první den nehlásí
+            self.assertEqual(pokusy, {"dobry": 1, "kolisavy": 2, "mrtvy": 2})
+            self.assertEqual(sorted({a["zdroj"] for a in akce["akce"]}), ["dobry", "kolisavy"])
+            self.assertTrue(zdravi["kolisavy"]["ok"])
+            self.assertEqual((zdravi["mrtvy"]["ok"], zdravi["mrtvy"]["hlasit"], problemy.strip()), (False, False, ""))
+            # druhý den po sobě už se mrtvý zdroj hlásí
+            akce, zdravi, problemy = self.beh(slozka, {})
+            self.assertTrue(zdravi["mrtvy"]["hlasit"])
+            self.assertIn("mrtvy", problemy)
+            self.assertEqual(len(akce["akce"]), 6)
+
+
+class Rozdeleni(unittest.TestCase):
+    def test_tydny_a_prubezne(self):
+        from nastroje import rozdel
+        akce = [a("x", "Dnes", "S", datum="2026-11-16"), a("x", "Příští týden", "S", datum="2026-11-24"),
+                a("x", "Výstava", "S", datum="2026-11-01", konec_datum="2026-12-31"),
+                a("x", "Festival", "S", datum="2026-11-20", konec_datum="2026-11-22"),
+                a("x", "Proběhlo", "S", datum="2026-11-10")]
+        p, t = rozdel.rozdel(akce, D)
+        self.assertEqual(sorted(x["nazev"] for x in p), ["Festival", "Výstava"])
+        self.assertEqual({k: [x["nazev"] for x in v] for k, v in t.items()}, {"2026-47": ["Dnes"], "2026-48": ["Příští týden"]})
+
+
 if __name__ == "__main__":
     unittest.main()

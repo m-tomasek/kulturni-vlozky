@@ -1,6 +1,6 @@
 # Kulturní vložky
 
-Přehled akcí pražských scén na jednom místě. Každé ráno je sbírají
+Kulturní program v Praze na jednom místě: weby divadel, klubů, kin a galerií a k tomu celý GoOut. Každé ráno je sbírají
 skripty v GitLab CI, výsledek je na stránce **https://michal.tomasek.gitlab.io/kulturni-vlozky/**.
 
 ## Co kde je
@@ -12,7 +12,8 @@ skripty v GitLab CI, výsledek je na stránce **https://michal.tomasek.gitlab.io
 | `scrapers/` | jeden skript na každý web |
 | `run.py` | denní běh: sběr, sloučení, změny, zrušené akce |
 | `tests/` | testy logiky (slučování, data, změny); běží před každým sběrem |
-| `data/akce.json` | aktuální akce (zároveň paměť systému) |
+| `data/akce.json` | aktuální akce (zároveň paměť systému; jedna akce na řádek) |
+| `nastroje/rozdel.py` | při nasazení rozdělí akce po týdnech, aby se web načítal rychle |
 | `data/zdravi.json` | který zdroj kdy naposledy fungoval |
 | `index.html` | dashboard s filtry a mapou |
 | `.gitlab-ci.yml` | plán běhu a nasazení webu |
@@ -27,7 +28,9 @@ skripty v GitLab CI, výsledek je na stránce **https://michal.tomasek.gitlab.io
   - změna času, místa nebo dostupnosti vstupenek se zobrazí jako **⚠ změna**,
   - akce, která ze zdroje zmizí, je druhý den **zrušeno?** a třetí den zmizí i odsud
     (pokud se zdroj ten den nenačetl, nic se nesoudí).
-- **Když se nějaký web rozbije** (vrátí 0 akcí nebo výrazně méně než minule), založí se jedno issue
+- **Krátké výpadky cizích webů** (chyba 500, nedostupnost) jsou běžné: sběr to zkusí znovu na konci běhu,
+  akce nechá být a nic nehlásí. Ozve se až tehdy, když zdroj nefunguje druhý den po sobě.
+- **Když se nějaký web rozbije** (změní se a skript ho neumí přečíst, nebo nejde druhý den), založí se jedno issue
   „Problém se zdroji“ a přijde e-mail; další dny se do něj jen přidává komentář a po opravě se samo zavře.
   Opravu stačí zadat Claudovi.
 - **Hlídač** (druhý denní plán) selže a pošle e-mail, když jsou data starší než 30 hodin.

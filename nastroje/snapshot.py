@@ -44,8 +44,15 @@ def rozbal(url, dnes):
     return re.sub(r"\{(rok|mesic2|mesic)(?:\+(\d+)m)?\}", nahrad, url)
 
 
-def stahni(url):
-    r = requests.get(url, headers={"User-Agent": UA}, timeout=30)
+UA_PROHLIZEC = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
+
+
+def stahni(url, prohlizec=False):
+    hlavicky = {"User-Agent": UA}
+    if prohlizec:  # test: chová se web jinak k běžnému prohlížeči?
+        hlavicky = {"User-Agent": UA_PROHLIZEC, "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
+                    "Accept-Language": "cs,en;q=0.8"}
+    r = requests.get(url, headers=hlavicky, timeout=30)
     return r.status_code, r.content
 
 
@@ -61,7 +68,7 @@ def main():
     ulohy += list(PRUZKUM.items())
     for nazev, url in ulohy:
         try:
-            kod, obsah = stahni(url)
+            kod, obsah = stahni(url, prohlizec=nazev.startswith("b-"))
             pripona = "json" if ("json" in nazev or url.endswith("per_page=50")) else "html"
             if "ical" in nazev:
                 pripona = "ics"

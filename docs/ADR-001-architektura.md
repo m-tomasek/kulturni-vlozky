@@ -3,7 +3,7 @@
 **Stav:** přijato · **Datum:** 16. 11. 2026 · **Rozhoduje:** M.
 
 ## Kontext
-Osobní přehled programu pražských scén pro jednoho člověka, který není programátor. Úpravy dělá Claude.
+Osobní přehled kulturního programu v Praze (weby jednotlivých scén + celý GoOut) pro jednoho člověka, který není programátor. Úpravy dělá Claude.
 Požadavky: dostupné odkudkoli, zdarma, bez serveru, o který se někdo musí starat, a aby se dalo snadno
 přidat další scénu. Od listopadu 2026 je součástí i celý GoOut, takže objem vzrostl z ~500 na ~3 000 akcí.
 
@@ -24,9 +24,15 @@ Web se nasazuje na GitLab Pages (jen pro přihlášené členy projektu).
 ## Kompromisy
 - **Data v gitu** jsou zároveň databáze i záloha, ale repo roste (denně jeden commit s velkým rozdílem). Až bude
   historie vadit, stačí data přesunout do samostatné větve nebo ukládat jen artefakt.
-- **Celý soubor do prohlížeče**: při ~3 000 akcích to stačí (popisy se už neposílají, seznam se kreslí po 400).
-  Kolem 10 000 akcí bude potřeba dělit soubor po týdnech.
-- **Jeden skript na scénu** se snadno opravuje, ale je jich přes 25 a weby se mění. Proto hlídání zdraví zdrojů
+- **Data pro web jsou dělená po týdnech** (`nastroje/rozdel.py`, vzniká při nasazení a do repa se neukládá).
+  Prohlížeč stáhne přehled a nejbližší týden, zbytek dočítá na pozadí; seznam se kreslí po 400 akcích.
+  Objem tedy může růst (víc dní z GoOut, další agregátory), aniž by se zpomalilo první zobrazení.
+- **Paměť v repu** (`data/akce.json`) má jednu akci na řádek, takže denní rozdíl obsahuje jen změněné akce
+  a repo roste pomalu.
+- **Výpadky cizích webů jsou běžné** (každý den má některý krátkou poruchu). Sběr proto: zkusí zdroj znovu
+  na konci běhu, přežije selhání jedné z více adres zdroje, akce při výpadku nemaže a problém hlásí až druhý
+  den po sobě. Chyba ve čtení stránky (web se změnil) se hlásí hned.
+- **Jeden skript na zdroj** se snadno opravuje, ale je jich přes 25 a weby se mění. Proto hlídání zdraví zdrojů
   (`data/zdravi.json`), issue s e-mailem a hlídač čerstvosti dat.
 - **Slučování duplicit** mezi GoOut a weby scén je odhad podle názvu, času a místa. Když se splete, je vidět
   buď dvojice stejných akcí, nebo chybí akce se stejným názvem na jiné scéně. Pokrývají to testy v `tests/`.

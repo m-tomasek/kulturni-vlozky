@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kulturní vložky</title>
-<meta name="description" content="Program menších pražských scén na jednom místě.">
+<meta name="description" content="Kulturní program v Praze na jednom místě: divadla, kluby, kina, galerie a celý GoOut.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -51,6 +51,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:18px}
 .top h1{margin:0;font-weight:850;font-stretch:62%;font-size:clamp(2rem,3.4vw + 1rem,3rem);line-height:.9;text-transform:uppercase;letter-spacing:-.005em}
 .top h1 span{font-weight:300}
+.top .pod{margin-top:6px;font-family:var(--sans);font-stretch:92%}
 .top p{margin:0;font-family:var(--mono);font-size:var(--s-1);color:var(--muted)}
 
 /* lepící lišta: dny + filtry */
@@ -159,7 +160,7 @@ footer .bad{color:var(--sold)}
 <body>
 <div class="page">
   <header class="top">
-    <h1>Kulturní <span>vložky</span></h1>
+    <div><h1>Kulturní <span>vložky</span></h1><p class="pod">kulturní program v Praze na jednom místě</p></div>
     <div class="topr"><p id="meta">načítám…</p><button class="mapbtn" id="mapBtn" aria-controls="mapa">Mapa</button></div>
   </header>
 
@@ -181,7 +182,7 @@ footer .bad{color:var(--sold)}
   <main id="list"></main>
 
   <footer>
-    <h2>Sledované scény</h2>
+    <h2>Sledované zdroje</h2>
     <ul id="sources"></ul>
   </footer>
 </div>
@@ -321,12 +322,13 @@ function ovladani(){
   const pouz=new Set(AKCE.map(a=>a.typ));
   const ty=document.getElementById("types");
   ty.innerHTML=Object.entries(TYPY).filter(([k])=>pouz.has(k)).map(([k,n])=>
-    `<button class="type" data-type="${k}" aria-pressed="false"><i style="background:var(--c-${k})"></i>${n}</button>`).join("");
+    `<button class="type" data-type="${k}" aria-pressed="${S.typy.has(k)}"><i style="background:var(--c-${k})"></i>${n}</button>`).join("");
   ty.onclick=e=>{const b=e.target.closest(".type");if(!b)return;const k=b.dataset.type;
     S.typy.has(k)?S.typy.delete(k):S.typy.add(k);b.setAttribute("aria-pressed",S.typy.has(k));vse();};
   const sel=document.getElementById("place");
   const mista=[...new Map(AKCE.map(a=>[a.zdroj,a.zdroj===GOOUT?"GoOut (vše)":(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
-  sel.innerHTML+=mista.map(([k,n])=>`<option value="${k}">${esc(n)}</option>`).join("");
+  sel.innerHTML=`<option value="">Všechna místa</option>`+mista.map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("");
+  sel.value=S.misto;
   sel.onchange=()=>{S.misto=sel.value;vse();};
   let qT; document.getElementById("q").oninput=e=>{clearTimeout(qT);qT=setTimeout(()=>{S.q=e.target.value.trim();vse();},180);};
   document.getElementById("hideSold").onchange=e=>{S.hideSold=e.target.checked;vse();};
@@ -433,22 +435,38 @@ document.getElementById("mapBtn").onclick=otevritMapu;
 document.getElementById("mapClose").onclick=zavritMapu;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") zavritMapu(); });
 
+/* Data jsou rozdělená po týdnech (nastroje/rozdel.py): nejdřív přehled a nejbližší týdny, zbytek se dočte na pozadí. */
+const nacti=u=>fetch("data/"+u,{cache:"no-cache"}).then(r=>{ if(!r.ok) throw new Error(`${u}: ${r.status}`); return r.json(); });
+function popisMeta(scen, celkem, stav){
+  const kdy=META.vygenerovano?new Date(META.vygenerovano).toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):"?";
+  document.getElementById("meta").textContent=`${celkem} akcí · ${scen} zdrojů · aktualizováno ${kdy}${stav?` · ${stav}`:""}`;
+}
 async function start(){
   try{
-    const [d,z]=await Promise.all([fetch("data/akce.json",{cache:"no-cache"}).then(r=>r.json()),
-      fetch("data/zdravi.json",{cache:"no-cache"}).then(r=>r.json()).catch(()=>({}))]);
-    META=d.meta||{}; AKCE=(d.akce||[]).filter(a=>konec(a)>=dnes());
-    const kdy=META.vygenerovano?new Date(META.vygenerovano).toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}):"?";
-    document.getElementById("meta").textContent=`${AKCE.length} akcí · ${Object.keys(z).length} scén · aktualizováno ${kdy}`;
-    S.sel = AKCE.some(nova) ? "nove" : dnes();
+    const [p,z]=await Promise.all([nacti("prehled.json"), nacti("zdravi.json").catch(()=>({}))]);
+    META=p.meta||{};
+    const t=dnes(), scen=Object.keys(z).length, hranice=plus(t,7);
+    const pridej=d=>{ AKCE=AKCE.concat((d.akce||[]).filter(a=>konec(a)>=t)); };
+    const casti=(p.casti||[]).filter(c=>c.do>=t);
+    const brzy=casti.filter(c=>c.od<=hranice), pozdeji=casti.filter(c=>c.od>hranice);
+    (await Promise.all([nacti(p.prubezne.soubor), ...brzy.map(c=>nacti(c.soubor))])).forEach(pridej);
+    S.sel=t;
     ovladani(); vse();
+    popisMeta(scen, p.celkem, pozdeji.length?"načítám další týdny…":"");
     const zpr=[], stari=META.vygenerovano?(Date.now()-new Date(META.vygenerovano))/36e5:999;
     if(stari>30) zpr.push(`<b>Data nejsou čerstvá</b> – poslední sběr proběhl před ${Math.round(stari/24)} dny.`);
-    const spatne=Object.values(z).filter(x=>!x.ok||x.varovani);
+    const spatne=Object.values(z).filter(x=>x.hlasit);   // jednodenní výpadek cizího webu se neukazuje
     if(spatne.length) zpr.push(`<b>Nefunguje:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}`);
     if(zpr.length){const al=document.getElementById("alert");al.innerHTML=zpr.join("<br>");al.hidden=false;}
     document.getElementById("sources").innerHTML=Object.values(z).sort((a,b)=>a.nazev.localeCompare(b.nazev,"cs")).map(s=>
       `<li class="${s.ok?"":"bad"}"><a href="${odkaz(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> <span class="mono">${s.ok?s.pocet:"✕"}</span></li>`).join("");
+    if(pozdeji.length){
+      const vysl=await Promise.allSettled(pozdeji.map(c=>nacti(c.soubor)));
+      vysl.forEach(v=>{ if(v.status==="fulfilled") pridej(v.value); });
+      const chybi=vysl.filter(v=>v.status!=="fulfilled").length;
+      const radky=S.vseRadky; ovladani(); vse(); if(radky){ S.vseRadky=true; kreslitSeznam(); }
+      popisMeta(scen, chybi?AKCE.length:p.celkem, chybi?"část programu se nenačetla, zkus obnovit stránku":"");
+    }
   }catch(e){ document.getElementById("meta").textContent="Program se nepodařilo načíst."; console.error(e); }
 }
 start();

@@ -144,7 +144,8 @@ zdroje:
     typ: primarni
     aktivni: true
     urls:
-      - https://rockcafe.cz/cs/program/
+      # holá adresa /cs/program/ občas vrací chybu 500, proto vždy konkrétní měsíc
+      - https://rockcafe.cz/cs/program/{rok}/{mesic2}
       - https://rockcafe.cz/cs/program/{rok+1m}/{mesic2+1m}
       - https://rockcafe.cz/cs/program/{rok+2m}/{mesic2+2m}
 

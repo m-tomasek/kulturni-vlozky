@@ -92,7 +92,9 @@ pages:
   script:
     - mkdir -p public/data
     - cp index.html public/
-    - cp data/*.json public/data/
+    - cp data/zdravi.json public/data/
+    # akce rozdělené po týdnech: web stáhne nejdřív nejbližší dny, zbytek na pozadí
+    - python nastroje/rozdel.py public/data
     # mapová knihovna z npm s ověřeným otiskem (web ji nebere z cizího CDN)
     - python nastroje/leaflet.py public/vendor/leaflet
   artifacts:

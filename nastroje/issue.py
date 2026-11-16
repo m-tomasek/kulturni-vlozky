@@ -4,6 +4,7 @@
 - je prázdný: otevřené issue s komentářem zavře.
 Chyba API ukončí skript s kódem 1 (ať je vidět, že upozornění nefungují).
 """
+import datetime as dt
 import json
 import os
 import pathlib
@@ -23,9 +24,26 @@ def volej(metoda, cesta, **data):
         return json.loads(r.read() or "null")
 
 
+def token_konci():
+    """Řádek s upozorněním, když přístupový token brzy vyprší (pak by se přestala ukládat data)."""
+    try:
+        req = urllib.request.Request(f"{os.environ['CI_API_V4_URL']}/personal_access_tokens/self",
+                                     headers={"PRIVATE-TOKEN": TOKEN})
+        with urllib.request.urlopen(req, timeout=30) as r:  # noqa: S310
+            konec = json.loads(r.read()).get("expires_at")
+        if konec and (dt.date.fromisoformat(konec) - dt.date.today()).days <= 21:
+            return (f"- **PROJEKT_TOKEN vyprší {dt.date.fromisoformat(konec).strftime('%-d. %-m. %Y')}** – pak se přestanou "
+                    "ukládat data. Vytvoř nový (Settings → Access tokens, role Maintainer, api + write_repository) "
+                    "a vlož ho do Settings → CI/CD → Variables.")
+    except Exception as e:  # noqa: BLE001 – kontrola platnosti je jen doplněk
+        print(f"platnost tokenu se nepodařilo zjistit: {e!r}", file=sys.stderr)
+    return ""
+
+
 def main():
     soubor = pathlib.Path(__file__).resolve().parent.parent / "data" / "problemy.md"
     text = soubor.read_text(encoding="utf-8").strip() if soubor.exists() else ""
+    text = "\n".join(x for x in (text, token_konci()) if x)
     q = urllib.parse.urlencode({"state": "opened", "search": NAZEV, "in": "title", "per_page": 20})
     otevrena = [i for i in volej("GET", f"/issues?{q}") if i["title"].startswith(NAZEV)]
     if text:
