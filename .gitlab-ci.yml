@@ -24,7 +24,7 @@ stages: [sber, nasazeni]
 
 sber:
   stage: sber
-  timeout: 25 minutes
+  timeout: 50 minutes
   rules:
     - if: '"$[[ inputs.job ]]" == "sber"'
   before_script:

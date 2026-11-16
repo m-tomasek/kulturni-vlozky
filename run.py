@@ -97,10 +97,61 @@ def mekky_stahovac(stahni, adresy):
             f.chyby.append((url, e))
             return ""
         f.uspechy += 1
+        if url in hlavni:
+            f.texty[url] = text
         return text
 
-    f.chyby, f.uspechy = [], 0
+    f.chyby, f.uspechy, f.texty = [], 0, {}
     return f
+
+
+_DATUM_CS = re.compile(r"(?<![\d.])(\d{1,2})\.\s?(\d{1,2})\.(?:\s?(20\d\d))?(?![\d])")
+_DATUM_ISO = re.compile(r"(?<!\d)(20\d\d)-(\d\d)-(\d\d)(?!\d)")
+_DATUM_SLOVY = re.compile(r"(?<!\d)(\d{1,2})\.\s?(ledna|února|března|dubna|května|června|července|srpna|září|října|listopadu|prosince)"
+                          r"(?:\s+(20\d\d))?", re.I)
+_MESICE_G = ["ledna", "února", "března", "dubna", "května", "června", "července", "srpna", "září", "října",
+             "listopadu", "prosince"]
+
+
+def data_v_textu(text, dnes, do):
+    """Budoucí data (do horizontu), která stránka zmiňuje – z textu i z atributů (JSON-LD, datetime=…)."""
+    vysledek = set()
+
+    def pridej(r, m, d):
+        try:
+            if r is None:
+                x = dt.date(dnes.year, m, d)
+                if x < dnes - dt.timedelta(days=1):
+                    x = dt.date(dnes.year + 1, m, d)
+            else:
+                x = dt.date(r, m, d)
+        except ValueError:
+            return
+        if dnes <= x <= do:
+            vysledek.add(x.isoformat())
+
+    for m in _DATUM_ISO.finditer(text):
+        pridej(int(m[1]), int(m[2]), int(m[3]))
+    for m in _DATUM_CS.finditer(text):
+        pridej(int(m[3]) if m[3] else None, int(m[2]), int(m[1]))
+    for m in _DATUM_SLOVY.finditer(text):
+        pridej(int(m[3]) if m[3] else None, _MESICE_G.index(m[2].lower()) + 1, int(m[1]))
+    return vysledek
+
+
+def kontrola_uplnosti(texty, akce, dnes, do):
+    """Porovná data zmíněná na stránkách programu s daty akcí, které z nich čtečka vytáhla.
+    Vrací (počet zmíněných dnů, chybějící dny). Chybějící dny = čtečka možná něco přehlíží."""
+    zminene = set()
+    for t in texty:
+        zminene |= data_v_textu(t, dnes, do)
+    mame = set()
+    for a in akce:
+        d0 = dt.date.fromisoformat(a["datum"])
+        d1 = dt.date.fromisoformat(a.get("konec_datum") or a["datum"])
+        for k in range(min((d1 - d0).days, 400) + 1):
+            mame.add((d0 + dt.timedelta(days=k)).isoformat())
+    return len(zminene), sorted(zminene - mame)
 
 
 def slova(nazev):
@@ -357,6 +408,7 @@ def main():
     podle_zdroje, typy_zdroju, ok_zdroje, problemy = {}, {}, set(), []
     nove_zdroje = set()
     vynechane = {}
+    uplnost_log = []
     # Zdroj, který napoprvé selže na síti (výpadek, chyba 5xx), dostane druhý pokus až na konci běhu –
     # krátké poruchy webů bývají za pár minut pryč.
     fronta = [(z, False) for z in cfg["zdroje"] if z.get("aktivni", True)]
@@ -435,6 +487,13 @@ def main():
             stav.update(ok=True, chyba=None, varovani=varovani, chyb_v_rade=0,
                         pocet=len(budouci) if not varovani else (minule_pocet or len(budouci)),
                         posledni_ok=ted.isoformat(timespec="minutes"), posledni_pokus=ted.isoformat(timespec="minutes"))
+        if not chyba and typy_zdroju[zid] != "agregator" and mekke.texty:
+            zminene, chybi = kontrola_uplnosti(mekke.texty.values(), budouci, dnes, horizont)
+            dosah = max((a["datum"] for a in budouci), default="-")
+            stav["uplnost"] = {"akci": len(budouci), "do": dosah, "dnu_na_webu": zminene, "chybi_dnu": len(chybi),
+                               "chybi_priklad": chybi[:8]}
+            uplnost_log.append(f"  {zid:14} {len(budouci):5} akcí, do {dosah}  | web zmiňuje {zminene:3} dnů,"
+                               f" z nich bez akce {len(chybi):3}" + (f"  např. {', '.join(chybi[:6])}" if chybi else ""))
         stav["nazev"] = z["nazev"]
         stav["url"] = zz["urls"][0]
         zdravi[zid] = stav
@@ -456,6 +515,8 @@ def main():
             vybrane.append(a)
         podle_zdroje[zid] = vybrane
 
+    print("Úplnost zdrojů (kolik akcí čteme a jestli web nezmiňuje dny, ze kterých nemáme nic):")
+    print("\n".join(uplnost_log))
     sloucene, rozpory = slouc(podle_zdroje, typy_zdroju)
     # kontrola překryvu s agregátorem (GoOut): u každého vlastního zdroje, kolik jeho akcí má i GoOut
     okna = [int(z["dni"]) for z in cfg["zdroje"] if z.get("aktivni", True) and z.get("typ") == "agregator" and z.get("dni")]
