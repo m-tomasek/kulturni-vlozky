@@ -352,6 +352,33 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
         else:
             nesparovane.append(a)
 
+    # tatáž akce, kterou teď přináší jiný zdroj (typicky nově přidaný web místa místo GoOut):
+    # stejný den, čas, místo a podobný název → pokračuje stará akce, nic nového ani zmizelého
+    nove_podle_terminu = {}
+    for a in nove:
+        nove_podle_terminu.setdefault((a["datum"], a.get("cas")), []).append(a)
+
+    def nahrazena(b):
+        return next((a for a in nove_podle_terminu.get((b["datum"], b.get("cas")), [])
+                     if a["zdroj"] != b["zdroj"] and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])), None)
+
+    minule_podle_terminu = {}
+    for b in minule:
+        minule_podle_terminu.setdefault((b["datum"], b.get("cas")), []).append(b)
+    zbyle = []
+    for a in nesparovane:
+        b = next((b for b in minule_podle_terminu.get((a["datum"], a.get("cas")), [])
+                  if b["id"] not in pouzite and b["zdroj"] != a["zdroj"]
+                  and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])), None) if a.get("cas") else None
+        if b:
+            pouzite.add(b["id"])
+            a["poprve_videno"] = b.get("poprve_videno", dnes_s)
+            a["zmeny"] = b.get("zmeny", [])
+            vysledek.append(a)
+        else:
+            zbyle.append(a)
+    nesparovane = zbyle
+
     # přesuny: stejná akce stejného zdroje s jiným datem/časem, starý termín zmizel
     zbyle_minule = [b for b in minule if b["id"] not in pouzite and b["zdroj"] in ok_zdroje
                     and (b.get("konec_datum") or b["datum"]) >= dnes_s]
@@ -383,6 +410,8 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
         konec = b.get("konec_datum") or b["datum"]
         if konec < dnes_s:
             continue  # proběhla
+        if b.get("cas") and nahrazena(b):
+            continue  # akci teď přináší jiný zdroj
         if b["zdroj"] not in ok_zdroje:
             vysledek.append(b)  # zdroj se dnes nenačetl – nic nesoudíme
             continue

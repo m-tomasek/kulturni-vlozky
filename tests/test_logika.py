@@ -203,6 +203,20 @@ class Rozdeleni(unittest.TestCase):
         self.assertEqual({k: [x["nazev"] for x in v] for k, v in t.items()}, {"2026-47": ["Dnes"], "2026-48": ["Příští týden"]})
 
 
+class PrevzetiJinymZdrojem(unittest.TestCase):
+    def test_goout_akci_prevezme_web_mista(self):
+        stara = a("goout", "Musí se žít", "Kino Atlas – Modrý sál", cas="19:15", datum="2026-12-10",
+                  id="g1", poprve_videno="2026-11-14")
+        nova = a("atlas", "Musí se žít", "Kino Atlas – Modrý sál", cas="19:15", datum="2026-12-10", id="a1")
+        v, s = run.porovnej([nova], [stara], {"goout", "atlas"}, D)
+        self.assertEqual([(x["id"], x["poprve_videno"]) for x in v], [("a1", "2026-11-14")])
+        self.assertEqual((s["nove"], s["zmizele"]), (0, 0))
+        # další den: stará GoOut akce už nemá být mezi zmizelými
+        v, s = run.porovnej([dict(nova)], [dict(nova), dict(stara, chybi_behu=1)], {"goout", "atlas"}, D)
+        self.assertEqual([x["id"] for x in v], ["a1"])
+        self.assertEqual(s["zmizele"], 0)
+
+
 class Uplnost(unittest.TestCase):
     def test_dny_bez_akci(self):
         html = ('<div><time datetime="2026-12-01">1</time> Čt 10. 12. a 12. prosince'
