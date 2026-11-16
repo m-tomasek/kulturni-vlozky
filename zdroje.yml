@@ -100,7 +100,7 @@ zdroje:
     typ: primarni
     aktivni: true
     urls:
-      - https://www.altart.cz/program/
+      - https://studioalta.cz/program?pages=15
 
   - id: alfred
     nazev: Alfred ve dvoře
@@ -167,8 +167,9 @@ zdroje:
     nazev: Bio Oko
     typ: primarni
     aktivni: true
+    web: https://www.biooko.net/cs/program
     urls:
-      - https://www.biooko.net/cs/program
+      - POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=1&filterType=program&ao=0&d=0&_locale=cs
 
   - id: rudolfinum
     nazev: Galerie Rudolfinum
@@ -190,6 +191,13 @@ zdroje:
     aktivni: false
     urls:
       - https://www.planetum.cz/program
+
+  - id: atlas
+    nazev: Kino Atlas
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://kinoatlaspraha.cz/
 
   - id: goout
     nazev: GoOut (celá Praha)

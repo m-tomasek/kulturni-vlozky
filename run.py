@@ -13,6 +13,7 @@ import re
 import sys
 import time
 import traceback
+from urllib.parse import parse_qsl, urlsplit
 from zoneinfo import ZoneInfo
 
 import requests
@@ -67,7 +68,12 @@ def vytvor_stahovac():
         posledni = None
         for pokus in range(3):
             try:
-                r = sezeni.get(url, timeout=30)
+                if url.startswith("POST "):  # "POST adresa?parametry" – web načítá program formulářem
+                    u = urlsplit(url[5:].strip())
+                    r = sezeni.post(f"{u.scheme}://{u.netloc}{u.path}", data=parse_qsl(u.query, keep_blank_values=True),
+                                    headers={"X-Requested-With": "XMLHttpRequest"}, timeout=30)
+                else:
+                    r = sezeni.get(url, timeout=30)
                 r.raise_for_status()
                 r.encoding = r.encoding if r.encoding and r.encoding.lower() != "iso-8859-1" else r.apparent_encoding
                 cache[url] = r.text
@@ -501,7 +507,7 @@ def main():
             uplnost_log.append(f"  {zid:14} {len(budouci):5} akcí, do {dosah}  | web zmiňuje {zminene:3} dnů,"
                                f" z nich bez akce {len(chybi):3}" + (f"  např. {', '.join(chybi[:6])}" if chybi else ""))
         stav["nazev"] = z["nazev"]
-        stav["url"] = zz["urls"][0]
+        stav["url"] = z.get("web") or zz["urls"][0]
         zdravi[zid] = stav
 
         vybrane = []

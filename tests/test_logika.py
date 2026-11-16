@@ -203,5 +203,37 @@ class Rozdeleni(unittest.TestCase):
         self.assertEqual({k: [x["nazev"] for x in v] for k, v in t.items()}, {"2026-47": ["Dnes"], "2026-48": ["Příští týden"]})
 
 
+class Uplnost(unittest.TestCase):
+    def test_dny_bez_akci(self):
+        html = ('<div><time datetime="2026-12-01">1</time> Čt 10. 12. a 12. prosince'
+                '<script type="application/ld+json">{"startDate":"2026-12-20T19:00"}</script> 1.1.2020</div>')
+        akce = [a("x", "Film", "S", datum="2026-12-10")]
+        self.assertEqual(run.kontrola_uplnosti([html], akce, D, D + dt.timedelta(days=120)),
+                         (3, ["2026-12-12", "2026-12-20"]))
+
+
+class KinoAtlas(unittest.TestCase):
+    def test_davky_a_detske(self):
+        from scrapers import atlas
+        h1 = ('<div class="batch"><div class="line date"><span>Čt</span>&nbsp;10. 12. </div>'
+              '<div class="line event"><div class="time">19:15</div><div class="location">Modrý sál</div>'
+              '<div class="title"><a href="?program=9980">Musí se žít</a></div></div>'
+              '<div class="line event"><div class="time">10:00</div><div class="title"><a href="?program=1">Mia</a></div>'
+              '<div class="tags"><span title="Dětský Atlas" class="tag cyklus">Dětský Atlas</span></div></div></div>'
+              '<div class="variables" data-next-cnt="5" data-last-date="2026-12-10"></div>')
+        h2 = ('<div class="batch"><div class="line date">So 12. 12.</div><div class="line event"><div class="time">17:30</div>'
+              '<div class="title"><a href="?program=9983">Musí se žít</a></div></div></div>'
+              '<div class="variables" data-next-cnt="0" data-last-date="2026-12-12"></div>')
+        dotazy = []
+
+        def stahni(url):
+            dotazy.append(url)
+            return h1 if len(dotazy) == 1 else h2
+        vysledek = atlas.ziskej(stahni, {}, D)
+        self.assertEqual([(x["nazev"], x["datum"], x["cas"]) for x in vysledek],
+                         [("Musí se žít", "2026-12-10", "19:15"), ("Musí se žít", "2026-12-12", "17:30")])
+        self.assertIn("date=2026-12-11", dotazy[1])
+
+
 if __name__ == "__main__":
     unittest.main()
