@@ -131,6 +131,30 @@ def stejne_misto(a, b):
     return bool({w for w in na.split() if len(w) >= 3} & {w for w in nb.split() if len(w) >= 3} - OBECNA_MISTA)
 
 
+def urcite_stejne_misto(a, b):
+    """Jako stejne_misto, ale jen když místo známe u obou a opravdu se shoduje."""
+    return bool(norm(a.get("misto") or "")) and bool(norm(b.get("misto") or "")) and stejne_misto(a, b)
+
+
+def pokryti_agregatorem(vysledek, akce_podle_zdroje, typy_zdroju, okno_do):
+    """Kolik akcí každého vlastního zdroje má i agregátor (GoOut) – ať je vidět, které skripty jsou navíc.
+
+    Vrací {zdroj: {"z": akcí zdroje v okně agregátoru, "shoda": z toho je má i agregátor,
+                   "navic": akce agregátoru na stejném místě, které zdroj nemá (nebo se nespárovaly)}}.
+    """
+    agreg = [a for a in vysledek if typy_zdroju[a["zdroj"]] == "agregator" and a["datum"] <= okno_do]
+    vystup = {}
+    for zid, xs in akce_podle_zdroje.items():
+        if typy_zdroju[zid] != "primarni":
+            continue
+        v_okne = [a for a in xs if a["datum"] <= okno_do]
+        shoda = sum(1 for a in v_okne if any(typy_zdroju.get(z) == "agregator" for z in a.get("dalsi_zdroje", [])))
+        mista = [{"misto": m} for m in {a.get("misto") for a in v_okne} if m]
+        navic = sum(1 for g in agreg if any(urcite_stejne_misto(g, m) for m in mista))
+        vystup[zid] = {"z": len(v_okne), "shoda": shoda, "navic": navic}
+    return vystup
+
+
 def minuty(c):
     if not c:
         return None
@@ -202,6 +226,13 @@ def slouc(akce_podle_zdroje, typy_zdroju):
                                           and len(slova(a["nazev"])) >= 3):
                     shoda = b
                     break
+            if shoda is None and typy_zdroju[a["zdroj"]] == "agregator" and a["cas"]:
+                # agregátor má akci pod jiným názvem: stejná scéna a přesně stejný začátek = tatáž akce
+                # (jen když je taková právě jedna a ještě k ní z tohoto agregátoru nic nepatří)
+                kandidati = [b for b in den if typy_zdroju[b["zdroj"]] == "primarni" and b["cas"] == a["cas"]
+                             and urcite_stejne_misto(a, b)]
+                if len(kandidati) == 1 and a["zdroj"] not in kandidati[0].get("dalsi_zdroje", []):
+                    shoda = kandidati[0]
             if shoda is None:
                 vysledek.append(a)
                 den.append(a)
@@ -426,6 +457,16 @@ def main():
         podle_zdroje[zid] = vybrane
 
     sloucene, rozpory = slouc(podle_zdroje, typy_zdroju)
+    # kontrola překryvu s agregátorem (GoOut): u každého vlastního zdroje, kolik jeho akcí má i GoOut
+    okna = [int(z["dni"]) for z in cfg["zdroje"] if z.get("aktivni", True) and z.get("typ") == "agregator" and z.get("dni")]
+    if okna and any(typy_zdroju[z] == "agregator" and z in ok_zdroje for z in podle_zdroje):
+        okno_do = (dnes + dt.timedelta(days=min(okna) - 1)).isoformat()
+        print("Překryv s GoOut (akce zdroje v příštích dnech / z toho i na GoOut / GoOut navíc na stejném místě):")
+        for zid, p in sorted(pokryti_agregatorem(sloucene, podle_zdroje, typy_zdroju, okno_do).items(),
+                             key=lambda x: -(x[1]["shoda"] / x[1]["z"] if x[1]["z"] else 0)):
+            if zid in zdravi:
+                zdravi[zid]["goout"] = p
+            print(f"  {zid:14} {p['z']:4} / {p['shoda']:4} / {p['navic']:4}")
     zalozeno = minule_data.get("meta", {}).get("zalozeno")
     akce, stat = porovnej(sloucene, minule_data.get("akce", []), ok_zdroje, dnes, nove_zdroje, zalozeno)
     akce.sort(key=lambda a: (a["datum"], a["cas"] or "99:99", a["nazev"]))

@@ -135,6 +135,7 @@ footer h2{font-size:var(--s-1);font-family:var(--mono);font-weight:500;letter-sp
 footer ul{list-style:none;margin:0;padding:0;columns:3;column-gap:24px}
 footer li{break-inside:avoid;padding:1px 0}
 footer .bad{color:var(--sold)}
+footer .go{font-size:10.5px;color:var(--faint);margin-left:4px}
 @media (max-width:640px){footer ul{columns:2}}
 /* mapa */
 .topr{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
@@ -459,7 +460,7 @@ async function start(){
     if(spatne.length) zpr.push(`<b>Nefunguje:</b> ${spatne.map(x=>`${esc(x.nazev)} (${esc(x.chyba||x.varovani)})`).join(", ")}`);
     if(zpr.length){const al=document.getElementById("alert");al.innerHTML=zpr.join("<br>");al.hidden=false;}
     document.getElementById("sources").innerHTML=Object.values(z).sort((a,b)=>a.nazev.localeCompare(b.nazev,"cs")).map(s=>
-      `<li class="${s.ok?"":"bad"}"><a href="${odkaz(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> <span class="mono">${s.ok?s.pocet:"✕"}</span></li>`).join("");
+      `<li class="${s.ok?"":"bad"}"><a href="${odkaz(s.url)}" target="_blank" rel="noopener">${esc(s.nazev)}</a> <span class="mono">${s.ok?s.pocet:"✕"}</span>${s.goout&&s.goout.z?` <span class="mono go" title="Z ${s.goout.z} akcí v příštích 3 týdnech jich ${s.goout.shoda} má i GoOut">GoOut ${Math.round(100*s.goout.shoda/s.goout.z)} %</span>`:""}</li>`).join("");
     if(pozdeji.length){
       const vysl=await Promise.allSettled(pozdeji.map(c=>nacti(c.soubor)));
       vysl.forEach(v=>{ if(v.status==="fulfilled") pridej(v.value); });

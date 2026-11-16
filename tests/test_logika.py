@@ -35,6 +35,21 @@ class Slouceni(unittest.TestCase):
                           "goout": [a("goout", "Večer deskových her pro dospělé", "Karlínské Spektrum")]}, self.TYPY)
         self.assertEqual(len(v), 1)
 
+    def test_jiny_nazev_na_stejne_scene_ve_stejny_cas_je_tataz_akce(self):
+        v, _ = run.slouc({"jazzdock": [a("jazzdock", "Krystof Trio", "Jazz Dock", "21:00")],
+                          "goout": [a("goout", "Večer mladého jazzu", "Jazz Dock", "21:00"),
+                                    a("goout", "Úplně jiná akce", "Jazz Dock", "18:00")]}, self.TYPY)
+        self.assertEqual(sorted((x["zdroj"], x["cas"]) for x in v), [("goout", "18:00"), ("jazzdock", "21:00")])
+
+    def test_prekryv_s_agregatorem(self):
+        zdroje = {"jazzdock": [a("jazzdock", "Koncert A", "Jazz Dock", "19:00"), a("jazzdock", "Koncert B", "Jazz Dock", "22:00"),
+                               a("jazzdock", "Daleko", "Jazz Dock", datum="2027-03-01")],
+                  "goout": [a("goout", "Koncert A", "Jazz Dock", "19:00"), a("goout", "Workshop", "Jazz Dock", "10:00"),
+                            a("goout", "Jinde", "Reduta Jazz Club", "19:00")]}
+        v, _ = run.slouc(zdroje, self.TYPY)
+        self.assertEqual(run.pokryti_agregatorem(v, zdroje, self.TYPY, "2026-12-06"),
+                         {"jazzdock": {"z": 2, "shoda": 1, "navic": 1}})
+
     def test_jiny_cas_neni_duplicita(self):
         v, _ = run.slouc({"goout": [a("goout", "Film X", "Bio Oko", "17:00"), a("goout", "Film X", "Bio Oko", "20:30")]}, self.TYPY)
         self.assertEqual(len(v), 2)
