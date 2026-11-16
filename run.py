@@ -17,6 +17,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 import yaml
+from bs4 import BeautifulSoup
 
 from nastroje.snapshot import rozbal
 from scrapers import nacti
@@ -144,6 +145,11 @@ def kontrola_uplnosti(texty, akce, dnes, do):
     Vrací (počet zmíněných dnů, chybějící dny). Chybějící dny = čtečka možná něco přehlíží."""
     zminene = set()
     for t in texty:
+        if t.lstrip()[:1] == "<":
+            # jen viditelný text a obsah skriptů (JSON-LD); atributy jako <time datetime> v kalendářních
+            # lištách by hlásily dny, na kterých nic není
+            s = BeautifulSoup(t, "lxml")
+            t = s.get_text(" ") + " ".join(x.string or "" for x in s.find_all("script"))
         zminene |= data_v_textu(t, dnes, do)
     mame = set()
     for a in akce:

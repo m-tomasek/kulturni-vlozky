@@ -1,5 +1,6 @@
-# název url  (stahuje úloha snapshot, výsledek je v artefaktech)
-goout-v1-json https://goout.net/services/entities/v1/schedules?languages%5B%5D=cs&cityIds%5B%5D=101752049&include=events,venues&limit=30
-goout-v2-json https://goout.net/services/entities/v1/schedules?languages%5B%5D=cs&cityIds%5B%5D=101752049&include=events,venues&limit=30&startAt=2026-11-15T00%3A00%3A00%2B01%3A00&endAt=2026-11-16T00%3A00%3A00%2B01%3A00
-goout-v3-json https://goout.net/services/entities/v1/schedules?languages%5B%5D=cs&cityIds%5B%5D=101752049&include=events,venues&limit=30&startAtFrom=2026-11-15&isPermanent=false
-goout-v4-json https://goout.net/services/entities/v1/schedules?languages%5B%5D=cs&cityIds%5B%5D=101752049&include=events,venues&limit=30&sort=startAt&state=approved&isPermanent=false&timeFrom=2026-11-15
+# název url  (stahuje úloha snapshot, výsledek je v artefaktech; "POST adresa?parametry" pošle formulář)
+biooko-0 https://www.biooko.net/cs/program
+biooko-post1 POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=1&filterType=program&ao=0&d=0&_locale=cs
+biooko-post2 POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=1&ao=0&d=1&_locale=cs
+biooko-post3 POST https://www.biooko.net/api_program?wp=1&_locale=cs
+biooko-post4 POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=0&filterType=program&ao=0&d=0&_locale=cs

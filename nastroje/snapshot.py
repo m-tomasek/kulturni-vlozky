@@ -49,6 +49,12 @@ UA_PROHLIZEC = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like 
 
 def stahni(url, prohlizec=False):
     hlavicky = {"User-Agent": UA}
+    if url.startswith("POST "):  # "POST adresa?parametry" – parametry se pošlou jako formulář
+        from urllib.parse import parse_qsl, urlsplit
+        u = urlsplit(url[5:].strip())
+        r = requests.post(f"{u.scheme}://{u.netloc}{u.path}", data=parse_qsl(u.query, keep_blank_values=True),
+                          headers={"User-Agent": UA_PROHLIZEC, "X-Requested-With": "XMLHttpRequest"}, timeout=30)
+        return r.status_code, r.content
     if prohlizec:  # test: chová se web jinak k běžnému prohlížeči?
         hlavicky = {"User-Agent": UA_PROHLIZEC, "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
                     "Accept-Language": "cs,en;q=0.8"}

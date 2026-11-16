@@ -1,5 +1,8 @@
 # soubor|hledaný text  (výřezy kolem výskytů -> raw/_okoli.txt)
-goout-v1-json.json|"included"
-goout-v2-json.json|"startAt"
-goout-v3-json.json|"startAt"
-goout-v4-json.json|"startAt"
+biooko-0.html|cinema-checkbox
+biooko-0.html|let filterType
+biooko-0.html|var filterType
+biooko-post1.html|program__day
+biooko-post2.html|program__day
+biooko-post3.html|program__day
+biooko-post4.html|program__day
