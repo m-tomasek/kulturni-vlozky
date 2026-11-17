@@ -199,6 +199,13 @@ zdroje:
     urls:
       - https://kinoatlaspraha.cz/
 
+  - id: sklep
+    nazev: Divadlo Sklep
+    typ: primarni
+    aktivni: true
+    urls:
+      - https://divadlosklep.cz/
+
   - id: goout
     nazev: GoOut (celá Praha)
     typ: agregator

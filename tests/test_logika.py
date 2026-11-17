@@ -217,6 +217,19 @@ class PrevzetiJinymZdrojem(unittest.TestCase):
         self.assertEqual(s["zmizele"], 0)
 
 
+class DivadloSklep(unittest.TestCase):
+    def test_terminy(self):
+        from scrapers import sklep
+        h = ('<div class="shows-list"><h3>Listopad 2026</h3><div class="row"><div class="col-lg-5"><span>Po</span>'
+             '30. 11. Výběr z Besídek</div><div class="col-lg-7 place">Praha, Dobeška, VYPRODÁNO - 19:30</div></div>'
+             '<h3>Leden 2027</h3><div class="row"><div class="col-lg-5"><span>Ne</span>24. 1. Besídka 2027</div>'
+             '<div class="col-lg-7 place">Praha, Dobeška - 19:30 <a href="https://1url.cz/x">Koupit</a></div></div></div>')
+        v = sklep.ziskej(lambda u: h, {"urls": ["x"]}, D)
+        self.assertEqual([(x["nazev"], x["datum"], x["cas"], x["misto"], x["stav"]) for x in v],
+                         [("Výběr z Besídek", "2026-11-30", "19:30", "Divadlo Dobeška", "vyprodano"),
+                          ("Besídka 2027", "2027-01-24", "19:30", "Divadlo Dobeška", "volno")])
+
+
 class Uplnost(unittest.TestCase):
     def test_dny_bez_akci(self):
         html = ('<div><time datetime="2026-12-01">1</time> Čt 10. 12. a 12. prosince'
