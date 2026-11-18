@@ -358,17 +358,6 @@ zdroje:
     urls:
       - https://natur.cuni.cz/udalosti
 
-  - id: klima
-    nazev: Klimatická koalice (akce v Praze)
-    typ: agregator
-    aktivni: true
-    scraper: obecny
-    jen_tema: true
-    jen_praha: true
-    blok: ".card"
-    urls:
-      - https://klimatickakoalice.cz/akce
-
   # --- architektura
   - id: zastarou
     nazev: Klub Za starou Prahu (procházky a přednášky)

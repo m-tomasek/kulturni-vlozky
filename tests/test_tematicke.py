@@ -50,6 +50,12 @@ class Tematicke(unittest.TestCase):
         self.assertEqual(run.urci_temata({"nazev": "Vycházka za ptáky v Troji", "typ": "jine"}), ["priroda"])
         self.assertEqual(run.urci_temata({"nazev": "Koncert Les", "typ": "koncert"}), [])
         self.assertEqual(run.urci_temata({"nazev": "Cokoli", "typ": "jine"}, "priroda"), ["priroda"])
+        # aktivismus a klima nejsou ochrana přírody – ani u zdroje s tématem příroda
+        self.assertEqual(run.urci_temata({"nazev": "Veřejné slyšení ke klimatickému inženýrství", "typ": "jine"}), [])
+        self.assertEqual(run.urci_temata({"nazev": "Kreativní jarmark – Šetrné Vánoce", "typ": "jine"}, "priroda"), [])
+        self.assertEqual(run.urci_temata({"nazev": "Recyklační čtvrtek", "typ": "jine"}), [])
+        self.assertEqual(run.urci_temata({"nazev": "Ukliďme Česko u Botiče", "typ": "jine"}), [])
+        self.assertEqual(run.urci_temata({"nazev": "Vycházka za obojživelníky do rezervace", "typ": "jine"}), ["priroda"])
 
     def test_obecny_datum_a_cas(self):
         nd = obecny.najdi_data

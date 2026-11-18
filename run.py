@@ -320,12 +320,19 @@ TEMATA = {
         r"|rothmayer|plecnik|kotera|gocar|krejcar|\bcamp\b|verejn\w* prostor|pamatk|industrial|vodarn"
         r"|cistirn|podzemi|kasemat|rozhledn|nadrazi|bunkr|zahradni mesto|beton|palac|\bnamesti\b"),
     "priroda": re.compile(
-        r"prirod|ekolog|klimat|biodiverzit|\bptac|\bptak|ornitolog|botanick|rostlin|\bstrom|\blesn|\bles\b"
+        r"prirod|ekolog|biodiverzit|\bptac|\bptak|ornitolog|botanick|rostlin|\bstrom|\blesn|\bles\b"
         r"|\blesy\b|\blesa\b|houb|hmyz|brouk|motyl|netopyr|zachrann\w* stanic|rezervac|chranen\w* (uzemi|druh)"
-        r"|\bkrajin|mokrad|\bvcel|ekocentr|den zeme|\buklid|zvirat|geolog|rybnik|recykl|kompost|permakult|mykolog"
+        r"|\bkrajin|mokrad|\bvcel|ekocentr|zvirat|geolog|rybnik|mykolog"
         r"|entomolog|\bhub[ay]?\b|netopyr|obojzivel|plaz|savc"),
 }
 BEZ_HADANI = {"koncert", "divadlo", "film", "tanec", "improvizace"}
+# Příroda = ochrana přírody jako obor (botanika, zoologie, mykologie, péče o krajinu…), ne aktivismus,
+# klima, odpady a udržitelný životní styl. Akce s těmito slovy téma „příroda“ nedostanou ani od
+# zdroje, který ho jinak dává všem svým akcím.
+NE_PRIRODA = re.compile(
+    r"klimat|aktivis|protest|demonstrac|stavk|extinction|fridays|greenpeace|recykl|upcykl|zero ?waste"
+    r"|udrzitel|setrn\w* vanoc|uhlik|emis[ei]|energi|fosil|kompost|uklid|den zeme|vegan|jarmark|bezobal"
+    r"|spotreb|obehov|odpad")
 
 
 def urci_temata(a, zdroj_tema=None):
@@ -335,6 +342,9 @@ def urci_temata(a, zdroj_tema=None):
         temata |= {t for t, rx in TEMATA.items() if rx.search(text)}
     if "camp" in bez_diakritiky(a.get("misto") or "").lower().split():
         temata.add("architektura")
+    if "priroda" in temata and NE_PRIRODA.search(
+            bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower()):
+        temata.discard("priroda")
     return sorted(temata)
 
 
@@ -642,9 +652,14 @@ def main(jen_chybne=False):
             if a["datum"] >= okraj:
                 a["_okraj"] = True  # jen se posunulo okno zdroje (nebo se rozšířilo) – to není novinka
             a["typ"] = urci_typ(a, pr)
+            if (z.get("tema") == "priroda" or z.get("tema_podle_znacky")) and \
+                    NE_PRIRODA.search(bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower()):
+                continue  # přírodovědný zdroj: aktivistické a „klimatické“ akce vůbec nebrat
             tema = urci_temata(a, z.get("tema"))
             if z.get("tema_podle_znacky") and a.get("znacky") in z["tema_podle_znacky"]:
                 tema = sorted(set(tema) | {z["tema_podle_znacky"][a["znacky"]]})
+                if "priroda" in tema and NE_PRIRODA.search(bez_diakritiky(a["nazev"]).lower()):
+                    tema.remove("priroda")
             if tema:
                 a["temata"] = tema
             elif z.get("jen_tema"):  # široký kalendář (muzeum, městská část): jen akce o přírodě/architektuře
