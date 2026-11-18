@@ -365,9 +365,11 @@ function kreslitDny(){
   const denText=d=>`${DNY2[dow(d)]} ${kratce(d)}`;
   let h=cip(t,"Dnes",denText(t),pocet(t),z.some(a=>probiha(a,t)&&nova(a)));
   h+=cip(zitra,"Zítra",denText(zitra),pocet(zitra),z.some(a=>probiha(a,zitra)&&nova(a)));
+  const pozitri=plus(t,2);
+  h+=cip(pozitri,"Pozítří",denText(pozitri),pocet(pozitri),z.some(a=>probiha(a,pozitri)&&nova(a)));
   h+=cip("vikend","Víkend",pa.slice(5,7)===ne.slice(5,7)?`${+pa.slice(8)}.–${kratce(ne)}`:`${kratce(pa)} – ${kratce(ne)}`,pocet("vikend"));
   // den vybraný v kalendáři (ne dnes/zítra) – ať je v seznamu vidět, co je vybrané
-  if(/^\d{4}/.test(S.sel)&&S.sel!==t&&S.sel!==zitra) h+=cip(S.sel,"Vybraný den",denText(S.sel),pocet(S.sel));
+  if(/^\d{4}/.test(S.sel)&&![t,zitra,pozitri].includes(S.sel)) h+=cip(S.sel,"Vybraný den",denText(S.sel),pocet(S.sel));
   h+=`<span class="sep"></span>`;
   const obd=[[`t:${tyd}`,"Tento týden",tydenText(tyd)],[`t:${plus(tyd,7)}`,"Příští týden",tydenText(plus(tyd,7))],
              [`m:${mes}`,"Tento měsíc",MESICE[+mes.slice(5)-1]],[`m:${pmes}`,"Příští měsíc",MESICE[+pmes.slice(5)-1]]];
