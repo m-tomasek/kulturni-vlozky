@@ -230,6 +230,26 @@ class DivadloSklep(unittest.TestCase):
                           ("Besídka 2027", "2027-01-24", "19:30", "Divadlo Dobeška", "volno")])
 
 
+class Opakovani(unittest.TestCase):
+    def test_sbaleni_prohlidek(self):
+        xs = [a("goout", "Neviditelná výstava", "Novoměstská radnice", cas=f"{h:02d}:{m:02d}", datum="2026-12-03")
+              for h in range(12, 15) for m in (0, 30)]
+        xs.append(a("goout", "Koncert", "Novoměstská radnice", cas="19:00", datum="2026-12-03"))
+        v = run.sbal_opakovani(xs)
+        self.assertEqual(len(v), 2)
+        s = next(x for x in v if x.get("opakovani"))
+        self.assertEqual((s["cas"], s["posledni_cas"], s["opakovani"]), ("12:00", "14:30", 6))
+
+    def test_stare_casy_nejsou_zmizele(self):
+        stare = [a("goout", "Neviditelná výstava", "Radnice", cas=c, datum="2026-12-03", id=f"s{i}", poprve_videno="2026-11-14")
+                 for i, c in enumerate(["12:00", "12:30", "13:00"])]
+        nova = a("goout", "Neviditelná výstava", "Radnice", cas="12:00", datum="2026-12-03", id="s0", opakovani=3,
+                 posledni_cas="13:00")
+        v, st = run.porovnej([nova], stare, {"goout"}, D)
+        self.assertEqual([x["id"] for x in v], ["s0"])
+        self.assertEqual(st["zmizele"], 0)
+
+
 class Uplnost(unittest.TestCase):
     def test_dny_bez_akci(self):
         html = ('<div><time datetime="2026-12-01">1</time> Čt 10. 12. a 12. prosince'

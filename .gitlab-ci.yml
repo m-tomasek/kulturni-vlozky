@@ -5,7 +5,8 @@
 #   Bez něj se web nasadí, ale data se neuloží zpět do repa (ztratí se paměť změn).
 # Plány (input "job"; výchozí je sber):
 #   1) denně v 05:13, input job = sber (nebo nechat výchozí)
-#   2) denně v 12:37, input job = hlidac
+#   2) denně v 12:37, input job = hlidac – zkontroluje čerstvost dat a znovu načte weby,
+#      které ráno selhaly (dosběr); když se povedou, web se hned aktualizuje
 # Ruční běh s input job = snapshot stáhne stránky z nastroje/pruzkum.txt (artefakt raw/).
 spec:
   inputs:
@@ -34,7 +35,7 @@ sber:
     # testy logiky (bez sítě): když neprojdou, sběr se nespustí a nic se nepřepíše
     - python -m unittest discover -s tests
     - python run.py
-    - |
+    - &uloz |
       if [ -n "$PROJEKT_TOKEN" ]; then
         REMOTE="https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
         git config user.name "kulturni-vlozky-bot"
@@ -50,6 +51,23 @@ sber:
       else
         echo "PROJEKT_TOKEN není nastaven – data se neukládají do repa"
       fi
+  artifacts:
+    paths: [data]
+    expire_in: 2 days
+
+# dosběr: weby, které při ranním sběru selhaly (výpadek, chyba 5xx), se zkusí znovu
+dosber:
+  stage: sber
+  timeout: 20 minutes
+  rules:
+    - if: '"$[[ inputs.job ]]" == "hlidac"'
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq git >/dev/null
+    - pip install -q --root-user-action=ignore -r requirements.txt
+  script:
+    - python -m unittest discover -s tests
+    - python run.py --jen-chybne
+    - *uloz
   artifacts:
     paths: [data]
     expire_in: 2 days
@@ -85,10 +103,14 @@ snapshot:
 pages:
   stage: nasazeni
   rules:
-    - if: '"$[[ inputs.job ]]" == "sber"'
+    - if: '"$[[ inputs.job ]]" =~ /^(sber|hlidac)$/'
   needs:
     - job: sber
       artifacts: true
+      optional: true
+    - job: dosber
+      artifacts: true
+      optional: true
   script:
     - mkdir -p public/data
     - cp index.html public/
@@ -97,5 +119,7 @@ pages:
     - python nastroje/rozdel.py public/data
     # mapová knihovna z npm s ověřeným otiskem (web ji nebere z cizího CDN)
     - python nastroje/leaflet.py public/vendor/leaflet
+    # předkomprimované soubory: GitLab Pages je pošle zabalené (data jsou pak ~6× menší, web se načte rychleji)
+    - find public -type f \( -name '*.json' -o -name '*.html' -o -name '*.js' -o -name '*.css' \) -exec gzip -k -9 {} \;
   artifacts:
     paths: [public]

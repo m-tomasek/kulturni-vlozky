@@ -57,23 +57,36 @@ def uloz_akce(cesta, meta, akce):
                      encoding="utf-8")
 
 
+# Některé weby (ochrana proti botům, CDN) odmítají neznámého „robota“ chybou 403/429/503, i když stránka
+# normálně funguje. U takového webu se zkusí znovu hlavičky běžného prohlížeče a pro zbytek běhu se drží.
+PROHLIZEC = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,application/json;q=0.8,*/*;q=0.7",
+    "Accept-Language": "cs-CZ,cs;q=0.9,en;q=0.6",
+}
+ODMITNUTI = (403, 406, 429, 503)
+
+
 def vytvor_stahovac():
     sezeni = requests.Session()
     sezeni.headers["User-Agent"] = UA
     cache = {}
+    jako_prohlizec = set()  # weby, které chtějí hlavičky prohlížeče
 
     def stahni(url):
         if url in cache:
             return cache[url]
         posledni = None
         for pokus in range(3):
+            host = urlsplit(url[5:].strip() if url.startswith("POST ") else url).netloc
+            hlavicky = PROHLIZEC if host in jako_prohlizec else {}
             try:
                 if url.startswith("POST "):  # "POST adresa?parametry" – web načítá program formulářem
                     u = urlsplit(url[5:].strip())
                     r = sezeni.post(f"{u.scheme}://{u.netloc}{u.path}", data=parse_qsl(u.query, keep_blank_values=True),
-                                    headers={"X-Requested-With": "XMLHttpRequest"}, timeout=30)
+                                    headers={**hlavicky, "X-Requested-With": "XMLHttpRequest"}, timeout=30)
                 else:
-                    r = sezeni.get(url, timeout=30)
+                    r = sezeni.get(url, headers=hlavicky, timeout=30)
                 r.raise_for_status()
                 r.encoding = r.encoding if r.encoding and r.encoding.lower() != "iso-8859-1" else r.apparent_encoding
                 cache[url] = r.text
@@ -81,6 +94,10 @@ def vytvor_stahovac():
             except requests.RequestException as e:
                 posledni = e
                 kod = getattr(getattr(e, "response", None), "status_code", None)
+                if kod in ODMITNUTI and host not in jako_prohlizec:
+                    jako_prohlizec.add(host)
+                    print(f"{host}: chyba {kod}, zkouším hlavičky prohlížeče", file=sys.stderr)
+                    continue
                 if kod is not None and 400 <= kod < 500 and kod not in (408, 429):
                     break  # chyba na naší straně (404, 403…) – opakování nepomůže
                 if pokus < 2:
@@ -225,6 +242,32 @@ def minuty(c):
     return int(h) * 60 + int(m)
 
 
+OPAKOVANI_OD = 3  # stejný pořad na stejném místě tolikrát a víckrát za den → jedna položka
+
+
+def sbal_opakovani(akce):
+    """Prohlídky a vstupy každých 15–30 minut (Neviditelná výstava, Signal Space…) zahlcují přehled
+    stovkami řádků. Stejný název + místo + den s 3 a více časy se sbalí do jedné akce s prvním časem
+    a polem opakovani = počet časů, posledni_cas = poslední začátek."""
+    skupiny = {}
+    for a in akce:
+        if a.get("cas") and not a.get("konec_datum"):
+            skupiny.setdefault((norm(a["nazev"]), a.get("misto") or "", a["datum"]), []).append(a)
+    pryc = set()
+    for xs in skupiny.values():
+        if len(xs) < OPAKOVANI_OD:
+            continue
+        xs.sort(key=lambda a: a["cas"])
+        prvni = xs[0]
+        prvni["opakovani"] = len(xs)
+        prvni["posledni_cas"] = xs[-1]["cas"]
+        prvni["konec_cas"] = None
+        if any(x.get("stav") != "vyprodano" for x in xs) and prvni.get("stav") == "vyprodano":
+            prvni["stav"] = "neznamo"  # vyprodaný je jen některý čas
+        pryc.update(id(x) for x in xs[1:])
+    return [a for a in akce if id(a) not in pryc]
+
+
 def ident(a):
     zaklad = f"{a['zdroj']}|{norm(a['nazev'])}|{a['datum']}|{a['cas'] or ''}"
     return hashlib.sha1(zaklad.encode()).hexdigest()[:10]
@@ -358,7 +401,11 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
     for a in nove:
         nove_podle_terminu.setdefault((a["datum"], a.get("cas")), []).append(a)
 
+    sbalene = {(norm(a["nazev"]), a.get("misto") or "", a["datum"]) for a in nove if a.get("opakovani")}
+
     def nahrazena(b):
+        if (norm(b["nazev"]), b.get("misto") or "", b["datum"]) in sbalene:
+            return True  # jednotlivý čas akce, která se teď ukazuje sbalená
         return next((a for a in nove_podle_terminu.get((b["datum"], b.get("cas")), [])
                      if a["zdroj"] != b["zdroj"] and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])), None)
 
@@ -429,7 +476,9 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
 
 # ---------------------------------------------------------------- hlavní běh
 
-def main():
+def main(jen_chybne=False):
+    """jen_chybne=True: dosběr – znovu se načtou jen zdroje, které při posledním běhu selhaly nebo hlásily
+    varování; akce ostatních zdrojů zůstanou, jak byly (jejich weby se znovu nestahují)."""
     ted = dt.datetime.now(PRAHA)
     dnes = ted.date()
     cfg = yaml.safe_load((KOREN / "zdroje.yml").read_text(encoding="utf-8"))
@@ -453,6 +502,12 @@ def main():
     # Zdroj, který napoprvé selže na síti (výpadek, chyba 5xx), dostane druhý pokus až na konci běhu –
     # krátké poruchy webů bývají za pár minut pryč.
     fronta = [(z, False) for z in cfg["zdroje"] if z.get("aktivni", True)]
+    if jen_chybne:
+        fronta = [(z, d) for z, d in fronta if not zdravi.get(z["id"], {}).get("ok", True) or zdravi.get(z["id"], {}).get("varovani")]
+        if not fronta:
+            print("Dosběr: všechny zdroje při posledním běhu fungovaly, není co dělat.")
+            return 0
+        print("Dosběr zdrojů: " + ", ".join(z["id"] for z, _ in fronta))
     i = 0
     while i < len(fronta):
         z, druhy_pokus = fronta[i]
@@ -539,6 +594,14 @@ def main():
         stav["url"] = z.get("web") or zz["urls"][0]
         zdravi[zid] = stav
 
+        # Okno zdroje: kolik dní dopředu se čte (GoOut má vlastní „dni“, ostatní horizont).
+        # Akce na samém konci okna nejsou novinky – jen se okno posunulo o den. Když se okno rozšíří
+        # (např. GoOut z 21 na 120 dní), nejsou novinky ani akce v nově přidaném úseku.
+        okno = int(z.get("dni") or (horizont - dnes).days)
+        drive = stav.get("okno") if not chyba else None
+        okraj = (dnes + dt.timedelta(days=min(okno, drive or okno) - 1)).isoformat()
+        if not chyba:
+            stav["okno"] = okno
         vybrane = []
         for a in budouci:
             if a["datum"] > horizont.isoformat():
@@ -548,13 +611,13 @@ def main():
                 vynechane[duvod.split(":")[0]] = vynechane.get(duvod.split(":")[0], 0) + 1
                 continue
             a["zdroj"] = zid
-            if z.get("dni") and a["datum"] >= (dnes + dt.timedelta(days=int(z["dni"]) - 1)).isoformat():
-                a["_okraj"] = True  # jen se posunulo okno zdroje o den – to není novinka
+            if a["datum"] >= okraj:
+                a["_okraj"] = True  # jen se posunulo okno zdroje (nebo se rozšířilo) – to není novinka
             a["typ"] = urci_typ(a, pr)
             a.pop("mimo_prahu", None)
             a["id"] = ident(a)
             vybrane.append(a)
-        podle_zdroje[zid] = vybrane
+        podle_zdroje[zid] = sbal_opakovani(vybrane)
 
     print("Úplnost zdrojů (kolik akcí čteme a jestli web nezmiňuje dny, ze kterých nemáme nic):")
     print("\n".join(uplnost_log))
@@ -570,6 +633,11 @@ def main():
                 zdravi[zid]["goout"] = p
             print(f"  {zid:14} {p['z']:4} / {p['shoda']:4} / {p['navic']:4}")
     zalozeno = minule_data.get("meta", {}).get("zalozeno")
+    for b in minule_data.get("akce", []):
+        # jednorázově: 16. 11. 2026 se okno GoOut rozšířilo z 21 na 120 dní a tisíce akcí se omylem
+        # označily jako nové (zbytečně plnily „Nově přidané“)
+        if b.get("zdroj") == "goout" and b.get("poprve_videno") == "2026-11-16" and b["datum"] >= "2026-12-06" and zalozeno:
+            b["poprve_videno"] = zalozeno
     akce, stat = porovnej(sloucene, minule_data.get("akce", []), ok_zdroje, dnes, nove_zdroje, zalozeno)
     akce.sort(key=lambda a: (a["datum"], a["cas"] or "99:99", a["nazev"]))
 
@@ -598,4 +666,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(jen_chybne="--jen-chybne" in sys.argv))
