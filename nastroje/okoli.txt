@@ -1,4 +1,7 @@
 # soubor|hledaný text  (výřezy kolem výskytů -> raw/_okoli.txt)
-cso-reg-js.js|fetch(
-cso-reg-js.js|/api
-cso-reg-js.js|axios
+cso-reg-js.js|baseURL
+cso-reg-js.js|https://
+cso-reg-js.js|"/api
+cso-reg-js.js|`/api
+cso-reg-js.js|.get(
+cso-reg-json.html|{

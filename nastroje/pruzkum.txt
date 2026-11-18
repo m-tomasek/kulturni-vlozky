@@ -58,3 +58,4 @@ praha13 https://www.praha13.cz/akce/
 cso-reg-js https://registrace.birdlife.cz/akce-pro-verejnost/assets/index-BGdl2T4k.js
 toulcuv-td https://toulcuvdvur.cz/td-akce
 b-prirodovedci https://www.prirodovedci.cz/kalendar-akci
+cso-reg-json https://registrace.birdlife.cz/api/akce-pro-verejnost
