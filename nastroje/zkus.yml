@@ -1,22 +1,13 @@
 # zkušební nastavení nových zdrojů (spouští úloha snapshot -> raw/_zkus.txt)
-- {id: myko, scraper: obecny, soubor: myko-akce.html, blok: "table tr", nazev: "td:nth-of-type(3)", datum: "td:nth-of-type(1)", misto_css: "td:nth-of-type(2)", jen_praha: true, vynechat_css: "s", tema: priroda}
 - {id: ceson, scraper: obecny, soubor: ceson-akce.html, blok: "div:has(> div.hlavicka)", nazev: "div.hlavicka b", datum: "div.hlavicka", jen_praha: true, tema: priroda}
-- {id: nm, scraper: obecny, soubor: nm-akce.html, blok: "div.eCont", nazev: "h3 a", datum: "time", misto_css: ".loc", jen_tema: true}
-- {id: nzm, scraper: obecny, soubor: nzm-akce.html, blok: "article.article--event", nazev: "h3 a", datum: "time", jen_praha: true, misto: "Národní zemědělské muzeum Praha"}
-- {id: prfuk, scraper: obecny, soubor: natur-ud.html, blok: "a.calendar-event-link", nazev: "h3", datum: ".calendar-event-date"}
-- {id: brontosaurus, scraper: obecny, soubor: brontosaurus-akce.html, blok: "a.hb-event", nazev: "h4", datum: "time", misto_css: ".hb-event__place", jen_praha: true, tema: priroda}
-- {id: klima, scraper: obecny, soubor: klima-akce.html, blok: ".card", jen_praha: true}
-- {id: cbs-pred, scraper: obecny, soubor: cbs-pred.html, blok: ".views-row", datum: "time", tema: priroda}
-- {id: cbs-exk, scraper: obecny, soubor: cbs-exk.html, blok: ".views-row", jen_praha: true, tema: priroda}
-- {id: koniklec, scraper: obecny, soubor: koniklec-akce.html, blok: "article", tema: priroda}
-- {id: praha1, scraper: obecny, soubor: praha1-ud.html, blok: "article", datum: ".entry-date"}
-- {id: ekokal, scraper: obecny, soubor: ekokal.html, blok: "div:has(> h3)", nazev: "h3", jen_praha: true, tema: priroda}
-- {id: zastarou, scraper: obecny, soubor: zastarou-prog.html, blok: "div.program_vypis", nazev: "h2 a", datum: "strong", misto_css: "span.fr", tema: architektura}
-- {id: muzeumprahy, scraper: obecny, soubor: muzeumprahy-akce.html, blok: "div.o-event__wrap-text", nazev: "h3", datum: ".o-event__date", misto: "Muzeum Prahy", vynechat: "pro děti|pro rodiče|pro rodiny|loutkov"}
-- {id: winternitz, scraper: obecny, soubor: winternitz-akce.html, blok: "article.eventlist-event--upcoming", nazev: "h1 a", datum: "time.event-date", misto: "Winternitzova vila", tema: architektura}
-- {id: cka, scraper: obecny, soubor: cka-ud.html, blok: "a.item-event", nazev: "h3", datum: "time", misto_css: ".item-event__info div", jen_praha: true, vynechat: "webinář|webinar", tema: architektura}
-- {id: upm, scraper: obecny, soubor: upm-prog.html, blok: "div.ctyri_sloupce", nazev: "h2 a", datum: "p.programy-pod-nadpisem", misto_css: "p.pod_nadpisem"}
+- {id: klima, scraper: obecny, soubor: klima-akce.html, blok: ".card", jen_praha: true, jen_tema: true}
+- {id: cbs-pred, scraper: obecny, soubor: cbs-pred.html, blok: ".views-row", datum: "time", tema: priroda, misto: "Botanický ústav PřF UK, Benátská 2"}
+- {id: cse-pred, scraper: obecny, soubor: cse-pred.html, blok: "p:has(strong)", nazev: "strong", tema: priroda}
+- {id: praha1, scraper: obecny, soubor: praha1-ud.html, blok: "li.list-item", nazev: "h3 a", datum: ".entry-date", jen_tema: true}
 - {id: ghmp, scraper: obecny, soubor: ghmp-dopr.html, blok: "div.col--6.article", nazev: "p", nazev_bez_data: true, datum: "p"}
-- {id: mlp, scraper: obecny, soubor: mlp-akce.html, blok: ".event-box"}
-- {id: hybernska, scraper: obecny, soubor: hybernska-prog.html, blok: "a[href*='/program/']"}
-- {id: npu, scraper: obecny, soubor: npu-akce.html, blok: "li:has(a[href*='/akce/kalendar/'])", jen_praha: true}
+- {id: mlp, scraper: obecny, soubor: mlp-akce.html, blok: "div.event-box__content__left", nazev: ".event-box__content__left__title", datum: "time", misto_css: ".event-box__content__left__place", vynechat: "Pro děti"}
+- {id: npu, scraper: obecny, soubor: npu-akce.html, blok: "div.events__item", nazev: "a.events__item-title", jen_praha: true, tema: architektura}
+- {id: bzuk, soubor: bzuk-kal.html, tema: priroda}
+- {id: toulcuv, scraper: obecny, soubor: toulcuv-td.html, blok: "div.new-content, div.card, article", misto: "Toulcův dvůr", tema: priroda}
+- {id: zoo, scraper: obecny, soubor: zoo-mesic.html, blok: "li.ev_td_li, tr", vynechat: "krmení|cvičení|zooškola", misto: "Zoo Praha"}
+- {id: prirodovedci, scraper: obecny, soubor: b-prirodovedci.html, blok: "article, .event, .views-row", tema: priroda}

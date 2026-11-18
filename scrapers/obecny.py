@@ -37,7 +37,7 @@ ISO = re.compile(r"(20\d\d)-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?")
 
 PRAHA = re.compile(r"\b(praha|prahy|praze|prazsk|prague)")
 UVODNI_DATUM = re.compile(r"^\s*(?:(?:po|ut|út|st|čt|ct|pá|pa|so|ne)\.?\s+)?[\d.\s–-]+(?:20\d\d)?\s*,?\s*"
-                          r"(?:\d{1,2}[.:]\d{2}\s*(?:[–-]\s*\d{1,2}(?:[.:]\d{2})?)?\s*h?\.?)?\s*", re.I)
+                          r"(?:\d{1,2}(?:[.:]\d{2})?\s*(?:[–-]\s*\d{1,2}(?:[.:]\d{2})?)?\s*(?:h\b\.?|(?<=\d\d)))?\s*", re.I)
 
 
 def je_v_praze(text):
@@ -93,7 +93,11 @@ def najdi_cas(text):
     """Čas začátku – data se z textu nejdřív odstraní, aby se „22.11.“ nebralo jako 22:11."""
     t = ROZSAH_DEN.sub(" ", text or "")
     t = re.sub(r"\b\d{1,2}\.\s*\d{1,2}\.\s*(?:20\d\d)?", " ", t)
-    return cas(t)
+    c = cas(t)
+    if not c:  # „18 h“, „13–18 h“
+        m = re.search(r"\b(\d{1,2})\s*(?:[–-]\s*\d{1,2}\s*)?h\b", t)
+        c = f"{int(m.group(1)):02d}:00" if m and int(m.group(1)) < 24 else None
+    return c
 
 
 def _z_atributu(blok):

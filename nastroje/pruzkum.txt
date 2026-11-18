@@ -55,3 +55,6 @@ cso-reg https://registrace.birdlife.cz/akce-pro-verejnost
 bzuk-kal https://www.bz-uk.cz/cs/kalendar
 zoo-mesic https://www.zoopraha.cz/navsteva/program/month.listevents/2026/11/18/-
 praha13 https://www.praha13.cz/akce/
+cso-reg-js https://registrace.birdlife.cz/akce-pro-verejnost/assets/index-BGdl2T4k.js
+toulcuv-td https://toulcuvdvur.cz/td-akce
+b-prirodovedci https://www.prirodovedci.cz/kalendar-akci
