@@ -96,6 +96,7 @@ snapshot:
     - pip install -q --root-user-action=ignore -r requirements.txt
     - python nastroje/snapshot.py --pruzkum
     - python nastroje/prohlidni.py
+    - python nastroje/zkus.py || true
   artifacts:
     paths: [raw]
     expire_in: 7 days

@@ -318,11 +318,12 @@ TEMATA = {
         r"architekt|urbanis|mestsk\w* planov|\bvil[ayu]\b|\bvile\b|\bvilou\b|\bvilach\b|\bvily\b|stavb|\bbudov|sidlist"
         r"|brutalis|funkcionalis|modernis|kubis|secesn|interier|open house|kolonie|\bloos|mullerov|winternitz"
         r"|rothmayer|plecnik|kotera|gocar|krejcar|\bcamp\b|verejn\w* prostor|pamatk|industrial|vodarn"
-        r"|cistirn|podzemi|kasemat|rozhledn|nadrazi|bunkr|zahradni mesto|beton"),
+        r"|cistirn|podzemi|kasemat|rozhledn|nadrazi|bunkr|zahradni mesto|beton|palac|\bnamesti\b"),
     "priroda": re.compile(
         r"prirod|ekolog|klimat|biodiverzit|\bptac|\bptak|ornitolog|botanick|rostlin|\bstrom|\blesn|\bles\b"
         r"|\blesy\b|\blesa\b|houb|hmyz|brouk|motyl|netopyr|zachrann\w* stanic|rezervac|chranen\w* (uzemi|druh)"
-        r"|krajin|mokrad|\bvcel|ekocentr|den zeme|\buklid|zvirat|geolog|rybnik"),
+        r"|krajin|mokrad|\bvcel|ekocentr|den zeme|\buklid|zvirat|geolog|rybnik|recykl|kompost|permakult|mykolog"
+        r"|entomolog|\bhub[ay]?\b|netopyr|obojzivel|plaz|savc"),
 }
 BEZ_HADANI = {"koncert", "divadlo", "film", "tanec", "improvizace"}
 
@@ -549,7 +550,7 @@ def main(jen_chybne=False):
         mekke = mekky_stahovac(stahni, zz["urls"])
         sitova = False
         try:
-            surove = nacti(zid).ziskej(mekke, zz, dnes)
+            surove = nacti(z.get("scraper", zid)).ziskej(mekke, zz, dnes)
             chyba = None
             if mekke.chyby and not mekke.uspechy:
                 raise mekke.chyby[0][1]
@@ -646,6 +647,8 @@ def main(jen_chybne=False):
                 tema = sorted(set(tema) | {z["tema_podle_znacky"][a["znacky"]]})
             if tema:
                 a["temata"] = tema
+            elif z.get("jen_tema"):  # široký kalendář (muzeum, městská část): jen akce o přírodě/architektuře
+                continue
             a.pop("mimo_prahu", None)
             a["id"] = ident(a)
             vybrane.append(a)

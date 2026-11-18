@@ -1,2 +1,5 @@
 # soubor|hledaný text  (výřezy kolem výskytů -> raw/_okoli.txt)
-csopzo.html|Praha
+zastarou-prog.html|program-7
+prahaneznama-v.html|2026
+nyctalus-p.html|2026
+ceson-akce.html|2026
