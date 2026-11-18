@@ -16,7 +16,7 @@
   --sold:#C8244F; --free:#0E8656; --warn:#9A6500;
   --c-divadlo:#E0457B; --c-improvizace:#D99A00; --c-koncert:#2F7FE6; --c-tanec:#8257E5;
   --c-prednaska:#12A27A; --c-vystava:#EE7A2B; --c-festival:#0BA9B8; --c-film:#6F7C90;
-  --c-spolecenska:#7FA816; --c-jine:#A2ABB8;
+  --c-spolecenska:#7FA816; --c-jine:#A2ABB8; --c-t-priroda:#2E8B57; --c-t-architektura:#B5651D;
   --sans:"Archivo","Helvetica Neue",Helvetica,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   --s-1:clamp(.78rem,.15vw + .74rem,.85rem);
@@ -32,7 +32,7 @@
     --sold:#FF7A98; --free:#5DD39E; --warn:#F2C14E;
     --c-divadlo:#FF6E9E; --c-improvizace:#FFC933; --c-koncert:#5EA2FF; --c-tanec:#A98BFF;
     --c-prednaska:#3DD3A3; --c-vystava:#FF9A55; --c-festival:#36D3E0; --c-film:#9AA6B8;
-    --c-spolecenska:#AEDB3A; --c-jine:#6E7887;
+    --c-spolecenska:#AEDB3A; --c-jine:#6E7887; --c-t-priroda:#5CC98B; --c-t-architektura:#E0995A;
   }
 }
 *{box-sizing:border-box}
@@ -128,6 +128,8 @@ details.dlouhe[open]>summary .dayhead::after{content:"▾"}
 .ev .info .t i{width:7px;height:7px;border-radius:50%}
 .st-new{color:var(--accent);font-weight:600}
 .gooutlbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;padding:0 6px;border:1px solid var(--rule-strong);border-radius:4px;color:var(--muted)}
+.tlbl{font-size:11.5px;padding:0 7px;border-radius:999px;color:var(--tc);border:1px solid color-mix(in srgb,var(--tc) 45%,transparent);background:color-mix(in srgb,var(--tc) 10%,transparent)}
+.type.tema{font-weight:600}
 .st-sold{color:var(--sold)}.st-free{color:var(--free)}.st-warn{color:var(--warn)}
 .ev .acts{display:flex;align-items:flex-start;gap:12px;font-size:var(--s-1);white-space:nowrap;padding-top:3px}
 .ev .acts a,.ev .acts button{color:var(--muted);text-decoration:none}
@@ -286,7 +288,8 @@ const MES2=["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj"
 const PASMO=21; // kolik dní ukazovat v pásu
 const STROP=400; // kolik akcí vykreslit najednou (zbytek po kliknutí)
 
-const S={sel:"vse", typy:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false, vseRadky:false,
+const TEMATA={priroda:"Příroda",architektura:"Architektura"};
+const S={sel:"vse", typy:new Set(), temata:new Set(), misto:"", q:"", hideSold:false, kdy:"", bezGoout:false, vseRadky:false,
   pohled:"seznam", mesic:"", kalDen:""};
 const MESICE=["leden","únor","březen","duben","květen","červen","červenec","srpen","září","říjen","listopad","prosinec"];
 const MESL=["lednu","únoru","březnu","dubnu","květnu","červnu","červenci","srpnu","září","říjnu","listopadu","prosinci"];
@@ -340,6 +343,7 @@ function zaklad(a){
   if(S.kdy){ const c=a.cas||""; if(!c) return false;
     if(S.kdy==="vecer"&&c<"17:00") return false; if(S.kdy==="pozde"&&c<"21:00") return false; if(S.kdy==="den"&&c>="17:00") return false; }
   if(S.typy.size && !S.typy.has(a.typ)) return false;
+  if(S.temata.size && !(a.temata||[]).some(t=>S.temata.has(t))) return false;
   if(S.misto && a.zdroj!==S.misto) return false;
   if(S.hideSold && a.stav==="vyprodano") return false;
   if(S.bezGoout && a.zdroj===GOOUT) return false;
@@ -412,6 +416,7 @@ function radek(a){
   const info=[];
   info.push(`<span class="t"><i style="background:var(--c-${a.typ})"></i>${TYPY[a.typ]||a.typ}</span>`);
   info.push(`<span>${esc(a.misto||"")}</span>`);
+  (a.temata||[]).forEach(t=>info.push(`<span class="tlbl" style="--tc:var(--c-t-${t})">${TEMATA[t]||t}</span>`));
   if(a.opakovani) info.push(`<span>${a.opakovani}× za den (${a.cas}–${a.posledni_cas})</span>`);
   if(a.zdroj===GOOUT) info.push(`<span class="gooutlbl">GoOut</span>`);
   if(a.cena) info.push(`<span>${esc(a.cena)}</span>`);
@@ -457,16 +462,20 @@ function kreslitSeznam(){
   const vic=document.getElementById("vic"); if(vic) vic.onclick=()=>{S.vseRadky=true;kreslitSeznam();};
 }
 function vse(){ S.vseRadky=false; kreslitDny(); if(S.pohled==="kal") kreslitKal(); else kreslitSeznam(); kreslitMapu();
-  const n=S.typy.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0)+(S.bezGoout?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
+  const n=S.typy.size+S.temata.size+(S.misto?1:0)+(S.q?1:0)+(S.hideSold?1:0)+(S.kdy?1:0)+(S.bezGoout?1:0); document.getElementById("nf").textContent=n?`(${n})`:""; }
 
 /* ---------- ovládání ---------- */
 function ovladani(){
   const pouz=new Set(AKCE.map(a=>a.typ));
   const ty=document.getElementById("types");
-  ty.innerHTML=Object.entries(TYPY).filter(([k])=>pouz.has(k)).map(([k,n])=>
+  const pouzT=new Set(AKCE.flatMap(a=>a.temata||[]));
+  ty.innerHTML=Object.entries(TEMATA).filter(([k])=>pouzT.has(k)).map(([k,n])=>
+    `<button class="type tema" data-tema="${k}" aria-pressed="${S.temata.has(k)}" title="Téma: ${n.toLocaleLowerCase("cs")} (přednášky, vycházky, prohlídky, výstavy…)"><i style="background:var(--c-t-${k})"></i>${n}</button>`).join("")
+    +Object.entries(TYPY).filter(([k])=>pouz.has(k)).map(([k,n])=>
     `<button class="type" data-type="${k}" aria-pressed="${S.typy.has(k)}"><i style="background:var(--c-${k})"></i>${n}</button>`).join("");
-  ty.onclick=e=>{const b=e.target.closest(".type");if(!b)return;const k=b.dataset.type;
-    S.typy.has(k)?S.typy.delete(k):S.typy.add(k);b.setAttribute("aria-pressed",S.typy.has(k));vse();};
+  ty.onclick=e=>{const b=e.target.closest(".type");if(!b)return;
+    const [mn,k]=b.dataset.tema?[S.temata,b.dataset.tema]:[S.typy,b.dataset.type];
+    mn.has(k)?mn.delete(k):mn.add(k);b.setAttribute("aria-pressed",mn.has(k));vse();};
   const sel=document.getElementById("place");
   const mista=[...new Map(AKCE.map(a=>[a.zdroj,a.zdroj===GOOUT?"GoOut (vše)":(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
   sel.innerHTML=`<option value="">Všechna místa</option>`+mista.map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("");
@@ -656,6 +665,8 @@ const MISTA=[
   {n:"Bio Oko",k:["bio oko","biooko"],p:[50.0999,14.4312]},
   {n:"Kino Atlas",k:["kino atlas"],p:[50.0929,14.4392]},
   {n:"Divadlo Dobeška (Sklep)",k:["dobesk*","sklep"],p:[50.0407,14.4153]},
+  {n:"CAMP",k:["camp"],p:[50.0929,14.4435]},
+  {n:"Botanická zahrada Praha",k:["botanicka zahrada praha"],p:[50.1205,14.4151]},
   {n:"Galerie Rudolfinum",k:["rudolfin*"],p:[50.0899,14.4153]},
   {n:"DOX",k:["dox"],p:[50.1066,14.4487]},
   {n:"Štefánikova hvězdárna",k:["stefanikov*","petrin*"],p:[50.0813,14.3990]},

@@ -206,6 +206,52 @@ zdroje:
     urls:
       - https://divadlosklep.cz/
 
+  # --- architektura a ochrana přírody ---
+  - id: camp
+    nazev: CAMP – Centrum architektury a městského plánování
+    typ: primarni
+    aktivni: true
+    tema: architektura
+    urls:
+      - https://praha.camp/program
+
+  - id: archiweb
+    nazev: archiweb.cz (architektonické akce v Praze)
+    typ: agregator
+    aktivni: true
+    tema: architektura
+    web: https://www.archiweb.cz/e/list
+    urls:
+      - https://www.archiweb.cz/e/list
+      - https://www.archiweb.cz/e/list/prednasky
+      - https://www.archiweb.cz/e/list/workshopy
+
+  - id: botanicka
+    nazev: Botanická zahrada Praha (Troja)
+    typ: primarni
+    aktivni: true
+    tema: priroda
+    urls:
+      - https://www.botanicka.cz/clanky/akce/prehled-nasich-akci
+
+  - id: lesypraha
+    nazev: Lesy hl. m. Prahy (vycházky, ekocentra)
+    typ: primarni
+    aktivni: true
+    tema: priroda
+    urls:
+      - https://lesypraha.cz/akce/
+
+  - id: kudyznudy
+    nazev: Kudy z nudy (příroda a komentované prohlídky v Praze)
+    typ: agregator
+    aktivni: true
+    tema_podle_znacky:
+      příroda a ekologie: priroda
+    urls:
+      - https://www.kudyznudy.cz/kalendar-akci/priroda-a-ekologie/hlavni-mesto-praha
+      - https://www.kudyznudy.cz/kalendar-akci/komentovane-prohlidky/hlavni-mesto-praha
+
   - id: goout
     nazev: GoOut (celá Praha)
     typ: agregator

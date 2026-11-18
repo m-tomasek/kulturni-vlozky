@@ -310,6 +310,33 @@ def urci_typ(a, pr):
     return a.get("typ") or "jine"
 
 
+# Témata napříč typy akcí (přednáška o vilách je „přednáška“ i „architektura“). Zdroj může mít téma
+# v zdroje.yml (tema: architektura); jinak se hledá podle slov v názvu a štítcích. U koncertů, divadla,
+# filmů, tance a impra se podle slov nehádá (kapela „Les“ není akce o přírodě).
+TEMATA = {
+    "architektura": re.compile(
+        r"architekt|urbanis|mestsk\w* planov|\bvil[ayu]\b|\bvile\b|\bvilou\b|\bvilach\b|\bvily\b|stavb|\bbudov|sidlist"
+        r"|brutalis|funkcionalis|modernis|kubis|secesn|interier|open house|kolonie|\bloos|mullerov|winternitz"
+        r"|rothmayer|plecnik|kotera|gocar|krejcar|\bcamp\b|verejn\w* prostor|pamatk|industrial|vodarn"
+        r"|cistirn|podzemi|kasemat|rozhledn|nadrazi|bunkr|zahradni mesto|beton"),
+    "priroda": re.compile(
+        r"prirod|ekolog|klimat|biodiverzit|\bptac|\bptak|ornitolog|botanick|rostlin|\bstrom|\blesn|\bles\b"
+        r"|\blesy\b|\blesa\b|houb|hmyz|brouk|motyl|netopyr|zachrann\w* stanic|rezervac|chranen\w* (uzemi|druh)"
+        r"|krajin|mokrad|\bvcel|ekocentr|den zeme|\buklid|zvirat|geolog|rybnik"),
+}
+BEZ_HADANI = {"koncert", "divadlo", "film", "tanec", "improvizace"}
+
+
+def urci_temata(a, zdroj_tema=None):
+    temata = set(zdroj_tema if isinstance(zdroj_tema, list) else [zdroj_tema] if zdroj_tema else [])
+    if a.get("typ") not in BEZ_HADANI:
+        text = bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''} {a.get('popis') or ''}").lower()
+        temata |= {t for t, rx in TEMATA.items() if rx.search(text)}
+    if "camp" in bez_diakritiky(a.get("misto") or "").lower().split():
+        temata.add("architektura")
+    return sorted(temata)
+
+
 # ---------------------------------------------------------------- sloučení zdrojů
 
 def slouc(akce_podle_zdroje, typy_zdroju):
@@ -614,6 +641,11 @@ def main(jen_chybne=False):
             if a["datum"] >= okraj:
                 a["_okraj"] = True  # jen se posunulo okno zdroje (nebo se rozšířilo) – to není novinka
             a["typ"] = urci_typ(a, pr)
+            tema = urci_temata(a, z.get("tema"))
+            if z.get("tema_podle_znacky") and a.get("znacky") in z["tema_podle_znacky"]:
+                tema = sorted(set(tema) | {z["tema_podle_znacky"][a["znacky"]]})
+            if tema:
+                a["temata"] = tema
             a.pop("mimo_prahu", None)
             a["id"] = ident(a)
             vybrane.append(a)
