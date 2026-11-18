@@ -322,7 +322,7 @@ TEMATA = {
     "priroda": re.compile(
         r"prirod|ekolog|klimat|biodiverzit|\bptac|\bptak|ornitolog|botanick|rostlin|\bstrom|\blesn|\bles\b"
         r"|\blesy\b|\blesa\b|houb|hmyz|brouk|motyl|netopyr|zachrann\w* stanic|rezervac|chranen\w* (uzemi|druh)"
-        r"|krajin|mokrad|\bvcel|ekocentr|den zeme|\buklid|zvirat|geolog|rybnik|recykl|kompost|permakult|mykolog"
+        r"|\bkrajin|mokrad|\bvcel|ekocentr|den zeme|\buklid|zvirat|geolog|rybnik|recykl|kompost|permakult|mykolog"
         r"|entomolog|\bhub[ay]?\b|netopyr|obojzivel|plaz|savc"),
 }
 BEZ_HADANI = {"koncert", "divadlo", "film", "tanec", "improvizace"}

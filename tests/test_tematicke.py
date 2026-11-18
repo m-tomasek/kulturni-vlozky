@@ -2,7 +2,7 @@ import datetime as dt
 import unittest
 
 import run
-from scrapers import archiweb, botanicka, camp, kudyznudy, lesypraha
+from scrapers import archiweb, botanicka, bzuk, camp, kudyznudy, lesypraha, obecny
 
 D = dt.date(2026, 11, 18)
 
@@ -50,6 +50,35 @@ class Tematicke(unittest.TestCase):
         self.assertEqual(run.urci_temata({"nazev": "Vycházka za ptáky v Troji", "typ": "jine"}), ["priroda"])
         self.assertEqual(run.urci_temata({"nazev": "Koncert Les", "typ": "koncert"}), [])
         self.assertEqual(run.urci_temata({"nazev": "Cokoli", "typ": "jine"}, "priroda"), ["priroda"])
+
+    def test_obecny_datum_a_cas(self):
+        nd = obecny.najdi_data
+        self.assertEqual(nd("24. 11. – 3. 12. 2026", D), (dt.date(2026, 11, 24), dt.date(2026, 12, 3)))
+        self.assertEqual(nd("24.–26. 11.", D), (dt.date(2026, 11, 24), dt.date(2026, 11, 26)))
+        self.assertEqual(nd("sobota 5. prosince 2026", D), (dt.date(2026, 12, 5), None))
+        self.assertEqual(nd("1. pro děti", D), (None, None))
+        self.assertEqual(obecny.najdi_cas("Neděle 22.11.2026 / Čas: 12:30"), "12:30")
+        self.assertEqual(obecny.najdi_cas("Čt 19. 11. 2026, 18 h"), "18:00")
+
+    def test_obecny_blok(self):
+        h = ('<div class="program_vypis"><h2><a href="/p/709/">PROCHÁZKY • Pankrácká pláň</a>'
+             '<span class="fr">Místo: Na Pankráci</span></h2><p><strong>Datum: Neděle 22.11.2026 / Čas: 12,30</strong></p></div>'
+             '<div class="program_vypis"><h2><a href="/p/1/">Brno</a><span class="fr">Místo: Brno</span></h2>'
+             '<p><strong>Datum: 23.11.2026</strong></p></div>')
+        z = {"urls": ["https://www.zastarouprahu.cz/x/"], "blok": "div.program_vypis", "nazev_css": "h2 a",
+             "datum": "strong", "misto_css": "span.fr", "jen_praha": False}
+        a = obecny.ziskej(lambda u: h, z, D)
+        self.assertEqual((a[0]["datum"], a[0]["cas"], a[0]["misto"], a[0]["url"]),
+                         ("2026-11-22", "12:30", "Na Pankráci", "https://www.zastarouprahu.cz/p/709/"))
+        z["jen_praha"] = True
+        self.assertEqual(obecny.ziskej(lambda u: h, z, D), [])  # ani jedno místo není výslovně v Praze
+
+    def test_bzuk_sezona(self):
+        h = ('<div class="node__content"><h2>2026</h2><p><strong>14. 5. – 27. 9.</strong><br/> <a href="x">Výstava</a>'
+             '<br/><strong>17. 5.</strong><br/> Botanická burza<br/></p></div>')
+        a = bzuk.ziskej(lambda u: h, {"urls": ["u"]}, D)
+        self.assertEqual([(x["nazev"], x["datum"], x["konec_datum"]) for x in a],
+                         [("Výstava", "2026-05-14", "2026-09-27"), ("Botanická burza", "2026-05-17", None)])
 
 
 if __name__ == "__main__":

@@ -252,6 +252,230 @@ zdroje:
       - https://www.kudyznudy.cz/kalendar-akci/priroda-a-ekologie/hlavni-mesto-praha
       - https://www.kudyznudy.cz/kalendar-akci/komentovane-prohlidky/hlavni-mesto-praha
 
+  # --- ochrana přírody (obecný scraper: nastavení bloků je přímo tady, popis v scrapers/obecny.py)
+  - id: myko
+    nazev: Česká mykologická společnost (vycházky a přednášky v Praze)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    tema: priroda
+    blok: "table tr"
+    nazev_css: "td:nth-of-type(3)"
+    datum: "td:nth-of-type(1)"
+    misto_css: "td:nth-of-type(2)"
+    jen_praha: true
+    vynechat_css: "s"
+    web: https://www.myko.cz/myko-akce/
+    urls:
+      - https://www.myko.cz/myko-akce/
+
+  - id: ceson
+    nazev: Česká společnost pro ochranu netopýrů (ČESON)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    tema: priroda
+    blok: "div:has(> div.hlavicka)"
+    nazev_css: "div.hlavicka b"
+    datum: "div.hlavicka"
+    jen_praha: true
+    urls:
+      - https://www.ceson.org/akce_pro_verejnost.php
+
+  - id: botanospol
+    nazev: Česká botanická společnost (přednášky)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    tema: priroda
+    blok: ".views-row"
+    datum: "time"
+    misto: "Botanický ústav PřF UK, Benátská 2"
+    urls:
+      - https://botanospol.cz/cs/prednasky
+
+  - id: bzuk
+    nazev: Botanická zahrada PřF UK (Na Slupi)
+    typ: primarni
+    aktivni: true
+    tema: priroda
+    web: https://www.bz-uk.cz/cs/kalendar
+    urls:
+      - https://www.bz-uk.cz/cs/kalendar
+
+  - id: toulcuv
+    nazev: Toulcův dvůr (ekocentrum)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    tema: priroda
+    blok: "div.event-wrap"
+    nazev_css: ".event-title a"
+    datum: ".event-time"
+    misto: "Toulcův dvůr"
+    vynechat: "kroužek|školk|lesníč|pro děti|pro rodiče|tábor|příměst"
+    urls:
+      - https://toulcuvdvur.cz/td-akce
+
+  - id: nm
+    nazev: Národní muzeum (jen akce o přírodě a architektuře, např. Prahou za přírodou)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    blok: "div.eCont"
+    nazev_css: "h3 a"
+    datum: "time"
+    misto_css: ".loc"
+    misto: "Národní muzeum"
+    urls:
+      - https://www.nm.cz/navstivte-nas/program/akce
+
+  - id: nzm
+    nazev: Národní zemědělské muzeum Praha (jen akce o přírodě)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    blok: "article.article--event"
+    nazev_css: "h3 a"
+    datum: "time"
+    jen_praha: true
+    misto: "Národní zemědělské muzeum Praha"
+    urls:
+      - https://www.nzm.cz/aktualne-v-muzeu/akce
+
+  - id: prfuk
+    nazev: Přírodovědecká fakulta UK (jen akce o přírodě)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    blok: "a.calendar-event-link"
+    nazev_css: "h3"
+    datum: ".calendar-event-date"
+    misto: "Přírodovědecká fakulta UK (Albertov)"
+    urls:
+      - https://natur.cuni.cz/udalosti
+
+  - id: klima
+    nazev: Klimatická koalice (akce v Praze)
+    typ: agregator
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    jen_praha: true
+    blok: ".card"
+    urls:
+      - https://klimatickakoalice.cz/akce
+
+  # --- architektura
+  - id: zastarou
+    nazev: Klub Za starou Prahu (procházky a přednášky)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    tema: architektura
+    blok: "div.program_vypis"
+    nazev_css: "h2 a"
+    datum: "strong"
+    misto_css: "span.fr"
+    urls:
+      - https://www.zastarouprahu.cz/menu-leve/program/kategorie-20/
+
+  - id: muzeumprahy
+    nazev: Muzeum Prahy (vily, prohlídky, přednášky)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "div.o-event__wrap-text"
+    nazev_css: "h3"
+    datum: ".o-event__date"
+    misto: "Muzeum Prahy"
+    vynechat: "pro děti|pro rodiče|pro rodiny|loutkov"
+    urls:
+      - https://www.muzeumprahy.cz/vystavy-a-akce/
+
+  - id: winternitz
+    nazev: Winternitzova vila
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    tema: architektura
+    blok: "article.eventlist-event--upcoming"
+    nazev_css: "h1 a"
+    datum: "time.event-date"
+    misto: "Winternitzova vila"
+    urls:
+      - https://www.loosovavila.cz/akce
+
+  - id: cka
+    nazev: Česká komora architektů (události v Praze)
+    typ: agregator
+    aktivni: true
+    scraper: obecny
+    tema: architektura
+    blok: "a.item-event"
+    nazev_css: "h3"
+    datum: "time"
+    misto_css: ".item-event__info div"
+    jen_praha: true
+    vynechat: "webinář|webinar|online"
+    urls:
+      - https://www.cka.cz/svet-architektury/aktualne/udalosti
+
+  - id: npu
+    nazev: Národní památkový ústav (akce v Praze)
+    typ: agregator
+    aktivni: true
+    scraper: obecny
+    tema: architektura
+    blok: "div.events__item"
+    nazev_css: "a.events__item-title"
+    jen_praha: true
+    urls:
+      - https://www.npu.cz/cs/akce
+
+  - id: upm
+    nazev: Uměleckoprůmyslové museum (jen architektura a příroda)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    blok: "div.ctyri_sloupce"
+    nazev_css: "h2 a"
+    datum: "p.programy-pod-nadpisem"
+    misto_css: "p.pod_nadpisem"
+    misto: "Uměleckoprůmyslové museum"
+    urls:
+      - https://www.upm.cz/programy/
+
+  - id: ghmp
+    nazev: Galerie hl. m. Prahy (jen architektura a příroda, např. Bílkova vila)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    blok: "div.col--6.article"
+    nazev_css: "p"
+    nazev_bez_data: true
+    datum: "p"
+    misto: "Galerie hlavního města Prahy"
+    urls:
+      - https://www.ghmp.cz/doprovodne-akce/
+
+  - id: praha1
+    nazev: Praha 1 – kalendář akcí (jen příroda a architektura)
+    typ: agregator
+    aktivni: true
+    scraper: obecny
+    jen_tema: true
+    blok: "li.list-item"
+    nazev_css: "h3 a"
+    datum: ".entry-date"
+    urls:
+      - https://www.praha1.cz/udalosti/
+
   - id: goout
     nazev: GoOut (celá Praha)
     typ: agregator

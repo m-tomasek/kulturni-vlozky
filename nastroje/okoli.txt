@@ -1,5 +1,4 @@
 # soubor|hledaný text  (výřezy kolem výskytů -> raw/_okoli.txt)
-zastarou-prog.html|program-7
-prahaneznama-v.html|2026
-nyctalus-p.html|2026
-ceson-akce.html|2026
+cso-reg-js.js|fetch(
+cso-reg-js.js|/api
+cso-reg-js.js|axios

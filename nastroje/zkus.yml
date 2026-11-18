@@ -1,13 +1,2 @@
-# zkušební nastavení nových zdrojů (spouští úloha snapshot -> raw/_zkus.txt)
-- {id: ceson, scraper: obecny, soubor: ceson-akce.html, blok: "div:has(> div.hlavicka)", nazev: "div.hlavicka b", datum: "div.hlavicka", jen_praha: true, tema: priroda}
-- {id: klima, scraper: obecny, soubor: klima-akce.html, blok: ".card", jen_praha: true, jen_tema: true}
-- {id: cbs-pred, scraper: obecny, soubor: cbs-pred.html, blok: ".views-row", datum: "time", tema: priroda, misto: "Botanický ústav PřF UK, Benátská 2"}
-- {id: cse-pred, scraper: obecny, soubor: cse-pred.html, blok: "p:has(strong)", nazev: "strong", tema: priroda}
-- {id: praha1, scraper: obecny, soubor: praha1-ud.html, blok: "li.list-item", nazev: "h3 a", datum: ".entry-date", jen_tema: true}
-- {id: ghmp, scraper: obecny, soubor: ghmp-dopr.html, blok: "div.col--6.article", nazev: "p", nazev_bez_data: true, datum: "p"}
-- {id: mlp, scraper: obecny, soubor: mlp-akce.html, blok: "div.event-box__content__left", nazev: ".event-box__content__left__title", datum: "time", misto_css: ".event-box__content__left__place", vynechat: "Pro děti"}
-- {id: npu, scraper: obecny, soubor: npu-akce.html, blok: "div.events__item", nazev: "a.events__item-title", jen_praha: true, tema: architektura}
+# zkušební nastavení nových zdrojů (spouští úloha snapshot -> raw/_zkus.txt); název akce = nazev_css
 - {id: bzuk, soubor: bzuk-kal.html, tema: priroda}
-- {id: toulcuv, scraper: obecny, soubor: toulcuv-td.html, blok: "div.new-content, div.card, article", misto: "Toulcův dvůr", tema: priroda}
-- {id: zoo, scraper: obecny, soubor: zoo-mesic.html, blok: "li.ev_td_li, tr", vynechat: "krmení|cvičení|zooškola", misto: "Zoo Praha"}
-- {id: prirodovedci, scraper: obecny, soubor: b-prirodovedci.html, blok: "article, .event, .views-row", tema: priroda}

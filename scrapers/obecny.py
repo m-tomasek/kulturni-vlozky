@@ -4,7 +4,7 @@ Použití v zdroje.yml (u zdroje uvést `scraper: obecny`):
 
   format: html          # html (výchozí) | jsonld (schema.org Event v <script type="application/ld+json">)
   blok: "article.event" # CSS výběr jedné akce
-  nazev: "h3 a"         # CSS uvnitř bloku pro název (výchozí: první nadpis, jinak první odkaz)
+  nazev_css: "h3 a"     # CSS uvnitř bloku pro název akce (výchozí: první nadpis, jinak první odkaz)
   datum: ".date"        # CSS uvnitř bloku s datem (výchozí: celý text bloku)
   odkaz: "a"            # CSS odkazu (výchozí: první odkaz v bloku)
   misto: "Toulcův dvůr" # pevné místo, nebo
@@ -157,7 +157,7 @@ def ziskej(stahni, zdroj, dnes):
                     continue
                 if zdroj.get("vynechat_css") and blok.select_one(zdroj["vynechat_css"]):
                     continue
-                n_el = blok.select_one(zdroj["nazev"]) if zdroj.get("nazev") else \
+                n_el = blok.select_one(zdroj["nazev_css"]) if zdroj.get("nazev_css") else \
                     blok.find(["h1", "h2", "h3", "h4", "h5"]) or blok.find("a")
                 if n_el is None and blok.name == "a":
                     n_el = blok
