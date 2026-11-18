@@ -58,6 +58,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 0;margin:0 -16px;padding-left:16px;padding-right:16px;
   border-bottom:1px solid var(--rule)}
 .days{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 12px;scrollbar-width:thin}
+@media (min-width:720px){.days{flex-wrap:wrap;overflow-x:visible}}
 .days::-webkit-scrollbar{height:4px}.days::-webkit-scrollbar-thumb{background:var(--rule-strong);border-radius:4px}
 .chip{flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
   min-width:58px;height:66px;padding:7px 9px;border-radius:10px;background:var(--panel);border:1px solid var(--rule);text-align:left;
@@ -151,7 +152,6 @@ footer .go{font-size:10.5px;color:var(--faint);margin-left:4px}
 .pohled button{font-family:var(--mono);font-size:var(--s-1);padding:3px 11px;border-radius:999px;color:var(--muted)}
 .pohled button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
 body.kal .page{max-width:1180px}
-body.kal .days{display:none}
 body.kal .bar{padding-top:12px}
 
 /* kalendář */
@@ -359,22 +359,24 @@ function kreslitDny(){
   const t=dnes(), z=AKCE.filter(zaklad), posl=AKCE.reduce((m,a)=>a.datum>m?a.datum:m,t);
   const pocet=sel=>z.filter(a=>vyber(a,sel)).length;
   const novych=z.filter(nova).length;
-  let h=`<button class="chip special" data-sel="vse" aria-pressed="${S.sel==="vse"}"><span class="d">Vše</span><span class="c">${z.length}</span></button>`;
-  h+=`<button class="chip special" data-sel="nove" aria-pressed="${S.sel==="nove"}"><span class="d">Nové</span><span class="c">${novych?`<i></i>`:""}${novych}</span></button>`;
-  h+=`<button class="chip special" data-sel="vikend" aria-pressed="${S.sel==="vikend"}"><span class="d">Víkend</span><span class="c">${pocet("vikend")}</span></button>`;
+  const tyd=pondeli(t), mes=t.slice(0,7), pmes=mesPlus(mes,1), zitra=plus(t,1), [pa,,ne]=vikend();
+  const cip=(k,nazev,kdy,n,tecka)=>`<button class="chip special obd" data-sel="${k}" aria-pressed="${S.pohled!=="kal"&&S.sel===k}" aria-label="${nazev} (${kdy}), ${n} akcí">
+      <span class="w">${kdy}</span><span class="d">${nazev}</span><span class="c">${tecka?"<i></i>":""}${n}</span></button>`;
+  const denText=d=>`${DNY2[dow(d)]} ${kratce(d)}`;
+  let h=cip(t,"Dnes",denText(t),pocet(t),z.some(a=>probiha(a,t)&&nova(a)));
+  h+=cip(zitra,"Zítra",denText(zitra),pocet(zitra),z.some(a=>probiha(a,zitra)&&nova(a)));
+  h+=cip("vikend","Víkend",pa.slice(5,7)===ne.slice(5,7)?`${+pa.slice(8)}.–${kratce(ne)}`:`${kratce(pa)} – ${kratce(ne)}`,pocet("vikend"));
+  // den vybraný v kalendáři (ne dnes/zítra) – ať je v seznamu vidět, co je vybrané
+  if(/^\d{4}/.test(S.sel)&&S.sel!==t&&S.sel!==zitra) h+=cip(S.sel,"Vybraný den",denText(S.sel),pocet(S.sel));
   h+=`<span class="sep"></span>`;
-  const tyd=pondeli(t), mes=t.slice(0,7), pmes=mesPlus(mes,1);
   const obd=[[`t:${tyd}`,"Tento týden",tydenText(tyd)],[`t:${plus(tyd,7)}`,"Příští týden",tydenText(plus(tyd,7))],
              [`m:${mes}`,"Tento měsíc",MESICE[+mes.slice(5)-1]],[`m:${pmes}`,"Příští měsíc",MESICE[+pmes.slice(5)-1]]];
-  obd.forEach(([k,nazev,kdy])=>{
-    h+=`<button class="chip special obd" data-sel="${k}" aria-pressed="${S.sel===k}" aria-label="${nazev} (${kdy}), ${pocet(k)} akcí">
-      <span class="w">${kdy}</span><span class="d">${nazev}</span><span class="c">${pocet(k)}</span></button>`;
-  });
+  obd.forEach(([k,nazev,kdy])=>{ h+=cip(k,nazev,kdy,pocet(k)); });
   // libovolný další týden / měsíc až do konce známého programu
   const tydny=[], mesice=[];
   for(let w=plus(tyd,14); w<=posl; w=plus(w,7)) tydny.push(w);
   for(let m=mesPlus(mes,2); m<=posl.slice(0,7); m=mesPlus(m,1)) mesice.push(m);
-  const jinyT=/^t:/.test(S.sel)&&!obd.some(o=>o[0]===S.sel), jinyM=/^m:/.test(S.sel)&&!obd.some(o=>o[0]===S.sel);
+  const jinyT=S.pohled!=="kal"&&/^t:/.test(S.sel)&&!obd.some(o=>o[0]===S.sel), jinyM=S.pohled!=="kal"&&/^m:/.test(S.sel)&&!obd.some(o=>o[0]===S.sel);
   if(tydny.length) h+=`<label class="chip special datepick obd${jinyT?" sel":""}"><span class="w">${jinyT?tydenText(S.sel.slice(2)):"vybrat"}</span>
     <span class="d">${jinyT?"Týden":"Jiný týden"}</span><span class="c">${jinyT?pocet(S.sel):"▾"}</span>
     <select id="pickT" aria-label="Vybrat týden"><option value="">Vyber týden…</option>${tydny.map(w=>`<option value="t:${w}"${S.sel===`t:${w}`?" selected":""}>${tydenText(w)} ${plus(w,6).slice(0,4)}</option>`).join("")}</select></label>`;
@@ -382,18 +384,12 @@ function kreslitDny(){
     <span class="d">${jinyM?MESICE[+S.sel.slice(7)-1]:"Jiný měsíc"}</span><span class="c">${jinyM?pocet(S.sel):"▾"}</span>
     <select id="pickM" aria-label="Vybrat měsíc"><option value="">Vyber měsíc…</option>${mesice.map(m=>`<option value="m:${m}"${S.sel===`m:${m}`?" selected":""}>${MESICE[+m.slice(5)-1]} ${m.slice(0,4)}</option>`).join("")}</select></label>`;
   h+=`<span class="sep"></span>`;
-  for(let i=0;i<PASMO;i++){
-    const d=plus(t,i), n=z.filter(a=>probiha(a,d));
-    const maNove=n.some(nova), w=dow(d);
-    const popis = i===0?"dnes": i===1?"zítra": DNY2[w];
-    h+=`<button class="chip ${w===0||w===6?"we":""} ${n.length?"":"empty"}" data-sel="${d}" aria-pressed="${S.sel===d}"
-      aria-label="${i<2?popis+", ":""}${DNY[w]} ${kratce(d)}, ${n.length} akcí">
-      <span class="w">${popis}</span><span class="d">${+d.slice(8)}${+d.slice(8)===1||i===0?`<small class="mono" style="font-size:10px;font-weight:400;margin-left:3px">${MES2[+d.slice(5,7)-1]}</small>`:""}</span>
-      <span class="c">${maNove?"<i></i>":""}${n.length}</span></button>`;
-  }
-  const mimo = S.sel.match(/^\d{4}/) && S.sel>plus(t,PASMO-1);
-  h+=`<label class="chip special datepick${mimo?" sel":""}"><span class="d">${mimo?kratce(S.sel):"Jiný den"}</span><span class="c">${mimo?pocet(S.sel):"📅"}</span>
-    <input type="date" id="pick" min="${t}" max="${posl}" aria-label="${mimo?`Vybraný den ${kratce(S.sel)}, změnit`:"Vybrat jiný den"}"></label>`;
+  // konkrétní den se vybírá v kalendáři
+  h+=`<button class="chip special obd" data-pohled="kal" aria-pressed="${S.pohled==="kal"}" aria-label="Vybrat den v kalendáři">
+      <span class="w">konkrétní den</span><span class="d">Kalendář</span><span class="c">📅</span></button>`;
+  h+=`<span class="sep"></span>`;
+  h+=cip("vse","Vše","celý program",z.length);
+  h+=cip("nove","Nové","za 7 dní",novych,novych>0);
   const el=document.getElementById("days"); const sx=el.scrollLeft;
   const f=document.activeElement, fs=el.contains(f)?(f.id?`#${f.id}`:f.dataset.sel?`[data-sel="${f.dataset.sel}"]`:null):null;
   el.innerHTML=h; el.scrollLeft=sx;
@@ -432,7 +428,7 @@ function kreslitSeznam(){
   let dlouhe=[];
   if(o){ dlouhe=v.filter(a=>a.datum<o[0]&&konec(a)>a.datum); v=v.filter(a=>!dlouhe.includes(a)); }
   const el=document.getElementById("list"), celkem=v.length;
-  document.getElementById("stav").textContent=celkem+dlouhe.length?`Zobrazeno ${celkem+dlouhe.length} akcí – ${popisVyberu()}.`:"Žádná akce neodpovídá výběru.";
+  document.getElementById("stav").textContent=celkem+dlouhe.length?`Zobrazeno ${celkem+dlouhe.length} akcí – ${popisVyberu().replace(/\.$/,"")}.`:"Žádná akce neodpovídá výběru.";
   if(!v.length&&!dlouhe.length){ el.innerHTML=`<p class="nic">${S.sel==="nove"?"Za posledních 7 dní nic nového nepřibylo.":"Nic tu není – zkus jiný den nebo uvolni filtry."}</p>`; return; }
   const od=o?o[0]:t, den=a=>jeDen?S.sel:(a.datum<od?od:a.datum);
   v.sort((a,b)=>den(a).localeCompare(den(b))||(a.cas||"99").localeCompare(b.cas||"99"));
@@ -471,8 +467,10 @@ function ovladani(){
   document.getElementById("more").onclick=e=>{const f=document.getElementById("filters");f.classList.toggle("open");
     e.currentTarget.setAttribute("aria-expanded",f.classList.contains("open"));};
   const days=document.getElementById("days");
-  days.onclick=e=>{const b=e.target.closest("[data-sel]");if(!b)return;S.sel=b.dataset.sel;vse();window.scrollTo({top:0,behavior:"smooth"});};
-  days.onchange=e=>{if(["pick","pickT","pickM"].includes(e.target.id)&&e.target.value){S.sel=e.target.value;vse();}};
+  const zvol=sel=>{ S.sel=sel; if(S.pohled==="kal") prepniPohled("seznam"); else vse(); window.scrollTo({top:0,behavior:"smooth"}); };
+  days.onclick=e=>{ if(e.target.closest("[data-pohled]")){ prepniPohled("kal",true); return; }
+    const b=e.target.closest("[data-sel]"); if(b) zvol(b.dataset.sel); };
+  days.onchange=e=>{if(["pickT","pickM"].includes(e.target.id)&&e.target.value) zvol(e.target.value);};
 }
 
 /* ---------- kalendář ----------
