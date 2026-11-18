@@ -41,7 +41,7 @@ class Tematicke(unittest.TestCase):
         self.assertFalse(archiweb.je_praha("Dům umění města Brna"))
 
     def test_botanicka_rozsah(self):
-        h = '<div class="article_detail"><p><a href="u">Křišťálová zahrada 27. 11. 2026–14. 2. 2027</a></p></div>'
+        h = '<div class="article_detail"><h1>Program</h1></div><div class="article_detail"><p><a href="u">Křišťálová zahrada 27. 11. 2026–14. 2. 2027</a></p></div>'
         a = botanicka.ziskej(lambda u: h, {"urls": ["x"]}, D)[0]
         self.assertEqual((a["nazev"], a["datum"], a["konec_datum"]), ("Křišťálová zahrada", "2026-11-27", "2027-02-14"))
 

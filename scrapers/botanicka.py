@@ -17,8 +17,8 @@ def ziskej(stahni, zdroj, dnes):
     vysledek, videno = [], set()
     for url in zdroj["urls"]:
         s = BeautifulSoup(stahni(url), "lxml")
-        obsah = s.select_one(".article_detail") or s
-        for a in obsah.select("p a[href]"):
+        # .article_detail je na stránce víckrát (záhlaví a pak tělo článku) – projdou se všechny
+        for a in s.select(".article_detail p a[href]") or s.select("p a[href]"):
             t = cisty(a.get_text(" "))
             m = DATUM.search(t)
             if not m:

@@ -1,6 +1,3 @@
 # název url  (stahuje úloha snapshot, výsledek je v artefaktech; "POST adresa?parametry" pošle formulář)
-biooko-0 https://www.biooko.net/cs/program
-biooko-post1 POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=1&filterType=program&ao=0&d=0&_locale=cs
-biooko-post2 POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=1&ao=0&d=1&_locale=cs
-biooko-post3 POST https://www.biooko.net/api_program?wp=1&_locale=cs
-biooko-post4 POST https://www.biooko.net/api_program?cinema[]=2&ef=0&wp=0&filterType=program&ao=0&d=0&_locale=cs
+botanicka https://www.botanicka.cz/clanky/akce/prehled-nasich-akci
+b-botanicka https://www.botanicka.cz/clanky/akce/prehled-nasich-akci
