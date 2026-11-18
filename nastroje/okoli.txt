@@ -1,4 +1,2 @@
 # soubor|hledaný text  (výřezy kolem výskytů -> raw/_okoli.txt)
-botanicka.html|Křišťálová
-botanicka.html|article_detail
-b-botanicka.html|Křišťálová
+csopzo.html|Praha

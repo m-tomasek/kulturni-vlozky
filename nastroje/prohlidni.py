@@ -130,8 +130,38 @@ def okoli():
     (RAW / "_okoli.txt").write_text("\n".join(out) + "\n", encoding="utf-8")
 
 
+def souhrn(soubor):
+    """Jeden řádek o stránce: titul, události v JSON-LD, nejčastější blok s datem, odkazy na akce."""
+    html = soubor.read_text(encoding="utf-8", errors="replace")
+    s = BeautifulSoup(html, "lxml")
+    titul = re.sub(r"\s+", " ", s.title.get_text(strip=True))[:70] if s.title else ""
+    udalosti = len(re.findall(r'"@type"\s*:\s*"(?:\w*Event)"', html))
+    tribe = "tribe" if "tribe-events" in html or "/wp-json/tribe/" in html else ""
+    for sc in s(["script", "style", "noscript"]):
+        sc.decompose()
+    pocty = collections.Counter()
+    for txt in s.find_all(string=DATUM):
+        pocty[cesta(txt.parent, 2)] += 1
+    blok = "; ".join(f"{n}× {k}" for k, n in pocty.most_common(2))
+    odk = []
+    for a in s.find_all("a", href=True):
+        h = a["href"].split("#")[0]
+        if re.search(r"akce|program|kalendar|event|udalost|vychazk|prohlid|exkurz|prednas|termin|calendar", h, re.I) \
+                and h not in odk and not h.startswith(("mailto", "javascript")):
+            odk.append(h)
+    return (f"{soubor.stem} | {len(html)} B | {titul} | ld-event:{udalosti} {tribe} | {blok}\n"
+            f"    odkazy: {' '.join(odk[:12])}")
+
+
 def main():
     okoli()
+    radky = []
+    for f in sorted(RAW.glob("*.html")):
+        try:
+            radky.append(souhrn(f))
+        except Exception as e:  # noqa: BLE001
+            radky.append(f"{f.stem}: chyba {e}")
+    (RAW / "_souhrn.txt").write_text("\n".join(radky) + "\n", encoding="utf-8")
     for f in sorted(RAW.glob("*.js")):
         (RAW / f"_prehled_{f.stem}.txt").write_text(prehled_js(f), encoding="utf-8")
     for f in sorted(RAW.glob("*.html")):
