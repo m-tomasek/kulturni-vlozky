@@ -13,6 +13,10 @@ spec:
     job:
       default: sber
       options: [sber, hlidac, snapshot]
+    zdroje:
+      # jen u ručního sběru: id zdrojů oddělená čárkou (např. "camp,myko") – načtou se jen ty,
+      # ostatní akce zůstanou, jak byly. Prázdné = všechny zdroje (běžný denní sběr).
+      default: ""
 ---
 workflow:
   rules:
@@ -34,7 +38,7 @@ sber:
   script:
     # testy logiky (bez sítě): když neprojdou, sběr se nespustí a nic se nepřepíše
     - python -m unittest discover -s tests
-    - python run.py
+    - python run.py --jen "$[[ inputs.zdroje ]]"
     - &uloz |
       if [ -n "$PROJEKT_TOKEN" ]; then
         REMOTE="https://bot:${PROJEKT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"

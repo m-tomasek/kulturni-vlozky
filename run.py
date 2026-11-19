@@ -11,8 +11,10 @@ import json
 import pathlib
 import re
 import sys
+import threading
 import time
 import traceback
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import parse_qsl, urlsplit
 from zoneinfo import ZoneInfo
 
@@ -68,8 +70,16 @@ ODMITNUTI = (403, 406, 429, 503)
 
 
 def vytvor_stahovac():
-    sezeni = requests.Session()
-    sezeni.headers["User-Agent"] = UA
+    # Zdroje se stahují souběžně (viz SOUBEZNE): každé vlákno má vlastní spojení (Session není
+    # mezi vlákny bezpečná), mezipaměť stránek je společná.
+    mistni = threading.local()
+
+    def sezeni_vlakna():
+        if not hasattr(mistni, "s"):
+            mistni.s = requests.Session()
+            mistni.s.headers["User-Agent"] = UA
+        return mistni.s
+
     cache = {}
     jako_prohlizec = set()  # weby, které chtějí hlavičky prohlížeče
 
@@ -83,10 +93,10 @@ def vytvor_stahovac():
             try:
                 if url.startswith("POST "):  # "POST adresa?parametry" – web načítá program formulářem
                     u = urlsplit(url[5:].strip())
-                    r = sezeni.post(f"{u.scheme}://{u.netloc}{u.path}", data=parse_qsl(u.query, keep_blank_values=True),
+                    r = sezeni_vlakna().post(f"{u.scheme}://{u.netloc}{u.path}", data=parse_qsl(u.query, keep_blank_values=True),
                                     headers={**hlavicky, "X-Requested-With": "XMLHttpRequest"}, timeout=30)
                 else:
-                    r = sezeni.get(url, headers=hlavicky, timeout=30)
+                    r = sezeni_vlakna().get(url, headers=hlavicky, timeout=30)
                 r.raise_for_status()
                 r.encoding = r.encoding if r.encoding and r.encoding.lower() != "iso-8859-1" else r.apparent_encoding
                 cache[url] = r.text
@@ -514,9 +524,37 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
 
 # ---------------------------------------------------------------- hlavní běh
 
-def main(jen_chybne=False):
+SOUBEZNE = 8  # kolik webů se stahuje najednou
+
+
+def stahni_zdroj(z, zz, stahni, dnes):
+    """Stáhne a přečte jeden zdroj. Vrátí (akce, chyba, sitova_chyba, mekky_stahovac, sekundy)."""
+    zacatek = time.monotonic()
+    mekke = mekky_stahovac(stahni, zz["urls"])
+    sitova = False
+    try:
+        surove = nacti(z.get("scraper", z["id"])).ziskej(mekke, zz, dnes)
+        chyba = None
+        if mekke.chyby and not mekke.uspechy:
+            raise mekke.chyby[0][1]
+    except requests.HTTPError as e:
+        sitova = e.response is None or e.response.status_code >= 500 or e.response.status_code in (408, 429)
+        kod = e.response.status_code if e.response is not None else "?"
+        surove, chyba = [], f"web vrací chybu {kod}" + (" (stránka zmizela nebo se přesunula)" if kod == 404 else "")
+    except (requests.ConnectionError, requests.Timeout):
+        sitova = True
+        surove, chyba = [], "web je nedostupný (neodpovídá)"
+    except Exception as e:  # noqa: BLE001
+        surove, chyba = [], f"web se asi změnil, skript ho neumí přečíst ({type(e).__name__})"
+        print(f"{z['id']}:", file=sys.stderr)
+        traceback.print_exc()
+    return surove, chyba, sitova, mekke, time.monotonic() - zacatek
+
+
+def main(jen_chybne=False, jen=None):
     """jen_chybne=True: dosběr – znovu se načtou jen zdroje, které při posledním běhu selhaly nebo hlásily
-    varování; akce ostatních zdrojů zůstanou, jak byly (jejich weby se znovu nestahují)."""
+    varování; akce ostatních zdrojů zůstanou, jak byly (jejich weby se znovu nestahují).
+    jen={"camp", …}: stejně tak, ale jen vyjmenované zdroje (ruční běh po úpravě jednoho zdroje)."""
     ted = dt.datetime.now(PRAHA)
     dnes = ted.date()
     cfg = yaml.safe_load((KOREN / "zdroje.yml").read_text(encoding="utf-8"))
@@ -546,34 +584,37 @@ def main(jen_chybne=False):
             print("Dosběr: všechny zdroje při posledním běhu fungovaly, není co dělat.")
             return 0
         print("Dosběr zdrojů: " + ", ".join(z["id"] for z, _ in fronta))
+    if jen:
+        neznam = jen - {z["id"] for z, _ in fronta}
+        if neznam:
+            print(f"Neznámé nebo vypnuté zdroje: {', '.join(sorted(neznam))}", file=sys.stderr)
+            return 1
+        fronta = [(z, d) for z, d in fronta if z["id"] in jen]
+        print("Jen zdroje: " + ", ".join(z["id"] for z, _ in fronta))
+    # Stažení všech zdrojů najednou (SOUBEZNE vláken; každý web dostane jen jedno spojení, jako dřív).
+    # Zpracování výsledků pak běží postaru po jednom zdroji ve stálém pořadí – výsledek je stejný,
+    # jen se nečeká, až odpoví web po webu. Druhý pokus po síťové chybě běží na konci, jako dřív.
+    pripravene = {z["id"]: dict(z, urls=[rozbal(u, dnes) for u in z["urls"]], _horizont=(horizont - dnes).days,
+                                _mista=mista_cache.setdefault(z["id"], {})) for z, _ in fronta}
+    with ThreadPoolExecutor(max_workers=SOUBEZNE) as ex:
+        budouci_vysledky = {z["id"]: ex.submit(stahni_zdroj, z, pripravene[z["id"]], stahni, dnes) for z, _ in fronta}
+        predem = {zid: f.result() for zid, f in budouci_vysledky.items()}
+    casy = {}
     i = 0
     while i < len(fronta):
         z, druhy_pokus = fronta[i]
         i += 1
         zid = z["id"]
         typy_zdroju[zid] = z.get("typ", "primarni")
-        zz = dict(z, urls=[rozbal(u, dnes) for u in z["urls"]], _horizont=(horizont - dnes).days,
-                  _mista=mista_cache.setdefault(zid, {}))
+        zz = pripravene[zid]
         if not zdravi.get(zid, {}).get("posledni_ok"):
             nove_zdroje.add(zid)
         stav = zdravi.get(zid, {})
-        mekke = mekky_stahovac(stahni, zz["urls"])
-        sitova = False
-        try:
-            surove = nacti(z.get("scraper", zid)).ziskej(mekke, zz, dnes)
-            chyba = None
-            if mekke.chyby and not mekke.uspechy:
-                raise mekke.chyby[0][1]
-        except requests.HTTPError as e:
-            sitova = e.response is None or e.response.status_code >= 500 or e.response.status_code in (408, 429)
-            kod = e.response.status_code if e.response is not None else "?"
-            surove, chyba = [], f"web vrací chybu {kod}" + (" (stránka zmizela nebo se přesunula)" if kod == 404 else "")
-        except (requests.ConnectionError, requests.Timeout):
-            sitova = True
-            surove, chyba = [], "web je nedostupný (neodpovídá)"
-        except Exception as e:  # noqa: BLE001
-            surove, chyba = [], f"web se asi změnil, skript ho neumí přečíst ({type(e).__name__})"
-            traceback.print_exc()
+        if not druhy_pokus and zid in predem:
+            surove, chyba, sitova, mekke, trvani = predem.pop(zid)
+        else:
+            surove, chyba, sitova, mekke, trvani = stahni_zdroj(z, zz, stahni, dnes)
+        casy[zid] = casy.get(zid, 0) + trvani
         if chyba and sitova and not druhy_pokus:
             print(f"{zid}: {chyba} – zkusím znovu na konci běhu", file=sys.stderr)
             fronta.append((z, True))
@@ -671,6 +712,8 @@ def main(jen_chybne=False):
 
     print("Úplnost zdrojů (kolik akcí čteme a jestli web nezmiňuje dny, ze kterých nemáme nic):")
     print("\n".join(uplnost_log))
+    print("Nejpomalejší zdroje (sekundy stahování; stahují se souběžně, celkem trvá zhruba ten nejpomalejší):")
+    print("  " + ", ".join(f"{k} {v:.0f}" for k, v in sorted(casy.items(), key=lambda x: -x[1])[:8]))
     sloucene, rozpory = slouc(podle_zdroje, typy_zdroju)
     # kontrola překryvu s agregátorem (GoOut): u každého vlastního zdroje, kolik jeho akcí má i GoOut
     okna = [int(z["dni"]) for z in cfg["zdroje"] if z.get("aktivni", True) and z.get("typ") == "agregator" and z.get("dni")]
@@ -716,4 +759,6 @@ def main(jen_chybne=False):
 
 
 if __name__ == "__main__":
-    sys.exit(main(jen_chybne="--jen-chybne" in sys.argv))
+    jen = sys.argv[sys.argv.index("--jen") + 1] if "--jen" in sys.argv[:-1] else ""
+    sys.exit(main(jen_chybne="--jen-chybne" in sys.argv,
+                  jen={x.strip() for x in jen.replace(",", " ").split() if x.strip()} or None))
