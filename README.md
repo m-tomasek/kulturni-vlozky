@@ -1,7 +1,15 @@
 # Kulturní vložky
 
-Kulturní program v Praze na jednom místě: weby divadel, klubů, kin a galerií a k tomu celý GoOut. Každé ráno je sbírají
-skripty v GitLab CI, výsledek je na stránce **https://kulturni-vlozky-c1b433.gitlab.io**.
+Kulturní program v Praze na jednom místě: weby divadel, klubů, kin a galerií a k tomu celý GoOut.
+
+Projekt běží ve dvou samostatných kopiích se stejným kódem; každá sbírá sama a má vlastní data a web:
+
+| | Sběr | Web |
+|---|---|---|
+| GitLab | `.gitlab-ci.yml` (plán v Build → Pipeline schedules) | https://kulturni-vlozky-c1b433.gitlab.io |
+| GitHub | `.github/workflows/sber.yml`, `hlidac.yml` | https://m-tomasek.github.io/kulturni-vlozky/ |
+
+Změny kódu se nahrávají do obou repozitářů; data (`data/`) si každá kopie ukládá sama.
 
 ## Co kde je
 
@@ -16,7 +24,8 @@ skripty v GitLab CI, výsledek je na stránce **https://kulturni-vlozky-c1b433.g
 | `nastroje/rozdel.py` | při nasazení rozdělí akce po týdnech, aby se web načítal rychle |
 | `data/zdravi.json` | který zdroj kdy naposledy fungoval |
 | `index.html` | dashboard s filtry a mapou |
-| `.gitlab-ci.yml` | plán běhu a nasazení webu |
+| `.gitlab-ci.yml` | plán běhu a nasazení webu na GitLabu |
+| `.github/workflows/` | totéž na GitHubu (`nastroje/github_uloz.sh` ukládá data a hlásí problémy) |
 | `docs/ADR-001-architektura.md` | proč je to postavené takhle a kde jsou limity |
 
 ## Jak to funguje

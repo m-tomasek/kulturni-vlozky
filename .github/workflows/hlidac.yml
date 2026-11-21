@@ -1,0 +1,49 @@
+name: Hlídač a dosběr
+
+# Kolem poledne: 1) znovu načte zdroje, které ráno selhaly (výpadek webu), 2) zkontroluje, že data
+# nejsou starší než 30 h – když ranní sběr vůbec neproběhl, založí issue (přijde e-mail).
+
+on:
+  schedule:
+    - cron: "37 11 * * *"   # 12:37 pražského času v zimě
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: zapis-do-repa
+  cancel-in-progress: false
+
+jobs:
+  hlidac:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Stáří dat
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STARI=$(python3 -c "
+          import json, datetime as dt
+          t = dt.datetime.fromisoformat(json.load(open('data/akce.json'))['meta']['vygenerovano'])
+          print(int((dt.datetime.now(dt.timezone.utc) - t).total_seconds() // 3600))")
+          echo "Data jsou stará ${STARI} h"
+          if [ "$STARI" -gt 30 ]; then
+            gh issue create --title "Data jsou stará ${STARI} h" \
+              --body "Ranní sběr neproběhl nebo neuložil data. Podívej se do Actions → Denní sběr akcí." || true
+            exit 1
+          fi
+      - run: pip install -q -r requirements.txt
+      - name: Dosběr zdrojů, které ráno selhaly
+        run: python run.py --jen-chybne
+      - name: Uložení a hlášení problémů
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: nastroje/github_uloz.sh

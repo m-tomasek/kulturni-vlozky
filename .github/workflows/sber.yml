@@ -1,0 +1,57 @@
+name: Denní sběr akcí
+
+# Samostatná kopie projektu (stejný kód běží i na GitLabu, každá kopie má vlastní data a web).
+# Každé ráno stáhne programy všech zdrojů, uloží data do repa (data/) a web na GitHub Pages
+# (z větve main) se přestaví sám. Problémy se zdroji -> issue „Problém se zdroji“ (e-mail).
+# Repozitář je veřejný: minuty GitHub Actions se nepočítají do limitu 2 000 min soukromých repozitářů.
+
+on:
+  schedule:
+    - cron: "13 4 * * *"   # 05:13 pražského času v zimě (06:13 v létě)
+  workflow_dispatch:
+    inputs:
+      zdroje:
+        description: "Jen tyto zdroje (id oddělená čárkou, např. camp,myko). Prázdné = všechny."
+        required: false
+        default: ""
+  push:
+    branches: [main]
+    paths: [".github/workflows/sber.yml"]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: zapis-do-repa
+  cancel-in-progress: false
+
+jobs:
+  sber:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -q -r requirements.txt
+      - name: Převzetí dat z GitLabu (jen jednou při přesunu)
+        # Když v repu leží soubor data/.prevzit-z-gitlabu, vezme se poslední stav dat z GitLabu
+        # (aby se po přesunu neukázalo tisíc „nových“ akcí). Soubor se pak smaže.
+        run: |
+          if [ -f data/.prevzit-z-gitlabu ]; then
+            for f in akce.json zdravi.json mista.json; do
+              curl -fsSL --retry 3 "https://gitlab.com/michal.tomasek/kulturni-vlozky/-/raw/main/data/$f" -o "data/$f"
+            done
+            git rm -q data/.prevzit-z-gitlabu
+          fi
+      - name: Testy (bez internetu)
+        run: python -m unittest discover -s tests
+      - name: Sběr akcí
+        run: python run.py --jen "${{ inputs.zdroje }}"
+      - name: Uložení a hlášení problémů
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: nastroje/github_uloz.sh
