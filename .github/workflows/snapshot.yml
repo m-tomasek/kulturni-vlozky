@@ -1,0 +1,26 @@
+name: Snapshot zdrojů (ladění)
+
+# Ručně: stáhne stránky z nastroje/pruzkum.txt a vyzkouší nastavení z nastroje/zkus.yml (artefakt raw).
+# Totéž umí GitLab (Run pipeline, input job = snapshot).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -q -r requirements.txt
+      - run: python nastroje/snapshot.py --pruzkum
+      - run: python nastroje/prohlidni.py
+      - run: python nastroje/zkus.py || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raw
+          path: raw
+          retention-days: 7
