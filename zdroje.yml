@@ -465,6 +465,51 @@ zdroje:
     urls:
       - https://www.praha1.cz/udalosti/
 
+  - id: fyzctvrtky
+    nazev: Fyzikální čtvrtky (FEL ČVUT)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "table.list_lec td"
+    nazev_css: "em"
+    datum: "strong"
+    misto: "FEL ČVUT, Technická 2, posluchárna 209 (Dejvice)"
+    cas_vychozi: "16:15"
+    typ_akce: prednaska
+    urls:
+      - https://www.aldebaran.cz/fyz_ctvrtky/
+
+  - id: fa_cvut
+    nazev: Fakulta architektury ČVUT
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    format: ics
+    tema: architektura
+    misto: "Fakulta architektury ČVUT"
+    vynechat: "volby|zasedání|shromáždění|odevzdání|přihláš|přihlaš|zkouš|prázdnin|ateliérový týden|obhajob|kontrola|zveřejnění|termín|jóga|přijímac|test|imatrikul|promoce|zápis|semestr|výpis|výuk|děkansk|rektorsk|státnic|podávání"
+    web: https://www.fa.cvut.cz/cs/aktualne/kalendar
+    urls:
+      - https://www.fa.cvut.cz/cs/aktualne/kalendar?export=true
+
+  - id: avu
+    nazev: Akademie výtvarných umění
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "a[href]:has(div.text-sm)"
+    misto: "Akademie výtvarných umění"
+    urls:
+      - https://www.avu.cz/verejnost/akce
+
+  - id: amu
+    nazev: AMU (HAMU, DAMU, FAMU)
+    typ: primarni
+    aktivni: true
+    web: https://www.amu.cz/cs/udalosti/
+    urls:
+      - https://www.amu.cz/api/events/?upcoming=1&count=50
+
   - id: goout
     nazev: GoOut (celá Praha)
     typ: agregator

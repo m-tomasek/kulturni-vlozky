@@ -3,6 +3,7 @@
 Použití v zdroje.yml (u zdroje uvést `scraper: obecny`):
 
   format: html          # html (výchozí) | jsonld (schema.org Event v <script type="application/ld+json">)
+                        # | ics (kalendář iCalendar, např. export z webu fakulty)
   blok: "article.event" # CSS výběr jedné akce
   nazev_css: "h3 a"     # CSS uvnitř bloku pro název akce (výchozí: první nadpis, jinak první odkaz)
   datum: ".date"        # CSS uvnitř bloku s datem (výchozí: celý text bloku)
@@ -12,9 +13,11 @@ Použití v zdroje.yml (u zdroje uvést `scraper: obecny`):
   jen_praha: true       # brát jen akce v Praze (u celostátních webů); s misto_css se hledá jen v místě
   vynechat_css: "s"     # bloky obsahující tento prvek se přeskočí (např. přeškrtnuté = zrušené)
   nazev_bez_data: true  # z názvu se odstraní úvodní datum a čas („St 18. 11. 2026, 16.30 h Název“)
+  nazev_odstranit: " / \\d.*$"  # regulární výraz – co z názvu akce smazat (např. datum za lomítkem)
   jen_tema: true        # (v run.py) brát jen akce, které vyjdou jako příroda/architektura
   vynechat: "pro děti|tábor"   # regulární výraz – bloky s tímto textem se přeskočí
-  typ: prednaska        # pevný typ akce (jinak se určí podle názvu)
+  cas_vychozi: "16:15"  # čas akce, když ho stránka neuvádí
+  typ_akce: prednaska   # pevný typ akce (jinak se určí podle názvu); `typ` je typ zdroje
 
 Datum se hledá v atributech (datetime=, content=) a v textu: „24. 11. 2026“, „24.11.“,
 „24. listopadu 2026“, rozsahy „24.–26. 11.“ i „24. 11. – 3. 12. 2026“. Čas „18:00“ / „18.00 h“.
@@ -23,6 +26,7 @@ import datetime as dt
 import json
 import re
 from urllib.parse import urljoin
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 
@@ -35,6 +39,7 @@ ROZSAH_DEN = re.compile(r"(?<!\d)(?<!\d\.)(?<!\d\.\s)(\d{1,2})\.\s*[–-]\s*(\d{
 ISO = re.compile(r"(20\d\d)-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?")
 
 
+PRAHA_TZ = ZoneInfo("Europe/Prague")
 PRAHA = re.compile(r"\b(praha|prahy|praze|prazsk|prague)")
 UVODNI_DATUM = re.compile(r"^\s*(?:(?:po|ut|út|st|čt|ct|pá|pa|so|ne)\.?\s+)?[\d.\s–-]+(?:20\d\d)?\s*,?\s*"
                           r"(?:\d{1,2}(?:[.:]\d{2})?\s*(?:[–-]\s*\d{1,2}(?:[.:]\d{2})?)?\s*(?:h\b\.?|(?<=\d\d)))?\s*", re.I)
@@ -141,6 +146,56 @@ def _jsonld(html, zdroj, url, dnes):
     return out
 
 
+def _ics_cas(hodnota, parametry):
+    """DTSTART/DTEND z iCalendar -> (datum, čas nebo None) v pražském čase."""
+    m = re.match(r"(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?", hodnota)
+    if not m:
+        return None, None
+    r, mes, d, h, mi, _, utc = m.groups()
+    if h is None:
+        return dt.date(int(r), int(mes), int(d)), None
+    t = dt.datetime(int(r), int(mes), int(d), int(h), int(mi))
+    if utc:
+        t = t.replace(tzinfo=dt.timezone.utc).astimezone(PRAHA_TZ).replace(tzinfo=None)
+    elif "TZID=" in parametry and "Prague" not in parametry:
+        try:
+            t = t.replace(tzinfo=ZoneInfo(parametry.split("TZID=")[1].split(";")[0])).astimezone(PRAHA_TZ).replace(tzinfo=None)
+        except Exception:  # noqa: BLE001
+            pass
+    return t.date(), (t.strftime("%H:%M") if (t.hour, t.minute) != (0, 0) else None)  # 0:00 = celý den
+
+
+def _ics(text, zdroj, url):
+    text = re.sub(r"\r?\n[ \t]", "", text)  # spojení zalomených řádků
+    out = []
+    for blok in re.findall(r"BEGIN:VEVENT(.*?)END:VEVENT", text, re.S):
+        pole = {}
+        for radek in blok.strip().splitlines():
+            if ":" not in radek:
+                continue
+            klic, hodnota = radek.split(":", 1)
+            jmeno, _, param = klic.partition(";")
+            pole.setdefault(jmeno.upper(), (hodnota.strip(), param))
+        def hodn(k):
+            return (pole.get(k) or ("", ""))[0].replace("\\,", ",").replace("\\;", ";").replace("\\n", " ").strip()
+        if "DTSTART" not in pole:
+            continue
+        od, c = _ics_cas(*pole["DTSTART"])
+        do, kc = _ics_cas(*pole["DTEND"]) if "DTEND" in pole else (None, None)
+        if not od:
+            continue
+        if do and do > od and ("T" not in pole["DTEND"][0] or kc is None):  # celodenní: DTEND je den po konci
+            do -= dt.timedelta(days=1)
+        misto = hodn("LOCATION")
+        if zdroj.get("jen_praha") and misto and not je_v_praze(misto) and not zdroj.get("misto"):
+            continue
+        out.append(dict(nazev=hodn("SUMMARY"), datum=od, konec_datum=do if do and do > od else None, cas=c,
+                        misto=(misto if misto and zdroj.get("misto", "").lower() in misto.lower() else
+                               f"{zdroj['misto']} – {misto}" if zdroj.get("misto") and misto else zdroj.get("misto") or misto),
+                        url=hodn("URL") or url, popis=hodn("DESCRIPTION")[:500] or None))
+    return out
+
+
 def ziskej(stahni, zdroj, dnes):
     vysledek, videno = [], set()
     vynechat = re.compile(zdroj["vynechat"], re.I) if zdroj.get("vynechat") else None
@@ -148,6 +203,8 @@ def ziskej(stahni, zdroj, dnes):
         html = stahni(url)
         if zdroj.get("format") == "jsonld":
             surove = _jsonld(html, zdroj, url, dnes)
+        elif zdroj.get("format") == "ics":
+            surove = _ics(html, zdroj, url)
         else:
             surove = []
             s = BeautifulSoup(html, "lxml")
@@ -182,6 +239,8 @@ def ziskej(stahni, zdroj, dnes):
                 nazev = cisty(n_el.get_text(" "))
                 if zdroj.get("nazev_bez_data"):
                     nazev = UVODNI_DATUM.sub("", nazev)
+                if zdroj.get("nazev_odstranit"):
+                    nazev = re.sub(zdroj["nazev_odstranit"], "", nazev).strip(" /–-")
                 surove.append(dict(nazev=nazev, datum=od, konec_datum=do, misto=misto,
                                    cas=c or najdi_cas(d_text) or (najdi_cas(text) if not zdroj.get("datum") else None),
                                    url=urljoin(url, o_el["href"]) if o_el and o_el.get("href") else url))
@@ -193,6 +252,6 @@ def ziskej(stahni, zdroj, dnes):
                 continue
             videno.add((nazev, a["datum"]))
             vysledek.append(akce(nazev=nazev, datum=a["datum"], konec_datum=a.get("konec_datum"),
-                                 cas=a.get("cas"), misto=a.get("misto") or zdroj.get("nazev_mista"),
-                                 url=a.get("url"), popis=a.get("popis"), typ=zdroj.get("typ")))
+                                 cas=a.get("cas") or zdroj.get("cas_vychozi"), misto=a.get("misto") or zdroj.get("nazev_mista"),
+                                 url=a.get("url"), popis=a.get("popis"), typ=zdroj.get("typ_akce")))
     return vysledek
