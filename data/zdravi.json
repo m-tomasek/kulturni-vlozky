@@ -1218,5 +1218,82 @@
   "nazev": "Praha 1 – kalendář akcí (jen příroda a architektura)",
   "url": "https://www.praha1.cz/udalosti/",
   "okno": 120
+ },
+ "fyzctvrtky": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 2,
+  "posledni_ok": "2026-11-22T17:38+01:00",
+  "posledni_pokus": "2026-11-22T17:38+01:00",
+  "uplnost": {
+   "akci": 2,
+   "do": "2026-12-03",
+   "dnu_na_webu": 2,
+   "chybi_dnu": 0,
+   "chybi_priklad": []
+  },
+  "nazev": "Fyzikální čtvrtky (FEL ČVUT)",
+  "url": "https://www.aldebaran.cz/fyz_ctvrtky/",
+  "okno": 120
+ },
+ "fa_cvut": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 22,
+  "posledni_ok": "2026-11-22T17:38+01:00",
+  "posledni_pokus": "2026-11-22T17:38+01:00",
+  "uplnost": {
+   "akci": 22,
+   "do": "2027-09-19",
+   "dnu_na_webu": 0,
+   "chybi_dnu": 0,
+   "chybi_priklad": []
+  },
+  "nazev": "Fakulta architektury ČVUT",
+  "url": "https://www.fa.cvut.cz/cs/aktualne/kalendar",
+  "okno": 120
+ },
+ "avu": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 5,
+  "posledni_ok": "2026-11-22T17:38+01:00",
+  "posledni_pokus": "2026-11-22T17:38+01:00",
+  "uplnost": {
+   "akci": 5,
+   "do": "2026-12-09",
+   "dnu_na_webu": 5,
+   "chybi_dnu": 0,
+   "chybi_priklad": []
+  },
+  "nazev": "Akademie výtvarných umění",
+  "url": "https://www.avu.cz/verejnost/akce",
+  "okno": 120
+ },
+ "amu": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 30,
+  "posledni_ok": "2026-11-22T17:38+01:00",
+  "posledni_pokus": "2026-11-22T17:38+01:00",
+  "nazev": "AMU (HAMU, DAMU, FAMU)",
+  "url": "https://www.amu.cz/cs/udalosti/",
+  "okno": 120
  }
 }
