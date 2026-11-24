@@ -221,6 +221,23 @@ def stejne_misto(a, b):
     return bool({w for w in na.split() if len(w) >= 3} & {w for w in nb.split() if len(w) >= 3} - OBECNA_MISTA)
 
 
+def misto_cast(a, b):
+    """Přísnější shoda místa (pro párování jen podle času): výrazná slova jednoho místa jsou celá obsažena
+    v druhém („Reduta Jazz Club“ × „Reduta“, „Divadlo X – Velký sál“ × „Divadlo X“), ale „Galerie Rudolfinum“
+    není „Rudolfinum – Dvořákova síň“ a „Kasárna Karlín“ není „Velká scéna HD Karlín“."""
+    obecna = OBECNA_MISTA - {"galerie", "gallery"}
+    wa, wb = ({w for w in norm(x.get("misto") or "").split() if len(w) >= 3} - obecna for x in (a, b))
+    return bool(wa) and bool(wb) and (wa <= wb or wb <= wa)
+
+
+def vzdalenost(p, q):
+    """Přibližná vzdálenost dvou bodů [šířka, délka] v metrech (na pár set metrů stačí rovinný výpočet)."""
+    import math
+    dy = (p[0] - q[0]) * 111_320
+    dx = (p[1] - q[1]) * 111_320 * math.cos(math.radians((p[0] + q[0]) / 2))
+    return math.hypot(dx, dy)
+
+
 def urcite_stejne_misto(a, b):
     """Jako stejne_misto, ale jen když místo známe u obou a opravdu se shoduje."""
     return bool(norm(a.get("misto") or "")) and bool(norm(b.get("misto") or "")) and stejne_misto(a, b)
@@ -384,6 +401,14 @@ def slouc(akce_podle_zdroje, typy_zdroju):
                 # agregátor má akci pod jiným názvem: stejná scéna a přesně stejný začátek = tatáž akce
                 # (jen když je taková právě jedna a ještě k ní z tohoto agregátoru nic nepatří)
                 kandidati = [b for b in den if typy_zdroju[b["zdroj"]] == "primarni" and b["cas"] == a["cas"]
+                             and misto_cast(a, b)]
+                if len(kandidati) == 1 and a["zdroj"] not in kandidati[0].get("dalsi_zdroje", []):
+                    shoda = kandidati[0]
+            if shoda is None and typy_zdroju[a["zdroj"]] == "agregator" and a["cas"] and a.get("poloha"):
+                # dva agregátory (GoOut × Colosseum) mají tutéž akci pod jiným názvem: stejný začátek, stejné
+                # místo podle názvu i podle souřadnic (do 100 m) – jen když je taková právě jedna
+                kandidati = [b for b in den if typy_zdroju[b["zdroj"]] == "agregator" and b["zdroj"] != a["zdroj"]
+                             and b["cas"] == a["cas"] and b.get("poloha") and vzdalenost(a["poloha"], b["poloha"]) <= 100
                              and urcite_stejne_misto(a, b)]
                 if len(kandidati) == 1 and a["zdroj"] not in kandidati[0].get("dalsi_zdroje", []):
                     shoda = kandidati[0]

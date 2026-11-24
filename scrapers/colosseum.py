@@ -34,7 +34,9 @@ def ziskej(stahni, zdroj, dnes):
                 typ = next((TYPY[k] for k in kategorie if k in TYPY), None)
                 for e in t.get("events") or []:
                     v = e.get("venue") or {}
-                    if ((v.get("municipality") or {}).get("title") or "") != "Praha" or e.get("id") in videno:
+                    # stejné představení bývá prodávané pod dvěma tituly (česky / anglicky) – stačí jednou
+                    if ((v.get("municipality") or {}).get("title") or "") != "Praha" or e.get("id") in videno \
+                            or (v.get("title"), e.get("start")) in videno:
                         continue
                     try:
                         zac = dt.datetime.fromisoformat(e["start"])
@@ -42,7 +44,7 @@ def ziskej(stahni, zdroj, dnes):
                         continue
                     if not (dnes <= zac.date() <= konec):
                         continue
-                    videno.add(e.get("id"))
+                    videno.update([e.get("id"), (v.get("title"), e.get("start"))])
                     kon = dt.datetime.fromisoformat(e["end"]) if e.get("end") else None
                     pmin, pmax = e.get("priceMin"), e.get("priceMax")
                     cena = (f"{pmin}–{pmax} Kč" if pmin and pmax and pmin != pmax else f"{pmin or pmax} Kč") \
