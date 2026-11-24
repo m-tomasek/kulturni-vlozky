@@ -668,7 +668,7 @@ def main(jen_chybne=False, jen=None):
                 print(f"{zid}: {u} – {e!r}", file=sys.stderr)
         if chyba is None and not budouci and surove:
             chyba = "zdroj ukazuje jen proběhlé akce"
-        if chyba is None and not surove:
+        if chyba is None and not surove and not z.get("muze_byt_prazdny"):  # sezónní kurzy bývají i bez termínu
             chyba = "zdroj nevrátil žádné akce (změnil se web?)"
         if chyba is None and sum(1 for a in budouci if not a["nazev"]) > len(budouci) / 2:
             chyba = "akce bez názvů – web se asi změnil"

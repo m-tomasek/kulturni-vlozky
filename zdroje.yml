@@ -555,6 +555,7 @@ zdroje:
     bloky: "(ZIMNÍ|JARNÍ|LETNÍ|PODZIMNÍ) KURZY"
     nazev_akce: "Kurz figurální kresby (AtVU)"
     misto: "AtVU, Milady Horákové 56, Praha 7"
+    muze_byt_prazdny: true
     urls:
       - https://www.atvu.cz/
 
@@ -566,6 +567,7 @@ zdroje:
     odkazy: "/kurzy-pro-dospele/(?!lektori|kurzovne|to-jsme-my|phdr|marketa|roman|kamila|robo|zlatnicka)[a-z0-9-]+/$"
     misto: "Ateliér 45, Praha 1"
     web: https://www.atelier45.cz/kurzy-pro-dospele/
+    muze_byt_prazdny: true
     urls:
       - https://www.atelier45.cz/
 
@@ -623,6 +625,7 @@ zdroje:
     misto_css: "div.text-uppercase"
     typ_akce: workshop
     web: https://www.mestskadivadlaprazska.cz/vzdelavani/divadelni-kurzy/
+    muze_byt_prazdny: true
     urls:
       - https://www.mestskadivadlaprazska.cz/vzdelavani/divadelni-kurzy/
 
@@ -638,6 +641,7 @@ zdroje:
     misto: "Akademie focení (Praha)"
     typ_akce: workshop
     web: https://www.akademiefoceni.cz/cs/nabidky/
+    muze_byt_prazdny: true
     urls:
       - https://www.akademiefoceni.cz/cs/nabidky/
 
@@ -649,6 +653,7 @@ zdroje:
     odkazy: "/celozivotni-vzdelavani/kurz-celozivotniho-vzdelavani/[^/]+/[^/]+$"
     misto: "UMPRUM, nám. Jana Palacha 80, Praha 1"
     web: https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani
+    muze_byt_prazdny: true
     urls:
       - https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani
       - https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani/kurz-celozivotniho-vzdelavani/kresba-a-malba
@@ -664,6 +669,7 @@ zdroje:
     vynechat: "zrušeno"
     misto: "Fakulta architektury ČVUT, Thákurova 9"
     web: https://www.fa.cvut.cz/cs/uchazeci/celozivotni-vzdelavani
+    muze_byt_prazdny: true
     urls:
       - https://www.fa.cvut.cz/cs/uchazeci/celozivotni-vzdelavani
 
@@ -686,6 +692,7 @@ zdroje:
     odkazy_text: "ND\\+ Kurz"
     misto: "Národní divadlo"
     web: https://www.narodni-divadlo.cz/cs/doprovodne-programy-nd-plus
+    muze_byt_prazdny: true
     urls:
       - https://www.narodni-divadlo.cz/cs/doprovodne-programy-nd-plus/nd-lab
       - https://www.narodni-divadlo.cz/cs/doprovodne-programy-nd-plus
@@ -748,6 +755,7 @@ zdroje:
     aktivni: true
     scraper: improbox
     web: https://improbox.cz/
+    muze_byt_prazdny: true
     urls:
       - https://improbox.cz/
 
