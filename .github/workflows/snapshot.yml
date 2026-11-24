@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   snapshot:
@@ -24,3 +24,8 @@ jobs:
           name: raw
           path: raw
           retention-days: 7
+      # kopie stažených stránek do větve ladeni-raw (ať se dají číst i bez stahování artefaktu)
+      - run: |
+          cd raw && git init -q -b ladeni-raw && git add -A
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm "raw $(date -u +%F_%T)"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" ladeni-raw

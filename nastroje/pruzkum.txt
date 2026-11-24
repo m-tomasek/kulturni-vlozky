@@ -1,1 +1,5 @@
 # název url  (stahuje úloha snapshot, výsledek je v artefaktech; "POST adresa?parametry" pošle formulář)
+kkk-js https://kinokinokino.cz/assets/index-CetQYRRk.js
+col-divadlo https://www.colosseumticket.cz/cs/vypis-akci/divadlo
+col-akce https://www.colosseumticket.cz/cs/akce/101680787-nezna-je-noc-divadlo-v-celetne-kaspar-klubovna-vstupenky
+aero-program https://www.aerofilms.cz/program-kin/
