@@ -733,6 +733,7 @@ zdroje:
     scraper: kudyznudy
     typ_akce: null
     typ_vychozi: workshop
+    rubrika: "kurzy a workshopy"
     urls:
       - https://www.kudyznudy.cz/kalendar-akci/kurzy-a-workshopy/hlavni-mesto-praha
 

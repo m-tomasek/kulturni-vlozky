@@ -21,7 +21,7 @@ def ziskej(stahni, zdroj, dnes):
     vysledek, videno = [], set()
     for url in zdroj["urls"]:
         s = BeautifulSoup(stahni(url), "lxml")
-        rubrika = "komentovaná prohlídka" if "komentovane-prohlidky" in url else "příroda a ekologie"
+        rubrika = zdroj.get("rubrika") or ("komentovaná prohlídka" if "komentovane-prohlidky" in url else "příroda a ekologie")
         for it in s.select('[itemtype$="schema.org/Event"]'):
             jmeno = it.select_one('[itemprop="name"]')
             zac = it.select_one('meta[itemprop="startDate"]')
