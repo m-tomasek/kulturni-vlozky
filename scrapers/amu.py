@@ -2,7 +2,7 @@
 
 amu.cz/api/events/?upcoming=1 vrací budoucí akce celé AMU (weby hamu/damu/famu sdílejí stejná data).
 Časy jsou v UTC, převádějí se na pražský. Místo se odhadne z kategorií, jinak „AMU“.
-Interní akce (workshopy, informační schůzky, wellbeing) se vynechávají.
+Interní akce (informační schůzky, wellbeing, akce pro pedagogy) se vynechávají; workshopy se berou.
 """
 import datetime as dt
 import json
@@ -13,8 +13,8 @@ from .spolecne import akce
 
 PRAHA = ZoneInfo("Europe/Prague")
 WEB = "https://www.amu.cz"
-VYNECHAT_KAT = re.compile(r"\b(workshop|wellbeing|kurz)\b", re.I)
-VYNECHAT_NAZEV = re.compile(r"informační schůzk|pro pedagogy|zrušeno|workshop|kurz ", re.I)
+VYNECHAT_KAT = re.compile(r"\bwellbeing\b", re.I)
+VYNECHAT_NAZEV = re.compile(r"informační schůzk|pro pedagogy|zrušeno", re.I)
 MISTA = [  # (kategorie obsahuje, místo)
     ("Sál Martinů", "Sál Martinů, Lichtenštejnský palác (HAMU)"),
     ("Galerie", "Galerie HAMU, Lichtenštejnský palác"),
@@ -22,7 +22,7 @@ MISTA = [  # (kategorie obsahuje, místo)
     ("Katedra jazzové hudby", "Klub Inspirace, Lichtenštejnský palác (HAMU)"),
     ("FAMU", "FAMU, Smetanovo nábřeží 2"),
 ]
-TYPY = [("Koncert", "koncert"), ("Výstava", "vystava"), ("Představení", "divadlo"),
+TYPY = [("Workshop", "workshop"), ("Kurz", "workshop"), ("Koncert", "koncert"), ("Výstava", "vystava"), ("Představení", "divadlo"),
         ("Konference", "prednaska"), ("Přednáška", "prednaska")]
 
 

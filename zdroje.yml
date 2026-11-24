@@ -510,6 +510,247 @@ zdroje:
     urls:
       - https://www.amu.cz/api/events/?upcoming=1&count=50
 
+  # --- workshopy a kurzy (typ akce „Workshop a kurz“; kurz = akce v den prvního setkání, v názvu od–do)
+  - id: atelier9
+    nazev: Ateliér 9 – kurzy hlasu, divadla, výtvarné tvorby
+    typ: primarni
+    aktivni: true
+    scraper: zp
+    misto: "Ateliér 9, Husova 9, Praha 1"
+    vynechat: "Sokolov|Brno|Ostrava|Plzeň|online"
+    web: https://atelier9.cz/kalendar/
+    urls:
+      - https://atelier9.cz/kalendar/
+
+  - id: zivapedagogika
+    nazev: Ateliér živé pedagogiky a tvorby
+    typ: primarni
+    aktivni: true
+    scraper: zp
+    misto: "Ateliér živé pedagogiky, Praha 1"
+    vynechat: "Brno|Ostrava|Plzeň|online"
+    web: https://zivapedagogika.eu/kalendar/
+    urls:
+      - https://zivapedagogika.eu/kalendar/
+
+  - id: skola21
+    nazev: Škola 21 – improvizace a seberozvoj
+    typ: primarni
+    aktivni: true
+    scraper: textove
+    odkazy: "/udalosti/"
+    nazev_css: title
+    nazev_odstranit: "^Škola 21\\s*"
+    vynechat: "festival|výročí|networking|komunitní setkání"
+    misto: "Škola 21 (Praha)"
+    web: https://www.skola21.com/program
+    urls:
+      - https://www.skola21.com/program
+
+  - id: atvu
+    nazev: AtVU – kurzy figurální kresby (Letná)
+    typ: primarni
+    aktivni: true
+    scraper: textove
+    bloky: "(ZIMNÍ|JARNÍ|LETNÍ|PODZIMNÍ) KURZY"
+    nazev_akce: "Kurz figurální kresby (AtVU)"
+    misto: "AtVU, Milady Horákové 56, Praha 7"
+    urls:
+      - https://www.atvu.cz/
+
+  - id: atelier45
+    nazev: Ateliér 45 – výtvarné kurzy
+    typ: primarni
+    aktivni: true
+    scraper: textove
+    odkazy: "/kurzy-pro-dospele/(?!lektori|kurzovne|to-jsme-my|phdr|marketa|roman|kamila|robo|zlatnicka)[a-z0-9-]+/$"
+    misto: "Ateliér 45, Praha 1"
+    web: https://www.atelier45.cz/kurzy-pro-dospele/
+    urls:
+      - https://www.atelier45.cz/
+
+  - id: montmartre
+    nazev: Atelier Montmartre – víkendové workshopy (Smíchov)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "li:has(a[href*='/kurzy/'])"
+    nazev_css: a
+    misto: "Atelier Montmartre, Kroftova 8, Smíchov"
+    typ_akce: workshop
+    web: https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
+    urls:
+      - https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
+
+  - id: mojedilna
+    nazev: Moje dílna – keramika a výtvarné lekce
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "div.course"
+    nazev_css: h2
+    vynechat: "děti|rodič"
+    misto: "Moje dílna (Praha)"
+    typ_akce: workshop
+    web: https://mojedilna.com/index.php/cs/courses
+    urls:
+      - https://mojedilna.com/index.php/cs/courses
+
+  - id: kurzyherectvi
+    nazev: Kurzy herectví (Praha)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "article.kh-course-card"
+    nazev_css: h3
+    datum: dl
+    jen_s_textem: "Praha"
+    vynechat: "teenager|děti"
+    misto: "Kurzy herectví (Praha)"
+    typ_akce: workshop
+    web: https://kurzyherectvi.cz/dynamicke-kurzy-praha/
+    urls:
+      - https://kurzyherectvi.cz/dynamicke-kurzy-praha/
+
+  - id: mdp_kurzy
+    nazev: Městská divadla pražská – divadelní kurzy a dílny
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "div.container > div > div.row"
+    nazev_css: h1
+    datum: "div.text-right"
+    misto_css: "div.text-uppercase"
+    typ_akce: workshop
+    web: https://www.mestskadivadlaprazska.cz/vzdelavani/divadelni-kurzy/
+    urls:
+      - https://www.mestskadivadlaprazska.cz/vzdelavani/divadelni-kurzy/
+
+  - id: akademiefoceni
+    nazev: Akademie focení (workshopy v Praze)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "div.card.course"
+    nazev_css: h3
+    datum: strong.date
+    jen_s_textem: "Praha"
+    misto: "Akademie focení (Praha)"
+    typ_akce: workshop
+    web: https://www.akademiefoceni.cz/cs/nabidky/
+    urls:
+      - https://www.akademiefoceni.cz/cs/nabidky/
+
+  - id: umprum_czv
+    nazev: UMPRUM – kurzy celoživotního vzdělávání
+    typ: primarni
+    aktivni: true
+    scraper: textove
+    odkazy: "/celozivotni-vzdelavani/kurz-celozivotniho-vzdelavani/[^/]+/[^/]+$"
+    misto: "UMPRUM, nám. Jana Palacha 80, Praha 1"
+    web: https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani
+    urls:
+      - https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani
+      - https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani/kurz-celozivotniho-vzdelavani/kresba-a-malba
+      - https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani/kurz-celozivotniho-vzdelavani/knizni-vazba
+      - https://www.umprum.cz/cs/web/pro-verejnost/celozivotni-vzdelavani/kurz-celozivotniho-vzdelavani/kuze-a-textil
+
+  - id: fa_czv
+    nazev: FA ČVUT – kurzy pro veřejnost (figurální kresba…)
+    typ: primarni
+    aktivni: true
+    scraper: textove
+    odkazy: "/celozivotni-vzdelavani/\\d+-"
+    vynechat: "zrušeno"
+    misto: "Fakulta architektury ČVUT, Thákurova 9"
+    web: https://www.fa.cvut.cz/cs/uchazeci/celozivotni-vzdelavani
+    urls:
+      - https://www.fa.cvut.cz/cs/uchazeci/celozivotni-vzdelavani
+
+  - id: nd
+    nazev: Národní divadlo (program a doprovodné programy ND+)
+    typ: primarni
+    aktivni: true
+    scraper: nd
+    vynechat: "\\(skupiny\\)"
+    web: https://www.narodni-divadlo.cz/cs/program
+    urls:
+      - https://www.narodni-divadlo.cz/eventfeed
+
+  - id: nd_plus
+    nazev: Národní divadlo – kurzy ND+ (ND+ LAB)
+    typ: primarni
+    aktivni: true
+    scraper: textove
+    odkazy: "/cs/predstaveni/"
+    odkazy_text: "ND\\+ Kurz"
+    misto: "Národní divadlo"
+    web: https://www.narodni-divadlo.cz/cs/doprovodne-programy-nd-plus
+    urls:
+      - https://www.narodni-divadlo.cz/cs/doprovodne-programy-nd-plus/nd-lab
+      - https://www.narodni-divadlo.cz/cs/doprovodne-programy-nd-plus
+
+  - id: mlp
+    nazev: Městská knihovna v Praze (dílny, kurzy, přednášky pro dospělé)
+    typ: primarni
+    aktivni: true
+    scraper: obecny
+    blok: "article.event-box"
+    nazev_css: "a.event-box__content__left__title"
+    datum: time
+    misto_css: ".event-box__content__left__place"
+    misto_predpona: "Městská knihovna – "
+    znacky_css: ".event-box__content__left__category"
+    jen_s_textem: "Pro dospělé|Pro seniory"
+    web: https://www.mlp.cz/cz/akce/
+    urls:
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=19&field_event_type_target_id%5B%5D=22&field_event_type_target_id%5B%5D=24
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=19&field_event_type_target_id%5B%5D=22&field_event_type_target_id%5B%5D=24&page=1
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=19&field_event_type_target_id%5B%5D=22&field_event_type_target_id%5B%5D=24&page=2
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=19&field_event_type_target_id%5B%5D=22&field_event_type_target_id%5B%5D=24&page=3
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=19&field_event_type_target_id%5B%5D=22&field_event_type_target_id%5B%5D=24&page=4
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=19&field_event_type_target_id%5B%5D=22&field_event_type_target_id%5B%5D=24&page=5
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=15&field_event_type_target_id%5B%5D=14&field_event_type_target_id%5B%5D=32
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=15&field_event_type_target_id%5B%5D=14&field_event_type_target_id%5B%5D=32&page=1
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=15&field_event_type_target_id%5B%5D=14&field_event_type_target_id%5B%5D=32&page=2
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=15&field_event_type_target_id%5B%5D=14&field_event_type_target_id%5B%5D=32&page=3
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=15&field_event_type_target_id%5B%5D=14&field_event_type_target_id%5B%5D=32&page=4
+      - https://www.mlp.cz/akce/vsechny-akce/?field_event_type_target_id%5B%5D=15&field_event_type_target_id%5B%5D=14&field_event_type_target_id%5B%5D=32&page=5
+
+  - id: kzn_workshopy
+    nazev: Kudy z nudy – kurzy a workshopy v Praze
+    typ: agregator
+    aktivni: true
+    scraper: kudyznudy
+    typ_akce: null
+    typ_vychozi: workshop
+    urls:
+      - https://www.kudyznudy.cz/kalendar-akci/kurzy-a-workshopy/hlavni-mesto-praha
+
+  - id: smsticket_ws
+    nazev: Smsticket – workshopy v Praze
+    typ: agregator
+    aktivni: true
+    scraper: obecny
+    blok: "a.item"
+    nazev_css: "span.text > strong"
+    datum: "span.date"
+    misto_css: "span.place"
+    jen_praha: true
+    typ_akce: workshop
+    web: https://www.smsticket.cz/akce/workshop
+    urls:
+      - https://www.smsticket.cz/akce/workshop
+
+  - id: improbox
+    nazev: Improbox – impro workshopy a kurzy v Praze
+    typ: agregator
+    aktivni: true
+    scraper: improbox
+    web: https://improbox.cz/
+    urls:
+      - https://improbox.cz/
+
   - id: goout
     nazev: GoOut (celá Praha)
     typ: agregator

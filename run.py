@@ -329,10 +329,16 @@ def duvod_vynechani(a, pr):
 
 
 def urci_typ(a, pr):
+    if a.get("typ") == "workshop":  # zdroje workshopů a kurzů (typ_akce: workshop) – i „impro kurz“ je kurz
+        return "workshop"
     text = bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower().replace("improvis", "")
+    text = text.replace("exkurz", "").replace("z dilny", "")  # exkurze není kurz, „z dílny autora“ není dílna
     for typ, klice in pr["typy"]:
-        if any(k in text for k in klice):
-            if a.get("typ") in (None, "koncert") or typ in ("improvizace", "festival", "vystava"):
+        shoda = [k for k in klice if k in text]
+        if shoda:
+            # „workshop“ v názvu přebije typ ze zdroje; „dílna“, „kurz“… jen u akcí bez typu
+            silne = typ != "workshop" or any(k in ("workshop", "masterclass", "master class", "open class") for k in shoda)
+            if a.get("typ") in (None, "koncert") or (typ in ("improvizace", "festival", "vystava", "workshop") and silne):
                 return typ
     return a.get("typ") or "jine"
 
@@ -726,6 +732,8 @@ def main(jen_chybne=False, jen=None):
             if a["datum"] >= okraj:
                 a["_okraj"] = True  # jen se posunulo okno zdroje (nebo se rozšířilo) – to není novinka
             a["typ"] = urci_typ(a, pr)
+            if a["typ"] == "jine" and z.get("typ_vychozi"):  # např. přehled kurzů: co nesedí jinam, je kurz
+                a["typ"] = z["typ_vychozi"]
             if (z.get("tema") == "priroda" or z.get("tema_podle_znacky")) and \
                     NE_PRIRODA.search(bez_diakritiky(f"{a['nazev']} {a.get('znacky') or ''}").lower()):
                 continue  # přírodovědný zdroj: aktivistické a „klimatické“ akce vůbec nebrat

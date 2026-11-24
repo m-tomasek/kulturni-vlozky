@@ -9,13 +9,15 @@ Použití v zdroje.yml (u zdroje uvést `scraper: obecny`):
   datum: ".date"        # CSS uvnitř bloku s datem (výchozí: celý text bloku)
   odkaz: "a"            # CSS odkazu (výchozí: první odkaz v bloku)
   misto: "Toulcův dvůr" # pevné místo, nebo
-  misto_css: ".place"   # místo z bloku
+  misto_css: ".place"   # místo z bloku (misto_predpona: "Městská knihovna – " se dá před něj)
   jen_praha: true       # brát jen akce v Praze (u celostátních webů); s misto_css se hledá jen v místě
   vynechat_css: "s"     # bloky obsahující tento prvek se přeskočí (např. přeškrtnuté = zrušené)
   nazev_bez_data: true  # z názvu se odstraní úvodní datum a čas („St 18. 11. 2026, 16.30 h Název“)
   nazev_odstranit: " / \\d.*$"  # regulární výraz – co z názvu akce smazat (např. datum za lomítkem)
   jen_tema: true        # (v run.py) brát jen akce, které vyjdou jako příroda/architektura
   vynechat: "pro děti|tábor"   # regulární výraz – bloky s tímto textem se přeskočí
+  jen_s_textem: "Pro dospělé"  # regulární výraz – brát jen bloky s tímto textem
+  znacky_css: ".category"      # štítky akce z bloku (podle nich se určí typ: dílna, kurz, přednáška…)
   cas_vychozi: "16:15"  # čas akce, když ho stránka neuvádí
   typ_akce: prednaska   # pevný typ akce (jinak se určí podle názvu); `typ` je typ zdroje
 
@@ -212,6 +214,8 @@ def ziskej(stahni, zdroj, dnes):
                 text = cisty(blok.get_text(" "))
                 if vynechat and vynechat.search(text):
                     continue
+                if zdroj.get("jen_s_textem") and not re.search(zdroj["jen_s_textem"], text, re.I):
+                    continue
                 if zdroj.get("vynechat_css") and blok.select_one(zdroj["vynechat_css"]):
                     continue
                 n_el = blok.select_one(zdroj["nazev_css"]) if zdroj.get("nazev_css") else \
@@ -222,6 +226,7 @@ def ziskej(stahni, zdroj, dnes):
                     continue
                 d_el = blok.select_one(zdroj["datum"]) if zdroj.get("datum") else None
                 d_text = re.sub(r"\b(\d{1,2}),(\d{2})\b", r"\1:\2", cisty(d_el.get_text(" ")) if d_el else text)
+                d_text = re.sub(r"(\d)\s+\.(?=\s*\d)", r"\1.", d_text)  # „15 .11.2026“ (rozdělené tučné písmo)
                 od, do = najdi_data(d_text, dnes)
                 c = None
                 if not od:
@@ -234,6 +239,8 @@ def ziskej(stahni, zdroj, dnes):
                 if zdroj.get("misto_css"):
                     m_el = blok.select_one(zdroj["misto_css"])
                     misto = re.sub(r"^\s*místo:\s*", "", cisty(m_el.get_text(" ")), flags=re.I) if m_el else misto
+                    if m_el and zdroj.get("misto_predpona"):
+                        misto = zdroj["misto_predpona"] + misto
                 if zdroj.get("jen_praha") and not je_v_praze(misto if zdroj.get("misto_css") else text):
                     continue
                 nazev = cisty(n_el.get_text(" "))
@@ -241,7 +248,9 @@ def ziskej(stahni, zdroj, dnes):
                     nazev = UVODNI_DATUM.sub("", nazev)
                 if zdroj.get("nazev_odstranit"):
                     nazev = re.sub(zdroj["nazev_odstranit"], "", nazev).strip(" /–-")
+                z_el = blok.select_one(zdroj["znacky_css"]) if zdroj.get("znacky_css") else None
                 surove.append(dict(nazev=nazev, datum=od, konec_datum=do, misto=misto,
+                                   znacky=cisty(z_el.get_text(" ")) if z_el else None,
                                    cas=c or najdi_cas(d_text) or (najdi_cas(text) if not zdroj.get("datum") else None),
                                    url=urljoin(url, o_el["href"]) if o_el and o_el.get("href") else url))
         for a in surove:
@@ -253,5 +262,6 @@ def ziskej(stahni, zdroj, dnes):
             videno.add((nazev, a["datum"]))
             vysledek.append(akce(nazev=nazev, datum=a["datum"], konec_datum=a.get("konec_datum"),
                                  cas=a.get("cas") or zdroj.get("cas_vychozi"), misto=a.get("misto") or zdroj.get("nazev_mista"),
-                                 url=a.get("url"), popis=a.get("popis"), typ=zdroj.get("typ_akce")))
+                                 url=a.get("url"), popis=a.get("popis"), typ=zdroj.get("typ_akce"),
+                                 znacky=a.get("znacky")))
     return vysledek

@@ -47,6 +47,6 @@ def ziskej(stahni, zdroj, dnes):
                 nazev=nazev, datum=od, konec_datum=do if do and do != od else None,
                 misto=cisty(misto.get_text(" ")) if misto else None, url=href,
                 popis=popis["content"] if popis else None, znacky=rubrika,
-                typ="jine",
+                typ=zdroj.get("typ_akce", "jine"),
             ))
     return vysledek
