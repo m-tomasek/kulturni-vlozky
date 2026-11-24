@@ -581,6 +581,7 @@ zdroje:
     misto: "Atelier Montmartre, Kroftova 8, Smíchov"
     typ_akce: workshop
     web: https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
+    odmita_github: true  # web odmítá servery GitHubu (401), z GitLabu funguje
     urls:
       - https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
 
@@ -611,6 +612,7 @@ zdroje:
     misto: "Kurzy herectví (Praha)"
     typ_akce: workshop
     web: https://kurzyherectvi.cz/dynamicke-kurzy-praha/
+    odmita_github: true  # web odmítá servery GitHubu (401), z GitLabu funguje
     urls:
       - https://kurzyherectvi.cz/dynamicke-kurzy-praha/
 

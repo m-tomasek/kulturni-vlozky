@@ -8,6 +8,7 @@
 import datetime as dt
 import hashlib
 import json
+import os
 import pathlib
 import re
 import sys
@@ -653,6 +654,12 @@ def main(jen_chybne=False, jen=None):
             surove, chyba, sitova, mekke, trvani = predem.pop(zid)
         else:
             surove, chyba, sitova, mekke, trvani = stahni_zdroj(z, zz, stahni, dnes)
+        if chyba and chyba.startswith(("web vrací chybu 401", "web vrací chybu 403")) and z.get("odmita_github") \
+                and os.environ.get("GITHUB_ACTIONS"):
+            # web odmítá servery GitHubu (z GitLabu funguje) – v kopii na GitHubu se jen přeskočí, nehlásí se
+            print(f"{zid}: {chyba} – web odmítá GitHub, přeskakuji", file=sys.stderr)
+            surove, chyba, sitova = [], None, False
+            z = {**z, "muze_byt_prazdny": True}
         casy[zid] = casy.get(zid, 0) + trvani
         if chyba and sitova and not druhy_pokus:
             print(f"{zid}: {chyba} – zkusím znovu na konci běhu", file=sys.stderr)
