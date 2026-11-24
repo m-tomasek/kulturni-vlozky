@@ -1,0 +1,3 @@
+- **Atelier Montmartre – víkendové workshopy (Smíchov)**: web vrací chybu 401 (nefunguje od 24. 11.) – https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
+- **Kurzy herectví (Praha)**: web vrací chybu 401 (nefunguje od 24. 11.) – https://kurzyherectvi.cz/dynamicke-kurzy-praha/
+- **FA ČVUT – kurzy pro veřejnost (figurální kresba…)**: zdroj nevrátil žádné akce (změnil se web?) (nefunguje od 24. 11.) – https://www.fa.cvut.cz/cs/uchazeci/celozivotni-vzdelavani
