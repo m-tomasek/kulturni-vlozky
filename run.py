@@ -480,7 +480,8 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None, agreg
         if (norm(b["nazev"]), b.get("misto") or "", b["datum"]) in sbalene:
             return True  # jednotlivý čas akce, která se teď ukazuje sbalená
         return next((a for a in nove_podle_terminu.get((b["datum"], b.get("cas")), [])
-                     if a["zdroj"] != b["zdroj"] and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])
+                     if a["zdroj"] != b["zdroj"] and stejne_misto(a, b)
+                     and (podobne(a["nazev"], b["nazev"]) or b["zdroj"] in a.get("dalsi_zdroje", []))
                      and not (b["zdroj"] not in ok_zdroje and a["zdroj"] in agregatory)), None)
 
     minule_podle_terminu = {}
