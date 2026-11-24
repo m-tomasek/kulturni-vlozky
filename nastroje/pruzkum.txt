@@ -1,1 +1,5 @@
 # název url  (stahuje úloha snapshot, výsledek je v artefaktech; "POST adresa?parametry" pošle formulář)
+montm https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
+b-montm https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu
+kh https://kurzyherectvi.cz/dynamicke-kurzy-praha/
+b-kh https://kurzyherectvi.cz/dynamicke-kurzy-praha/
