@@ -1313,5 +1313,47 @@
    "shoda": 8,
    "navic": 171
   }
+ },
+ "kinokinokino": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 917,
+  "posledni_ok": "2026-11-24T14:06+01:00",
+  "posledni_pokus": "2026-11-24T14:06+01:00",
+  "nazev": "kinokinokino (artová kina Praha)",
+  "url": "https://kinokinokino.cz/",
+  "okno": 120
+ },
+ "colosseum": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 1784,
+  "posledni_ok": "2026-11-24T14:06+01:00",
+  "posledni_pokus": "2026-11-24T14:06+01:00",
+  "nazev": "ColosseumTicket (celá Praha)",
+  "url": "https://www.colosseumticket.cz/",
+  "okno": 120
+ },
+ "aerofilms": {
+  "varovani_behu": 0,
+  "hlasit": false,
+  "ok": true,
+  "chyba": null,
+  "varovani": null,
+  "chyb_v_rade": 0,
+  "pocet": 156,
+  "posledni_ok": "2026-11-24T14:06+01:00",
+  "posledni_pokus": "2026-11-24T14:06+01:00",
+  "nazev": "Aerofilms (filmy a přenosy v kinech)",
+  "url": "https://www.aerofilms.cz/program-kin/",
+  "okno": 120
  }
 }
