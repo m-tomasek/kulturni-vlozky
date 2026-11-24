@@ -1,0 +1,8 @@
+b-kh | 127212 B | Herecké kurzy v Praze – Kurzy herectví | ld-event:0  | 9× dd < div; 1× 
+    odkazy: 
+b-montm | 52900 B | Program Workshopů | Atelier MontMartre | ld-event:0  | 27× strong < strong
+    odkazy: /udalosti /vytvarne-kurzy/program-workshopu /kurzy/vikendove-workshopy/abstrakce-jako-nastroj-k-odpocinku-abstraktni-kresba-a-malba /media/gallery/101/abstrakce-workshop.jpg
+kh | 127212 B | Herecké kurzy v Praze – Kurzy herectví | ld-event:0  | 9× dd < div; 1× 
+    odkazy: 
+montm | 52900 B | Program Workshopů | Atelier MontMartre | ld-event:0  | 27× strong < strong
+    odkazy: /udalosti /vytvarne-kurzy/program-workshopu /kurzy/vikendove-workshopy/abstrakce-jako-nastroj-k-odpocinku-abstraktni-kresba-a-malba /media/gallery/101/abstrakce-workshop.jpg
