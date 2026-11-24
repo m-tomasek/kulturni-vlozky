@@ -413,7 +413,7 @@ def slouc(akce_podle_zdroje, typy_zdroju):
 
 # ---------------------------------------------------------------- porovnání s minulým během
 
-def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
+def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None, agregatory=()):
     dnes_s = dnes.isoformat()
     min_podle_id = {a["id"]: a for a in minule}
     pouzite = set()
@@ -455,7 +455,8 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
         if (norm(b["nazev"]), b.get("misto") or "", b["datum"]) in sbalene:
             return True  # jednotlivý čas akce, která se teď ukazuje sbalená
         return next((a for a in nove_podle_terminu.get((b["datum"], b.get("cas")), [])
-                     if a["zdroj"] != b["zdroj"] and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])), None)
+                     if a["zdroj"] != b["zdroj"] and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])
+                     and not (b["zdroj"] not in ok_zdroje and a["zdroj"] in agregatory)), None)
 
     minule_podle_terminu = {}
     for b in minule:
@@ -465,6 +466,12 @@ def porovnej(nove, minule, ok_zdroje, dnes, nove_zdroje=(), zalozeno=None):
         b = next((b for b in minule_podle_terminu.get((a["datum"], a.get("cas")), [])
                   if b["id"] not in pouzite and b["zdroj"] != a["zdroj"]
                   and stejne_misto(a, b) and podobne(a["nazev"], b["nazev"])), None) if a.get("cas") else None
+        if b and b["zdroj"] not in ok_zdroje and a["zdroj"] in agregatory:
+            # částečný běh (--jen): zdroj staré akce se dnes nenačítal, agregátor ji nepřebírá
+            # (sloučení by ji jinak nechalo vlastnímu zdroji) – stará akce zůstane, nová se zahodí
+            if a["zdroj"] not in b.setdefault("dalsi_zdroje", []):
+                b["dalsi_zdroje"].append(a["zdroj"])
+            continue
         if b:
             pouzite.add(b["id"])
             a["poprve_videno"] = b.get("poprve_videno", dnes_s)
@@ -731,7 +738,8 @@ def main(jen_chybne=False, jen=None):
         # označily jako nové (zbytečně plnily „Nově přidané“)
         if b.get("zdroj") == "goout" and b.get("poprve_videno") == "2026-11-16" and b["datum"] >= "2026-12-06" and zalozeno:
             b["poprve_videno"] = zalozeno
-    akce, stat = porovnej(sloucene, minule_data.get("akce", []), ok_zdroje, dnes, nove_zdroje, zalozeno)
+    akce, stat = porovnej(sloucene, minule_data.get("akce", []), ok_zdroje, dnes, nove_zdroje, zalozeno,
+                          {z for z, t in typy_zdroju.items() if t == "agregator"})
     akce.sort(key=lambda a: (a["datum"], a["cas"] or "99:99", a["nazev"]))
 
     meta = minule_data.get("meta", {})

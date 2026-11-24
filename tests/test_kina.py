@@ -57,6 +57,15 @@ class Kina(unittest.TestCase):
         self.assertEqual(len(v), 1)
         self.assertEqual(v[0]["dalsi_zdroje"], ["kinokinokino", "aerofilms"])
 
+    def test_castecny_beh_agregator_neprebira_akci(self):
+        stara = dict(id="o1", nazev="Milovaný", datum="2026-11-25", cas="20:30", misto="Bio Oko", zdroj="biooko",
+                     stav="neznamo", poprve_videno="2026-11-16", zmeny=[])
+        nova = dict(id="k1", nazev="Milovaný", datum="2026-11-25", cas="20:30", misto="Bio Oko", zdroj="kinokinokino",
+                    stav="neznamo")
+        v, stat = run.porovnej([nova], [stara], {"kinokinokino"}, D, agregatory={"kinokinokino"})
+        self.assertEqual([(a["id"], a["zdroj"]) for a in v], [("o1", "biooko")])
+        self.assertEqual(stat["nove"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
