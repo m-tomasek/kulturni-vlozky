@@ -60,13 +60,13 @@ def uloz_akce(cesta, meta, akce):
 
 
 # Některé weby (ochrana proti botům, CDN) odmítají neznámého „robota“ chybou 403/429/503, i když stránka
-# normálně funguje. U takového webu se zkusí znovu hlavičky běžného prohlížeče a pro zbytek běhu se drží.
+# normálně funguje (některé i 401). U takového webu se zkusí znovu hlavičky běžného prohlížeče a pro zbytek běhu se drží.
 PROHLIZEC = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,application/json;q=0.8,*/*;q=0.7",
     "Accept-Language": "cs-CZ,cs;q=0.9,en;q=0.6",
 }
-ODMITNUTI = (403, 406, 429, 503)
+ODMITNUTI = (401, 403, 406, 429, 503)
 
 
 def vytvor_stahovac():
