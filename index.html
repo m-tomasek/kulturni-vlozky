@@ -295,6 +295,11 @@ const MESICE=["leden","únor","březen","duben","květen","červen","červenec",
 const MESL=["lednu","únoru","březnu","dubnu","květnu","červnu","červenci","srpnu","září","říjnu","listopadu","prosinci"];
 const MESG=["ledna","února","března","dubna","května","června","července","srpna","září","října","listopadu","prosince"];
 const GOOUT="goout";
+// agregátory celé Prahy (štítek u akce, ve výběru míst jedna položka „… (vše)“)
+const AGREG={goout:"GoOut",colosseum:"Colosseum"};
+// zdroje s mnoha místy (kina): ve výběru míst se rozepíší podle místa
+const PODLE_MISTA=new Set(["kinokinokino","aerofilms"]);
+const zakl=a=>(a.misto||a.zdroj).split(" – ")[0].split(" (")[0];
 let AKCE=[], META={};
 
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -344,7 +349,7 @@ function zaklad(a){
     if(S.kdy==="vecer"&&c<"17:00") return false; if(S.kdy==="pozde"&&c<"21:00") return false; if(S.kdy==="den"&&c>="17:00") return false; }
   if(S.typy.size && !S.typy.has(a.typ)) return false;
   if(S.temata.size && !(a.temata||[]).some(t=>S.temata.has(t))) return false;
-  if(S.misto && a.zdroj!==S.misto) return false;
+  if(S.misto && (S.misto.startsWith("m:") ? zakl(a)!==S.misto.slice(2) : a.zdroj!==S.misto)) return false;
   if(S.hideSold && a.stav==="vyprodano") return false;
   if(S.bezGoout && a.zdroj===GOOUT) return false;
   if(S.q){ if(a._h===undefined) a._h=`${a.nazev} ${a.misto} ${a.znacky||""}`.toLocaleLowerCase("cs");
@@ -418,7 +423,7 @@ function radek(a){
   info.push(`<span>${esc(a.misto||"")}</span>`);
   (a.temata||[]).forEach(t=>info.push(`<span class="tlbl" style="--tc:var(--c-t-${t})">${TEMATA[t]||t}</span>`));
   if(a.opakovani) info.push(`<span>${a.opakovani}× za den (${a.cas}–${a.posledni_cas})</span>`);
-  if(a.zdroj===GOOUT) info.push(`<span class="gooutlbl">GoOut</span>`);
+  if(AGREG[a.zdroj]) info.push(`<span class="gooutlbl">${AGREG[a.zdroj]}</span>`);
   if(a.cena) info.push(`<span>${esc(a.cena)}</span>`);
   if(nova(a)) info.push(`<span class="st-new">nové</span>`);
   if(a.stav==="vyprodano") info.push(`<span class="st-sold">vyprodáno</span>`);
@@ -477,7 +482,9 @@ function ovladani(){
     const [mn,k]=b.dataset.tema?[S.temata,b.dataset.tema]:[S.typy,b.dataset.type];
     mn.has(k)?mn.delete(k):mn.add(k);b.setAttribute("aria-pressed",mn.has(k));vse();};
   const sel=document.getElementById("place");
-  const mista=[...new Map(AKCE.map(a=>[a.zdroj,a.zdroj===GOOUT?"GoOut (vše)":(a.misto||a.zdroj).split(" – ")[0].split(" (")[0]])).entries()].sort((x,y)=>x[1].localeCompare(y[1],"cs"));
+  const mm=new Map(AKCE.map(a=>AGREG[a.zdroj]?[a.zdroj,a.zdroj===GOOUT?"GoOut (vše)":"ColosseumTicket (vše)"]:PODLE_MISTA.has(a.zdroj)?["m:"+zakl(a),zakl(a)]:[a.zdroj,zakl(a)]));
+  const sMistem=new Set([...mm].filter(([k])=>k.startsWith("m:")).map(([,n])=>n));
+  const mista=[...mm.entries()].filter(([k,n])=>k.startsWith("m:")||!sMistem.has(n)).sort((x,y)=>x[1].localeCompare(y[1],"cs"));
   sel.innerHTML=`<option value="">Všechna místa</option>`+mista.map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("");
   sel.value=S.misto;
   sel.onchange=()=>{S.misto=sel.value;vse();};
@@ -633,6 +640,21 @@ function ovladaniKal(){
 // Slovo s * na konci je začátek slova (dejvick* = dejvické, dejvického…). Pořadí je důležité: konkrétnější místa před obecnými.
 const MISTA=[
   {n:"Kino Galaxie (Háje)",k:["galaxie"],p:[50.0306,14.5264]},
+  {n:"Kino Světozor",k:["kino svetozor"],p:[50.0812,14.4258]},
+  {n:"Kino Lucerna",k:["kino lucerna"],p:[50.0815,14.4251]},
+  {n:"Kino Pilotů",k:["kino pilotu"],p:[50.0716,14.4699]},
+  {n:"Modřanský biograf",k:["modransky biograf"],p:[50.0093,14.4049]},
+  {n:"Kino Evald",k:["kino evald"],p:[50.0820,14.4185]},
+  {n:"Kino Aero",k:["kino aero"],p:[50.0897,14.4747]},
+  {n:"Kino Ponrepo",k:["ponrepo"],p:[50.0836,14.4176]},
+  {n:"Kino Kavalírka",k:["kavalirk*"],p:[50.0688,14.3729]},
+  {n:"Kino MAT",k:["kino mat"],p:[50.0757,14.4186]},
+  {n:"Edison Filmhub",k:["edison filmhub"],p:[50.0852,14.4318]},
+  {n:"Kino Radotín",k:["kino radotin"],p:[49.9853,14.3611]},
+  {n:"Kino 35",k:["kino 35"],p:[50.0789,14.4258]},
+  {n:"Kino Dlabačov",k:["kino dlabacov"],p:[50.0838,14.3835]},
+  {n:"Kino Přítomnost",k:["kino pritomnost"],p:[50.0846,14.4497]},
+  {n:"Kino Svépomoc",k:["kino svepomoc"],p:[50.1043,14.4733]},
   {n:"Jízdárna Pražského hradu",k:["jizdarn*"],p:[50.0927,14.3990]},
   {n:"Dejvické divadlo",k:["dejvick*"],p:[50.1055,14.3917]},
   {n:"Pomezí – Náprstkovo muzeum",k:["naprstk*"],p:[50.0846,14.4152]},
@@ -679,7 +701,7 @@ const MISTA=[
 const bezd=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
 const kl=new Map();
 function poloha(a){
-  const t=` ${bezd(a.misto)} ${a.zdroj===GOOUT?"":a.zdroj} `;
+  const t=` ${bezd(a.misto)} ${AGREG[a.zdroj]||PODLE_MISTA.has(a.zdroj)?"":a.zdroj} `;
   if(kl.has(t)) return kl.get(t);
   if(a.poloha){ const m={n:(a.misto||"").split(" – ")[0],p:a.poloha}; kl.set(t,m); return m; }
   const m=MISTA.find(m=>m.k.some(k=>new RegExp(k.endsWith("*")?`(^|[^a-z0-9])${k.slice(0,-1)}`:`(^|[^a-z0-9])${k}($|[^a-z0-9])`).test(t)))||null;

@@ -1,13 +1,1 @@
 # název url  (stahuje úloha snapshot, výsledek je v artefaktech; "POST adresa?parametry" pošle formulář)
-c1-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&offset=5
-c2-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&from=5
-c3-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&page=2
-c4-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&city=Praha
-c5-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&municipality=148637330
-c6-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&municipalityId=148637330
-c7-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&cities=148637330
-c8-json https://www.colosseumticket.cz/api/title?locale=cs&size=5
-c9-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&dateFrom=2026-12-01&dateTo=2026-12-07
-c10-json https://www.colosseumticket.cz/api/title?locale=cs&size=5&page=1
-aero-program https://www.aerofilms.cz/program-kin/
-col-p https://www.colosseumticket.cz/cs/vysledky-vyhledavani

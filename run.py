@@ -232,13 +232,13 @@ def pokryti_agregatorem(vysledek, akce_podle_zdroje, typy_zdroju, okno_do):
     Vrací {zdroj: {"z": akcí zdroje v okně agregátoru, "shoda": z toho je má i agregátor,
                    "navic": akce agregátoru na stejném místě, které zdroj nemá (nebo se nespárovaly)}}.
     """
-    agreg = [a for a in vysledek if typy_zdroju[a["zdroj"]] == "agregator" and a["datum"] <= okno_do]
+    agreg = [a for a in vysledek if a["zdroj"] == "goout" and a["datum"] <= okno_do]
     vystup = {}
     for zid, xs in akce_podle_zdroje.items():
         if typy_zdroju[zid] != "primarni":
             continue
         v_okne = [a for a in xs if a["datum"] <= okno_do]
-        shoda = sum(1 for a in v_okne if any(typy_zdroju.get(z) == "agregator" for z in a.get("dalsi_zdroje", [])))
+        shoda = sum(1 for a in v_okne if "goout" in a.get("dalsi_zdroje", []))
         mista = [{"misto": m} for m in {a.get("misto") for a in v_okne} if m]
         navic = sum(1 for g in agreg if any(urcite_stejne_misto(g, m) for m in mista))
         vystup[zid] = {"z": len(v_okne), "shoda": shoda, "navic": navic}
@@ -716,8 +716,8 @@ def main(jen_chybne=False, jen=None):
     print("  " + ", ".join(f"{k} {v:.0f}" for k, v in sorted(casy.items(), key=lambda x: -x[1])[:8]))
     sloucene, rozpory = slouc(podle_zdroje, typy_zdroju)
     # kontrola překryvu s agregátorem (GoOut): u každého vlastního zdroje, kolik jeho akcí má i GoOut
-    okna = [int(z["dni"]) for z in cfg["zdroje"] if z.get("aktivni", True) and z.get("typ") == "agregator" and z.get("dni")]
-    if okna and any(typy_zdroju[z] == "agregator" and z in ok_zdroje for z in podle_zdroje):
+    okna = [int(z["dni"]) for z in cfg["zdroje"] if z.get("aktivni", True) and z["id"] == "goout" and z.get("dni")]
+    if okna and "goout" in ok_zdroje and "goout" in podle_zdroje:
         okno_do = (dnes + dt.timedelta(days=min(okna) - 1)).isoformat()
         print("Překryv s GoOut (akce zdroje v příštích dnech / z toho i na GoOut / GoOut navíc na stejném místě):")
         for zid, p in sorted(pokryti_agregatorem(sloucene, podle_zdroje, typy_zdroju, okno_do).items(),
