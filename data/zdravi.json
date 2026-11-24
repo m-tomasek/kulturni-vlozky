@@ -106,15 +106,15 @@
   "okno": 120
  },
  "kis": {
-  "chyb_v_rade": 1,
-  "ok": false,
-  "chyba": "web je nedostupný (neodpovídá)",
+  "chyb_v_rade": 0,
+  "ok": true,
+  "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_pokus": "2026-11-24T22:29+01:00",
   "nazev": "KIŠ",
   "url": "https://www.tyrkis.cz/program",
   "pocet": 7,
-  "posledni_ok": "2026-11-24T21:15+01:00",
+  "posledni_ok": "2026-11-24T22:29+01:00",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
@@ -129,8 +129,7 @@
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
-  "okno": 120,
-  "nefunguje_od": "2026-11-24"
+  "okno": 120
  },
  "x10": {
   "ok": true,
@@ -407,19 +406,18 @@
   "okno": 120
  },
  "improliga": {
-  "chyb_v_rade": 1,
-  "ok": false,
-  "chyba": "web je nedostupný (neodpovídá)",
+  "chyb_v_rade": 0,
+  "ok": true,
+  "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_pokus": "2026-11-24T22:29+01:00",
   "nazev": "Improliga",
   "url": "https://improliga.cz/kalendar-predstaveni/",
   "pocet": 22,
-  "posledni_ok": "2026-11-24T21:15+01:00",
+  "posledni_ok": "2026-11-24T22:29+01:00",
   "varovani_behu": 0,
   "hlasit": false,
-  "okno": 120,
-  "nefunguje_od": "2026-11-24"
+  "okno": 120
  },
  "bioctvrtky": {
   "ok": true,
@@ -1523,20 +1521,21 @@
  "mojedilna": {
   "varovani_behu": 0,
   "hlasit": false,
-  "ok": false,
-  "chyba": "web je nedostupný (neodpovídá)",
+  "ok": true,
+  "chyba": null,
   "varovani": null,
-  "chyb_v_rade": 1,
-  "pocet": 8,
-  "posledni_ok": "2026-11-24T21:15+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "chyb_v_rade": 0,
+  "pocet": 9,
+  "posledni_ok": "2026-11-24T22:29+01:00",
+  "posledni_pokus": "2026-11-24T22:29+01:00",
   "uplnost": {
-   "akci": 8,
+   "akci": 9,
    "do": "2027-01-22",
-   "dnu_na_webu": 9,
-   "chybi_dnu": 1,
+   "dnu_na_webu": 11,
+   "chybi_dnu": 2,
    "chybi_priklad": [
-    "2026-12-16"
+    "2026-12-02",
+    "2026-12-22"
    ]
   },
   "nazev": "Moje dílna – keramika a výtvarné lekce",
@@ -1546,8 +1545,7 @@
    "z": 0,
    "shoda": 0,
    "navic": 0
-  },
-  "nefunguje_od": "2026-11-24"
+  }
  },
  "kurzyherectvi": {
   "chyb_v_rade": 0,
