@@ -4,22 +4,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 26,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 25,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Pomezí",
   "url": "https://pomezi.com/",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 23,
+   "z": 22,
    "shoda": 2,
-   "navic": 146
+   "navic": 145
   },
   "uplnost": {
-   "akci": 26,
+   "akci": 25,
    "do": "2027-07-21",
-   "dnu_na_webu": 21,
+   "dnu_na_webu": 20,
    "chybi_dnu": 1,
    "chybi_priklad": [
     "2026-11-26"
@@ -32,22 +32,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 13,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 12,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Klub Letka",
   "url": "https://www.klubletka.cz/program",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 6,
+   "z": 5,
    "shoda": 1,
    "navic": 3
   },
   "uplnost": {
-   "akci": 13,
+   "akci": 12,
    "do": "2026-12-19",
-   "dnu_na_webu": 9,
+   "dnu_na_webu": 8,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -59,8 +59,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 7,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Vosto5",
   "url": "https://vosto5.cz/program/",
   "varovani_behu": 0,
@@ -68,7 +68,7 @@
   "goout": {
    "z": 3,
    "shoda": 3,
-   "navic": 22
+   "navic": 21
   },
   "uplnost": {
    "akci": 7,
@@ -84,22 +84,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 19,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 18,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Divadlo DISK",
   "url": "https://www.divadlodisk.cz/program",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 19,
-   "shoda": 16,
+   "z": 18,
+   "shoda": 15,
    "navic": 0
   },
   "uplnost": {
-   "akci": 19,
+   "akci": 18,
    "do": "2026-12-20",
-   "dnu_na_webu": 17,
+   "dnu_na_webu": 16,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -110,15 +110,15 @@
   "ok": true,
   "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T22:29+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "KIŠ",
   "url": "https://www.tyrkis.cz/program",
   "pocet": 7,
-  "posledni_ok": "2026-11-24T22:29+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 0,
+   "z": 4,
    "shoda": 0,
    "navic": 0
   },
@@ -136,9 +136,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 34,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 33,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Divadlo X10",
   "url": "https://www.divadlox10.cz/cs/program",
   "varovani_behu": 0,
@@ -149,7 +149,7 @@
    "navic": 0
   },
   "uplnost": {
-   "akci": 34,
+   "akci": 33,
    "do": "2027-03-30",
    "dnu_na_webu": 32,
    "chybi_dnu": 0,
@@ -162,22 +162,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 51,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 50,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Malostranská beseda",
   "url": "https://www.malostranska-beseda.cz/club/program?year=2026&month=11",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 51,
-   "shoda": 39,
-   "navic": 15
+   "z": 50,
+   "shoda": 38,
+   "navic": 17
   },
   "uplnost": {
-   "akci": 51,
+   "akci": 50,
    "do": "2027-01-30",
-   "dnu_na_webu": 49,
+   "dnu_na_webu": 48,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -188,22 +188,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 60,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 58,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Činoherní klub",
   "url": "https://cinoherniklub.cz/divadlo/?s=t",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 52,
+   "z": 51,
    "shoda": 0,
    "navic": 0
   },
   "uplnost": {
-   "akci": 60,
+   "akci": 58,
    "do": "2027-03-21",
-   "dnu_na_webu": 57,
+   "dnu_na_webu": 56,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -214,22 +214,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 152,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 151,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Žižkovské divadlo Járy Cimrmana",
   "url": "https://zdjc.cz/program/",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 84,
-   "shoda": 73,
+   "z": 83,
+   "shoda": 72,
    "navic": 11
   },
   "uplnost": {
-   "akci": 152,
+   "akci": 151,
    "do": "2027-06-28",
-   "dnu_na_webu": 75,
+   "dnu_na_webu": 74,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -240,20 +240,20 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 45,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 44,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Dejvické divadlo",
   "url": "https://www.dejvickedivadlo.cz/program?m=11&r=2026",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 27,
+   "z": 26,
    "shoda": 0,
-   "navic": 43
+   "navic": 42
   },
   "uplnost": {
-   "akci": 45,
+   "akci": 44,
    "do": "2027-01-31",
    "dnu_na_webu": 0,
    "chybi_dnu": 0,
@@ -267,8 +267,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 5,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Vyšehrad",
   "url": "https://praha-vysehrad.cz/cs/program/",
   "varovani_behu": 0,
@@ -293,21 +293,21 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 121,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Jazz Dock",
   "url": "https://www.jazzdock.cz/cs/program",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 90,
-   "shoda": 51,
+   "z": 96,
+   "shoda": 50,
    "navic": 0
   },
   "uplnost": {
    "akci": 121,
-   "do": "2027-05-11",
-   "dnu_na_webu": 12,
+   "do": "2027-04-23",
+   "dnu_na_webu": 11,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -319,8 +319,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 26,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Studio ALTA",
   "url": "https://studioalta.cz/program?pages=15",
   "varovani_behu": 0,
@@ -345,8 +345,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 9,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Alfred ve dvoře",
   "url": "https://www.alfredvedvore.cz/",
   "varovani_behu": 0,
@@ -354,7 +354,7 @@
   "goout": {
    "z": 8,
    "shoda": 7,
-   "navic": 8
+   "navic": 6
   },
   "uplnost": {
    "akci": 9,
@@ -371,15 +371,15 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 33,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Studio Hrdinů",
   "url": "https://studiohrdinu.cz/program/",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 29,
-   "shoda": 28,
+   "z": 30,
+   "shoda": 29,
    "navic": 2
   },
   "uplnost": {
@@ -396,9 +396,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 47,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 44,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Stanice Galaxie",
   "url": "https://www.stanicegalaxie.cz/program",
   "varovani_behu": 0,
@@ -410,11 +410,11 @@
   "ok": true,
   "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T22:29+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Improliga",
   "url": "https://improliga.cz/kalendar-predstaveni/",
   "pocet": 22,
-  "posledni_ok": "2026-11-24T22:29+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
   "varovani_behu": 0,
   "hlasit": false,
   "okno": 120
@@ -425,8 +425,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 4,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Biologické čtvrtky",
   "url": "https://bioctvrtky.cz/category/program-na-aktualni-semestr/",
   "varovani_behu": 0,
@@ -458,22 +458,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 42,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 40,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Rock Café",
   "url": "https://rockcafe.cz/cs/program/2026/11",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 42,
-   "shoda": 30,
+   "z": 40,
+   "shoda": 29,
    "navic": 20
   },
   "uplnost": {
-   "akci": 42,
+   "akci": 40,
    "do": "2027-01-13",
-   "dnu_na_webu": 27,
+   "dnu_na_webu": 26,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -484,22 +484,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 9,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 8,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Kasárna Karlín",
   "url": "https://kasarnakarlin.cz/cs/program",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 8,
+   "z": 7,
    "shoda": 3,
    "navic": 16
   },
   "uplnost": {
-   "akci": 9,
+   "akci": 8,
    "do": "2027-04-12",
-   "dnu_na_webu": 7,
+   "dnu_na_webu": 6,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -511,8 +511,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 35,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "DOX",
   "url": "https://www.dox.cz/program",
   "varovani_behu": 0,
@@ -520,7 +520,7 @@
   "goout": {
    "z": 24,
    "shoda": 14,
-   "navic": 8
+   "navic": 7
   },
   "uplnost": {
    "akci": 35,
@@ -536,22 +536,22 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 54,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 53,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Bio Oko",
   "url": "https://www.biooko.net/cs/program",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 54,
+   "z": 53,
    "shoda": 1,
    "navic": 2
   },
   "uplnost": {
-   "akci": 54,
+   "akci": 53,
    "do": "2027-02-09",
-   "dnu_na_webu": 25,
+   "dnu_na_webu": 24,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -562,25 +562,25 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 5,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 6,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Galerie Rudolfinum",
   "url": "https://www.galerierudolfinum.cz/wp-json/tribe/events/v1/events?per_page=50",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 4,
+   "z": 5,
    "shoda": 3,
    "navic": 9
   },
   "uplnost": {
-   "akci": 5,
+   "akci": 6,
    "do": "2026-12-17",
-   "dnu_na_webu": 7,
+   "dnu_na_webu": 8,
    "chybi_dnu": 2,
    "chybi_priklad": [
-    "2026-11-24",
+    "2026-11-25",
     "2026-11-27"
    ]
   },
@@ -591,20 +591,20 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 45,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 44,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Reduta Jazz Club",
   "url": "https://redutajazzclub.cz/program-cs",
   "varovani_behu": 0,
   "hlasit": false,
   "goout": {
-   "z": 45,
-   "shoda": 45,
-   "navic": 160
+   "z": 44,
+   "shoda": 44,
+   "navic": 159
   },
   "uplnost": {
-   "akci": 45,
+   "akci": 44,
    "do": "2026-12-18",
    "dnu_na_webu": 0,
    "chybi_dnu": 0,
@@ -617,9 +617,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 8913,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 8891,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "GoOut (celá Praha)",
   "url": "https://goout.net/cs/praha/akce/",
   "varovani_behu": 0,
@@ -632,19 +632,19 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 4,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 3,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Slam poetry (Praha)",
   "url": "https://www.slampoetry.cz/c/program",
   "hlasit": false,
   "goout": {
-   "z": 4,
+   "z": 3,
    "shoda": 1,
-   "navic": 33
+   "navic": 25
   },
   "uplnost": {
-   "akci": 4,
+   "akci": 3,
    "do": "2026-12-15",
    "dnu_na_webu": 5,
    "chybi_dnu": 4,
@@ -664,14 +664,14 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 110,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 102,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Kino Atlas",
   "url": "https://kinoatlaspraha.cz/",
   "goout": {
-   "z": 110,
-   "shoda": 104,
+   "z": 102,
+   "shoda": 96,
    "navic": 31
   },
   "okno": 120
@@ -684,8 +684,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 5,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 5,
    "do": "2027-01-25",
@@ -698,7 +698,7 @@
   "goout": {
    "z": 5,
    "shoda": 4,
-   "navic": 19
+   "navic": 20
   },
   "okno": 120
  },
@@ -709,13 +709,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 14,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 13,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 14,
+   "akci": 13,
    "do": "2027-01-14",
-   "dnu_na_webu": 1,
+   "dnu_na_webu": 0,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -723,8 +723,8 @@
   "url": "https://praha.camp/program",
   "okno": 120,
   "goout": {
-   "z": 14,
-   "shoda": 11,
+   "z": 13,
+   "shoda": 10,
    "navic": 1
   }
  },
@@ -736,8 +736,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 6,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "archiweb.cz (architektonické akce v Praze)",
   "url": "https://www.archiweb.cz/e/list",
   "okno": 120
@@ -747,7 +747,7 @@
   "ok": true,
   "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "hlasit": false,
   "nazev": "Botanická zahrada Praha (Troja)",
   "url": "https://www.botanicka.cz/clanky/akce/prehled-nasich-akci",
@@ -758,7 +758,7 @@
   },
   "varovani_behu": 0,
   "pocet": 1,
-  "posledni_ok": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 1,
    "do": "2026-11-27",
@@ -775,13 +775,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 6,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 4,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 6,
+   "akci": 4,
    "do": "2026-12-15",
-   "dnu_na_webu": 7,
+   "dnu_na_webu": 5,
    "chybi_dnu": 1,
    "chybi_priklad": [
     "2026-11-28"
@@ -791,7 +791,7 @@
   "url": "https://lesypraha.cz/akce/",
   "okno": 120,
   "goout": {
-   "z": 6,
+   "z": 4,
    "shoda": 0,
    "navic": 6
   }
@@ -804,8 +804,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 22,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Kudy z nudy (příroda a komentované prohlídky v Praze)",
   "url": "https://www.kudyznudy.cz/kalendar-akci/priroda-a-ekologie/hlavni-mesto-praha",
   "okno": 120
@@ -818,13 +818,13 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 44,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 44,
    "do": "2027-06-15",
-   "dnu_na_webu": 54,
-   "chybi_dnu": 8,
+   "dnu_na_webu": 55,
+   "chybi_dnu": 9,
    "chybi_priklad": [
     "2026-11-25",
     "2026-11-26",
@@ -840,7 +840,7 @@
   "url": "https://www.myko.cz/myko-akce/",
   "okno": 120,
   "goout": {
-   "z": 19,
+   "z": 20,
    "shoda": 0,
    "navic": 1
   }
@@ -853,8 +853,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 1,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 1,
    "do": "2027-05-21",
@@ -885,8 +885,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 7,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 7,
    "do": "2027-03-06",
@@ -911,8 +911,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 1,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 1,
    "do": "2026-11-27",
@@ -936,13 +936,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 10,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 9,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 10,
+   "akci": 9,
    "do": "2026-12-06",
-   "dnu_na_webu": 11,
+   "dnu_na_webu": 10,
    "chybi_dnu": 1,
    "chybi_priklad": [
     "2027-01-27"
@@ -952,7 +952,7 @@
   "url": "https://toulcuvdvur.cz/td-akce",
   "okno": 120,
   "goout": {
-   "z": 10,
+   "z": 9,
    "shoda": 0,
    "navic": 2
   }
@@ -965,8 +965,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 11,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 11,
    "do": "2026-12-06",
@@ -993,12 +993,12 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 12,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 12,
-   "do": "2026-12-12",
-   "dnu_na_webu": 11,
+   "do": "2027-01-09",
+   "dnu_na_webu": 12,
    "chybi_dnu": 3,
    "chybi_priklad": [
     "2026-11-29",
@@ -1023,8 +1023,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 11,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 11,
    "do": "2027-04-28",
@@ -1049,8 +1049,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 5,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 5,
    "do": "2026-12-21",
@@ -1064,7 +1064,7 @@
   "goout": {
    "z": 5,
    "shoda": 2,
-   "navic": 12
+   "navic": 11
   }
  },
  "muzeumprahy": {
@@ -1074,11 +1074,11 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 19,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 18,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 19,
+   "akci": 18,
    "do": "2027-01-21",
    "dnu_na_webu": 15,
    "chybi_dnu": 1,
@@ -1090,7 +1090,7 @@
   "url": "https://www.muzeumprahy.cz/vystavy-a-akce/",
   "okno": 120,
   "goout": {
-   "z": 19,
+   "z": 18,
    "shoda": 0,
    "navic": 2
   }
@@ -1102,13 +1102,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 81,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 80,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 81,
+   "akci": 80,
    "do": "2027-06-15",
-   "dnu_na_webu": 50,
+   "dnu_na_webu": 49,
    "chybi_dnu": 2,
    "chybi_priklad": [
     "2026-12-02",
@@ -1119,9 +1119,9 @@
   "url": "https://www.loosovavila.cz/akce",
   "okno": 120,
   "goout": {
-   "z": 55,
+   "z": 54,
    "shoda": 10,
-   "navic": 109
+   "navic": 108
   }
  },
  "cka": {
@@ -1132,8 +1132,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 2,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Česká komora architektů (události v Praze)",
   "url": "https://www.cka.cz/svet-architektury/aktualne/udalosti",
   "okno": 120
@@ -1146,8 +1146,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 1,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Národní památkový ústav (akce v Praze)",
   "url": "https://www.npu.cz/cs/akce",
   "okno": 120
@@ -1159,13 +1159,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 33,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 32,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 33,
+   "akci": 32,
    "do": "2027-03-03",
-   "dnu_na_webu": 25,
+   "dnu_na_webu": 24,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -1175,7 +1175,7 @@
   "goout": {
    "z": 1,
    "shoda": 0,
-   "navic": 22
+   "navic": 21
   }
  },
  "ghmp": {
@@ -1185,13 +1185,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 37,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 36,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 37,
+   "akci": 36,
    "do": "2027-02-21",
-   "dnu_na_webu": 30,
+   "dnu_na_webu": 29,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -1212,8 +1212,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 13,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Praha 1 – kalendář akcí (jen příroda a architektura)",
   "url": "https://www.praha1.cz/udalosti/",
   "okno": 120
@@ -1226,8 +1226,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 2,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 2,
    "do": "2026-12-03",
@@ -1251,11 +1251,11 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 29,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 31,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 29,
+   "akci": 31,
    "do": "2027-09-19",
    "dnu_na_webu": 0,
    "chybi_dnu": 0,
@@ -1265,9 +1265,9 @@
   "url": "https://www.fa.cvut.cz/cs/aktualne/kalendar",
   "okno": 120,
   "goout": {
-   "z": 21,
+   "z": 23,
    "shoda": 0,
-   "navic": 258
+   "navic": 255
   }
  },
  "avu": {
@@ -1277,13 +1277,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 7,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 6,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 7,
+   "akci": 6,
    "do": "2026-12-11",
-   "dnu_na_webu": 7,
+   "dnu_na_webu": 6,
    "chybi_dnu": 0,
    "chybi_priklad": []
   },
@@ -1291,9 +1291,9 @@
   "url": "https://www.avu.cz/verejnost/akce",
   "okno": 120,
   "goout": {
-   "z": 7,
+   "z": 6,
    "shoda": 0,
-   "navic": 5
+   "navic": 4
   }
  },
  "amu": {
@@ -1304,15 +1304,15 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 28,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "AMU (HAMU, DAMU, FAMU)",
   "url": "https://www.amu.cz/cs/udalosti/",
   "okno": 120,
   "goout": {
    "z": 27,
    "shoda": 4,
-   "navic": 180
+   "navic": 178
   }
  },
  "kinokinokino": {
@@ -1322,9 +1322,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 917,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 885,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "kinokinokino (artová kina Praha)",
   "url": "https://kinokinokino.cz/",
   "okno": 120
@@ -1336,9 +1336,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 1774,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 1781,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "ColosseumTicket (celá Praha)",
   "url": "https://www.colosseumticket.cz/",
   "okno": 120
@@ -1350,9 +1350,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 156,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 198,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Aerofilms (filmy a přenosy v kinech)",
   "url": "https://www.aerofilms.cz/program-kin/",
   "okno": 120
@@ -1364,13 +1364,13 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 30,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 29,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 30,
+   "akci": 29,
    "do": "2027-04-24",
-   "dnu_na_webu": 30,
+   "dnu_na_webu": 29,
    "chybi_dnu": 2,
    "chybi_priklad": [
     "2026-12-13",
@@ -1381,7 +1381,7 @@
   "url": "https://atelier9.cz/kalendar/",
   "okno": 120,
   "goout": {
-   "z": 28,
+   "z": 27,
    "shoda": 0,
    "navic": 6
   }
@@ -1394,8 +1394,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 10,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 10,
    "do": "2027-04-08",
@@ -1407,7 +1407,7 @@
   "url": "https://zivapedagogika.eu/kalendar/",
   "okno": 120,
   "goout": {
-   "z": 8,
+   "z": 9,
    "shoda": 0,
    "navic": 6
   }
@@ -1420,8 +1420,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 11,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 11,
    "do": "2027-06-01",
@@ -1435,7 +1435,7 @@
   "goout": {
    "z": 9,
    "shoda": 0,
-   "navic": 3
+   "navic": 2
   }
  },
  "atvu": {
@@ -1446,22 +1446,22 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 2,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 2,
    "do": "2027-04-06",
-   "dnu_na_webu": 22,
-   "chybi_dnu": 21,
+   "dnu_na_webu": 21,
+   "chybi_dnu": 20,
    "chybi_priklad": [
-    "2026-11-24",
     "2026-11-25",
     "2026-11-28",
     "2026-12-02",
     "2026-12-03",
     "2026-12-05",
     "2026-12-11",
-    "2026-12-15"
+    "2026-12-15",
+    "2026-12-16"
    ]
   },
   "nazev": "AtVU – kurzy figurální kresby (Letná)",
@@ -1481,8 +1481,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 7,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 7,
    "do": "2027-02-20",
@@ -1504,7 +1504,7 @@
   "ok": true,
   "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "hlasit": false,
   "nazev": "Atelier Montmartre – víkendové workshopy (Smíchov)",
   "url": "https://www.ateliermontmartre.cz/vytvarne-kurzy/program-workshopu",
@@ -1515,7 +1515,7 @@
   },
   "varovani_behu": 0,
   "pocet": 0,
-  "posledni_ok": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
   "okno": 120
  },
  "mojedilna": {
@@ -1525,26 +1525,25 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 9,
-  "posledni_ok": "2026-11-24T22:29+01:00",
-  "posledni_pokus": "2026-11-24T22:29+01:00",
+  "pocet": 8,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 9,
-   "do": "2027-01-22",
-   "dnu_na_webu": 11,
-   "chybi_dnu": 2,
+   "akci": 8,
+   "do": "2026-12-10",
+   "dnu_na_webu": 9,
+   "chybi_dnu": 1,
    "chybi_priklad": [
-    "2026-12-02",
-    "2026-12-22"
+    "2026-11-25"
    ]
   },
   "nazev": "Moje dílna – keramika a výtvarné lekce",
   "url": "https://mojedilna.com/index.php/cs/courses",
   "okno": 120,
   "goout": {
-   "z": 0,
+   "z": 8,
    "shoda": 0,
-   "navic": 0
+   "navic": 2
   }
  },
  "kurzyherectvi": {
@@ -1552,7 +1551,7 @@
   "ok": true,
   "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "hlasit": false,
   "nazev": "Kurzy herectví (Praha)",
   "url": "https://kurzyherectvi.cz/dynamicke-kurzy-praha/",
@@ -1563,7 +1562,7 @@
   },
   "varovani_behu": 0,
   "pocet": 0,
-  "posledni_ok": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
   "okno": 120
  },
  "mdp_kurzy": {
@@ -1574,8 +1573,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 3,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 3,
    "do": "2027-02-13",
@@ -1602,8 +1601,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 1,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 1,
    "do": "2026-12-07",
@@ -1632,8 +1631,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 6,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 6,
    "do": "2027-04-03",
@@ -1655,7 +1654,7 @@
   "ok": true,
   "chyba": null,
   "varovani": null,
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "hlasit": false,
   "nazev": "FA ČVUT – kurzy pro veřejnost (figurální kresba…)",
   "url": "https://www.fa.cvut.cz/cs/uchazeci/celozivotni-vzdelavani",
@@ -1666,7 +1665,7 @@
   },
   "varovani_behu": 0,
   "pocet": 0,
-  "posledni_ok": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 0,
    "do": "-",
@@ -1686,18 +1685,18 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 73,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 79,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
-   "akci": 73,
+   "akci": 79,
    "do": "2026-12-06",
    "dnu_na_webu": 16,
    "chybi_dnu": 4,
    "chybi_priklad": [
-    "2026-11-24",
     "2026-12-13",
     "2026-12-23",
+    "2027-01-14",
     "2027-01-29"
    ]
   },
@@ -1705,9 +1704,9 @@
   "url": "https://www.narodni-divadlo.cz/cs/program",
   "okno": 120,
   "goout": {
-   "z": 53,
+   "z": 59,
    "shoda": 1,
-   "navic": 31
+   "navic": 29
   }
  },
  "nd_plus": {
@@ -1718,8 +1717,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 3,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 3,
    "do": "2026-12-17",
@@ -1744,8 +1743,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 94,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "uplnost": {
    "akci": 94,
    "do": "2026-12-08",
@@ -1761,7 +1760,7 @@
   "goout": {
    "z": 94,
    "shoda": 0,
-   "navic": 34
+   "navic": 31
   }
  },
  "kzn_workshopy": {
@@ -1771,9 +1770,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 9,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 10,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Kudy z nudy – kurzy a workshopy v Praze",
   "url": "https://www.kudyznudy.cz/kalendar-akci/kurzy-a-workshopy/hlavni-mesto-praha",
   "okno": 120
@@ -1785,9 +1784,9 @@
   "chyba": null,
   "varovani": null,
   "chyb_v_rade": 0,
-  "pocet": 30,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "pocet": 32,
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Smsticket – workshopy v Praze",
   "url": "https://www.smsticket.cz/akce/workshop",
   "okno": 120
@@ -1800,8 +1799,8 @@
   "varovani": null,
   "chyb_v_rade": 0,
   "pocet": 1,
-  "posledni_ok": "2026-11-24T21:23+01:00",
-  "posledni_pokus": "2026-11-24T21:23+01:00",
+  "posledni_ok": "2026-11-25T15:21+01:00",
+  "posledni_pokus": "2026-11-25T15:21+01:00",
   "nazev": "Improbox – impro workshopy a kurzy v Praze",
   "url": "https://improbox.cz/",
   "okno": 120
